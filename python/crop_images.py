@@ -120,3 +120,5 @@ def main():
     out_root_dir = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0"
     sort_objects_by_class(img_dir, path_to_csv, out_root_dir)
 
+if __name__ == "__main__":
+    main()
