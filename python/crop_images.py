@@ -54,9 +54,7 @@ def parse_label_to_class_names(path_to_csv):
     return parsed
 
 
-def crop_object(f_img, lb_pairs,
-                out_root_dir="/home/yaatehr/programs/spatial_LDA/data"
-                             "/cropped_test_0"):
+def crop_object(f_img, lb_pairs, out_root_dir, class_names):
     """Function for cropping a single object in a single image, and saves
     the cropped image into the out_dir output directory."""
     # Load image and get shape
@@ -64,7 +62,7 @@ def crop_object(f_img, lb_pairs,
     m, n, c = A.shape
 
     # Iterate over all labels in the image
-    for label, lb_pair in zip(labels, lb_pairs):
+    for lb_pair in lb_pairs:
         # Get label and boundary
         label, boundary = lb_pair
 
@@ -78,13 +76,17 @@ def crop_object(f_img, lb_pairs,
         A_crop = A[ymin:ymax, xmin:xmax, :]
 
         # Get output directory using class label
-        out_root_dir = out_dir
+        out_dir = os.path.join(out_root_dir, "/", class_names[id])
+
+        # If directory doesn't already exist, make it
+        if not os.path.exists(out_dir):
+            os.mkdirs(out_dir)
 
         # Save image
         cv.imwrite(os.path.join(os.getcwd(), out_dir), A_crop)
 
 
-def sort_objects_by_class(img_dir, label_dir, csv_path):
+def sort_objects_by_class(img_dir, csv_path, out_root_dir):
     """Main function for cropping our objects of interest into their respective
     classes."""
     # Get dictionary of parsed values
@@ -94,8 +96,27 @@ def sort_objects_by_class(img_dir, label_dir, csv_path):
     ids = list(parsed.keys())
     counter = 0  # For printing
 
+    # Get label to class dictionary
+    class_names = parse_label_to_class_names(csv_path)
+
     # Iterate over all images via ids
     for id in ids:
-        print("Iterated over {} images".format(counter))
-        crop_object(parsed[id])  # Crop and save image objects by class
+        # Get filename
+        fname = os.path.join(img_dir, id, ".jpg")
+
+        # Extract all objects from file
+        crop_object(fname, parsed[id], out_root_dir, class_names)
+
+        # Show progress
+        if counter % 1000 == 0:
+            print("Iterated over {} images".format(counter))
         counter += 1
+
+
+def main():
+    img_dir = "/home/yaatehr/programs/datasets/google_open_image/train_00/"
+    path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
+                  "-annotations-bbox.csv"
+    out_root_dir = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0"
+    sort_objects_by_class(img_dir, path_to_csv, out_root_dir)
+
