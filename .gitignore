@@ -1,5 +1,15 @@
 __pycache__
 .idea/*
+*.png
+*.jpeg
+*.jpg
+*.csv
+*.pkl
+*.tsv
+*.tif
+*.zip
+*.tiff
+*.tar
 
 
 
