@@ -53,6 +53,7 @@ def parse_label_to_class_names(path_to_csv):
         print(f'Processed {line_count} lines.')
     return parsed
 
+
 def crop_object(f_img, lb_pairs,
                 out_root_dir="/home/yaatehr/programs/spatial_LDA/data"
                              "/cropped_test_0"):
