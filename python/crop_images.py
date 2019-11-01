@@ -20,10 +20,12 @@ def parse_bounding_csv(path_to_csv):
         line_count = 0
         for row in csv_reader:
             if line_count == 0:
-                print(f'Column names are {", ".join(row)}')
+                print('Column names are {}'.format(row))
                 line_count += 1
             else:
                 image_id = row[0]
+                if line_count == 1:
+                    print(image_id)
                 boundary = {}
                 boundary["xMin"] = row[4]
                 boundary["xMax"] = row[5]
@@ -37,7 +39,7 @@ def parse_bounding_csv(path_to_csv):
                     lis.append((label, boundary))
                     parsed[image_id] = lis
                 line_count += 1
-        print(f'Processed {line_count} lines.')
+        print('Processed {} lines'.format(line_count))
     return parsed
 
 
@@ -50,7 +52,8 @@ def parse_label_to_class_names(path_to_csv):
         for row in csv_reader:
             parsed[row[0]] = row[1]
             line_count += 1
-        print(f'Processed {line_count} lines.')
+        print("ROW: {}".format(row))
+        print('Processed {line_count} lines.')
     return parsed
 
 
@@ -67,24 +70,25 @@ def crop_object(f_img, lb_pairs, out_root_dir, class_names):
         label, boundary = lb_pair
 
         # Convert min/max values from percentages to pixels
-        xmin = n * boundary["xMin"]
-        xmax = n * boundary["xMax"]
-        ymin = m * boundary["yMin"]
-        ymax = m * boundary["yMax"]
+        xmin = int(n * float(boundary["xMin"]))
+        xmax = int(n * float(boundary["xMax"]))
+        ymin = int(m * float(boundary["yMin"]))
+        ymax = int(m * float(boundary["yMax"]))
 
         # Crop image to object values over bounding box with all channels
         A_crop = A[ymin:ymax, xmin:xmax, :]
 
         # Get output directory using class label
-        out_dir = os.path.join(out_root_dir, "/", class_names[id])
+        out_dir = os.path.join(out_root_dir, label[1:])
 
-        # If directory doesn't already exist, make it
+        # If directories (recursive) don't already exist, make them
         if not os.path.exists(out_dir):
-            os.mkdirs(out_dir)
+            os.makedirs(out_dir)
 
         # Save image
-        cv.imwrite(os.path.join(os.getcwd(), out_dir), A_crop)
-
+        img_file = f_img.split("/")[-1]
+        outfile = os.path.join(out_dir, img_file)
+        cv.imwrite(outfile, A_crop)
 
 def sort_objects_by_class(img_dir, csv_path, out_root_dir):
     """Main function for cropping our objects of interest into their respective
@@ -98,14 +102,16 @@ def sort_objects_by_class(img_dir, csv_path, out_root_dir):
 
     # Get label to class dictionary
     class_names = parse_label_to_class_names(csv_path)
+    
+    files = os.listdir(img_dir) 
 
     # Iterate over all images via ids
     for id in ids:
         # Get filename
-        fname = os.path.join(img_dir, id, ".jpg")
-
+        fname = os.path.join(img_dir, id+ ".jpg")
         # Extract all objects from file
-        crop_object(fname, parsed[id], out_root_dir, class_names)
+        if fname.split("/")[-1] in files:
+            crop_object(fname, parsed[id], out_root_dir, class_names)
 
         # Show progress
         if counter % 1000 == 0:
@@ -117,6 +123,9 @@ def main():
     img_dir = "/home/yaatehr/programs/datasets/google_open_image/train_00/"
     path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
                   "-annotations-bbox.csv"
-    out_root_dir = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0"
+    out_root_dir = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/"
     sort_objects_by_class(img_dir, path_to_csv, out_root_dir)
+
+if __name__ == "__main__":
+    main()
 
