@@ -48,5 +48,17 @@ def parse_bounding_csv(path_to_csv):
                 line_count += 1
         print(f'Processed {line_count} lines.')
     return parsed
+
+def parse_label_to_class_names(path_to_csv):
+    """Returns a dictionary of label:class name"""
+    parsed = {}
+    with open(path_to_csv) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=",")
+        line_count = 0
+        for row in csv_reader:
+            parsed[row[0]] = row[1]
+            line_count += 1
+        print(f'Processed {line_count} lines.')
+    return parsed
             
             
