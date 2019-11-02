@@ -85,11 +85,11 @@ def get_all_sublabels(node):
     return sublabels
 
 
-def make_inverted_labelmap(n, path=LABEL_HIERARCHY_PATH):
+def make_inverted_labelmap(depth, path=LABEL_HIERARCHY_PATH):
     if path.exists(path):
         hierarchy_json_tree = json.load(open(path, 'r'))
         # hierarchy_json_tree = jsontree.load(open(LABEL_HIERARCHY_PATH, 'r'))
-        node_map = build_tree_to_depth_n(hierarchy_json_tree, n)
+        node_map = build_tree_to_depth_n(hierarchy_json_tree, depth)
         return node_map
     else:
         raise Exception("counld not find label json hierarchy")
