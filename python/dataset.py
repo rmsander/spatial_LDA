@@ -23,7 +23,7 @@ path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
 classname_map = parse_label_to_class_names(path_to_csv)
 max_hierarchy_level=3
 granularity_map = make_inverted_labelmap(max_hierarchy_level, path_to_hierarchy=hierarchy_json_path)
-
+#print(classname_map)
 
 resnet_transform = transforms.Compose([
     transforms.ToPILImage(),
@@ -60,17 +60,18 @@ class ImageDataset(Dataset):
         image = io.imread(impath)
         if self.transform:
             image = self.transform(image)
-        image_class_hash = os.path.basename(os.path.dirname(os.path.dirname(impath)))
+        image_class_hash = os.path.basename(os.path.dirname(impath))
         
         label = getImageLabel(image_class_hash)
         return image, label
     
     def get_all_labels(self, use_text=True):
         output = set()
+        #print(self.image_paths)
         for impath in self.image_paths:
-            image_class_hash = os.path.basename(os.path.dirname(os.path.dirname(impath)))
+            image_class_hash = os.path.basename(os.path.dirname(impath))
             if use_text:
-                image_class_hash = classname_map(image_class_hash)
+                image_class_hash = classname_map[image_class_hash]
             output.add(image_class_hash)
         return output
 
