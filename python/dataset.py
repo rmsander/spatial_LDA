@@ -22,7 +22,7 @@ path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
                 "-annotations-bbox.csv"
 classname_map = parse_label_to_class_names(path_to_csv)
 max_hierarchy_level=3
-granularity_map = make_inverted_labelmap(max_hierarchy_level, path=hierarchy_json_path)
+granularity_map = make_inverted_labelmap(max_hierarchy_level, path_to_hierarchy=hierarchy_json_path)
 
 
 resnet_transform = transforms.Compose([
