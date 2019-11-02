@@ -5,8 +5,8 @@ from torch.utils.data import Dataset, DataLoader
 import matplotlib
 matplotlib.use('Agg')
 from skimage import io
-from python.crop_images import *
-from python.utils import *
+from crop_images import *
+from utils import *
 from torch.utils.data.sampler import SubsetRandomSampler
 
 # data_root = os.path.join(os.path.dirname('__file__'), 'data')
@@ -35,7 +35,7 @@ resnet_transform = transforms.Compose([
 
 class ImageDataset(Dataset):
 
-    def __init__(self, root, transform=None):
+    def __init__(self, root, transform=resnet_transform):
         """
         Args:
             root_dir (string): Directory with all the images organized into folders by class label (hash).
