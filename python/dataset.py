@@ -35,7 +35,7 @@ resnet_transform = transforms.Compose([
 
 class ImageDataset(Dataset):
 
-    def __init__(self, root, transform=resnet_transform):
+    def __init__(self, root=train_root, transform=resnet_transform):
         """
         Args:
             root_dir (string): Directory with all the images organized into folders by class label (hash).
