@@ -51,6 +51,7 @@ def parse_label_to_class_names(path_to_csv):
         line_count = 0
         for row in csv_reader:
             parsed[row[0][3:]] = row[1]
+            # parsed[row[0]] = row[2]
             line_count += 1
         print("ROW: {}".format(row))
         print(f'Processed {line_count} lines.')

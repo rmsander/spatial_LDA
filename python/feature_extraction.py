@@ -4,10 +4,10 @@ import os
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.neural_network import MLPClassifier
 
-img_path = ''
+img_path = '/Users/crystalwang/Downloads/test.png'
 
 def get_feature_vector(img):
-    sift = cv.xfeatures2d.SIFT.create()
+    sift = cv.xfeatures2d_SIFT.create()
     kp, des = sift.detectAndCompute(img, None)
     return kp, des
 
