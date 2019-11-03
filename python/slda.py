@@ -1,6 +1,7 @@
-"""This file contains code for a latent dirichlet allocation (SLDA),
+"""This file contains code for a spatial latent dirichlet allocation (SLDA),
 which uses principles from maximum likelihood estimation and
-Expectation-Maximization."""
+Expectation-Maximization in addition to probabilistic structure derived from
+an application space of images."""
 
 # Native Python imports
 import os
@@ -17,7 +18,7 @@ def get_features():
     pass
 
 
-class LDA:
+class SLDA:
     """Class that implements Latent Dirichlet Allocation using an
     Expectation-Maximization framework.  This function iterates through the
     following two steps to find a locally-optimal maximum likelihood estimate of
@@ -76,7 +77,7 @@ class LDA:
         a set of parameters that optimizes the log likelihood of the
         distributions of interest (i.e. Maximum Likelihood Estimation)."""
 
-        self.parameters = np.argmax(self.log_likelihood)  # Update parameters
+        self.parameters = np.argmax(self.log_likelihood)
 
     def find_params(self):
         """Function that iterates over the expectation and maximization steps
