@@ -8,6 +8,7 @@ from skimage import io
 from crop_images import *
 from utils import *
 from torch.utils.data.sampler import SubsetRandomSampler
+import numpy as np
 
 # data_root = os.path.join(os.path.dirname('__file__'), 'data')
 # train_root = os.path.join(data_root, 'train')
