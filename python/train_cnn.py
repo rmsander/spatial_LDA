@@ -25,8 +25,10 @@ def cnnEpoch(model, loader, device, criterion, output_period, epoch, optimizer=N
     num_batches = len(loader)
     errors = np.zeros(2)
     for batch_num, (inputs, labels) in enumerate(loader, 1):
+        #print(inputs)
+        #print(labels)
         inputs = inputs.to(device)
-        labels = labels.to(device)
+        labels = np.array(labels)).to(device)
 
         outputs = model(inputs)
         loss = criterion(outputs, labels)
@@ -72,7 +74,8 @@ def trainCNN(modelName='resnet'):
     # setup the device for running
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    train_loader, val_loader = dataset.frame_train_loader(batch_size, model=modelName), dataset.frame_val_loader(batch_size, model=modelName)
+    #train_loader, val_loader = dataset.frame_train_loader(batch_size, model=modelName), dataset.frame_val_loader(batch_size, model=modelName)
+    train_loader, val_loader = get_loaders()
     numTrainSamples = len(train_loader) * batch_size
     numValSamples = len(val_loader) * batch_size
 

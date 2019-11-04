@@ -29,14 +29,14 @@ def create_classname_map(path_to_csv):
         line = file.readline()
         while line:
             vals = line.split(",")
-            output[vals[0].split("/")[-1]] = vals[1]
+            output[vals[0].split("/")[-1]] = vals[1].strip()
             line = file.readline()
     return output
 
 classname_map = create_classname_map(path_to_classname_map_csv)
 max_hierarchy_level=3
 granularity_map = make_inverted_labelmap(max_hierarchy_level, path_to_hierarchy=hierarchy_json_path)
-print(classname_map)
+#print(classname_map)
 
 resnet_transform = transforms.Compose([
     transforms.ToPILImage(),
