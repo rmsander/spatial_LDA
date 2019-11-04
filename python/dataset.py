@@ -10,7 +10,7 @@ from utils import *
 from torch.utils.data.sampler import SubsetRandomSampler
 import numpy as np
 
-# data_root = os.path.join(os.path.dirname('__file__'), 'data')
+data_root = os.path.join(os.path.dirname('__file__'), '../data')
 # train_root = os.path.join(data_root, 'train')
 # val_root = os.path.join(data_root, 'val')
 # test_root = os.path.join(data_root, 'test')
@@ -21,10 +21,22 @@ test_root = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m"
 hierarchy_json_path = "/home/yaatehr/programs/spatial_LDA/data/bbox_labels_600_hierarchy.json"
 path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
                 "-annotations-bbox.csv"
-classname_map = parse_label_to_class_names(path_to_csv)
+path_to_classname_map_csv = os.path.join(data_root, 'class-descriptions.csv')
+
+def create_classname_map(path_to_csv):
+    output = {}
+    with open(path_to_csv, 'r') as file:
+        line = file.readline()
+        while line:
+            vals = line.split(",")
+            output[vals[0].split("/")[-1]] = vals[1]
+            line = file.readline()
+    return output
+
+classname_map = create_classname_map(path_to_classname_map_csv)
 max_hierarchy_level=3
 granularity_map = make_inverted_labelmap(max_hierarchy_level, path_to_hierarchy=hierarchy_json_path)
-#print(classname_map)
+print(classname_map)
 
 resnet_transform = transforms.Compose([
     transforms.ToPILImage(),
@@ -61,7 +73,7 @@ class ImageDataset(Dataset):
         image = io.imread(impath)
         if self.transform:
             image = self.transform(image)
-        image_class_hash = os.path.basename(os.path.dirname(impath))
+        image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[-1]
         
         label = getImageLabel(image_class_hash)
         return image, label

@@ -62,11 +62,11 @@ def build_tree_to_depth_n(root, n):
     #invert the dictionary (map from lower level labels to higher)
     for key, value in label_map.items():
         if isinstance(value, str):
-            output[key] = value
+            output[key.split("/")[-1]] = value.split("/")[-1]
         else:
             for label in value:
                 if label:
-                    output[label] = key
+                    output[label.split("/")[-1]] = key.split("/")[-1]
         
     return output
 
