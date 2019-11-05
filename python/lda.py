@@ -10,11 +10,14 @@ import copy
 import numpy as np
 import cv2 as cv
 
+# External package imports
+import numpy as np
+import cv2 as cv
+from sklearn.decomposition import LatentDirichletAllocation as LDA
 
-def get_features():
-    """This is a wrapper function for importing features obtained from
-    feature embeddings used for our images."""
-    pass
+# Custom module imports
+import dataset
+import feature_extraction
 
 
 class LDA:
@@ -29,14 +32,35 @@ class LDA:
         beta (float): A parameter for our LDA model (TODO: add on here).
 
     """
-
-    def __init__(self, feature, alpha=1, beta=1, eps=1e-5):
-        self.features = features  # Array of features for all images
+    def __init__(self, data_path, alpha=1, beta=1, eps=1e-5,n_topics=10):
+        self.data_path = data_path  # File path for data
         self.alpha = alpha  # Dirichlet dist hyperparameter
         self.beta = beta  # Dirichlet dist hyperparameter
         self.log_likelihood = None  # Array of log likelihoods
         self.parameters = None  # Numpy vector of parameters
         self.eps = eps  # Convergence threshold
+        self.keypoints = None
+        self.n_topics = n_topics
+
+
+    def get_features(self,f_name):
+        """This is a wrapper function for importing features obtained from
+        feature embeddings used for our images."""
+        f_img = os.path.join(self.data_path, f_name)
+        A_img = cv.imread(f_img)
+        kp, _ = feature_extraction.get_feature_vector(A_img)
+        return kp
+
+    def create_data_matrix(self):
+        self.keypoints = []
+        img_files = os.listdir(self.data_path)
+        for img_file in img_files:
+            self.keypoints.append(kp)
+        kp = np.array(kp)
+
+    def off_the_shelf_LDA(self):
+        lda = LDA(n_components=self.n_topics)
+        lda.fit(self.keypoints)
 
     def sample_phi_from_dirichlet(self, n=1):
         """Function to sample from a Dirichlet distribution.
