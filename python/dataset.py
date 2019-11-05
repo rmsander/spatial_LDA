@@ -2,10 +2,8 @@ import torch
 import os
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
-import matplotlib
-
-matplotlib.use('Agg')
 from skimage import io
+import sklearn as skl
 from crop_images import *
 from utils import *
 from torch.utils.data.sampler import SubsetRandomSampler
@@ -43,16 +41,13 @@ max_hierarchy_level = 3
 granularity_map = make_inverted_labelmap(max_hierarchy_level,
                                          path_to_hierarchy=hierarchy_json_path)
 
-# print(classname_map)
-
 resnet_transform = transforms.Compose([
     transforms.ToPILImage(),
-    transforms.Resize([118, 224]),
-    # we willl need to fix the resize and padding since we have variable
-    # sized images, We should experiment with this
-    transforms.Pad((0, 53)),
+    transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding='constant'),
     transforms.ToTensor(),
-    transforms.Normalize([0.5] * 3, [0.5] * 3)
+    # transforms.Normalize([0.5] * 3, [0.5] * 3)
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
+                         0.229, 0.224, 0.225])  # for the pytorch resnet impl
 ])
 
 
@@ -73,9 +68,16 @@ class ImageDataset(Dataset):
 
         self.image_paths = []
         for (dirpath, dirnames, filenames) in os.walk(self.root):
-            self.image_paths.extend([os.path.join(dirpath, filename) \
+            self.image_paths.extend([os.path.join(dirpath, filename)
                                      for filename in filenames if
                                      filename.endswith('.jpg')])
+        self.image_class_hashes = [os.path.basename(os.path.dirname(impath)).split("/")[
+            -1] for impath in self.image_paths]
+        self.effective_hashes = [granularity_map[imhash]
+                                 for imhash in self.image_class_hashes]
+        self.effective_labels = [classname_map[imhash]
+                                 for imhash in self.effective_hashes]
+        self.onehot_labelmap = self.init_one_hot_map(classname_map.keys())
 
     def __len__(self):
         return len(self.image_paths)
@@ -88,18 +90,21 @@ class ImageDataset(Dataset):
         image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[
             -1]
 
-        label = getImageLabel(image_class_hash)
-        return image, label
+        label = self.effective_labels[idx]
+        return image, self.onehot_labelmap[label]
 
-    def get_all_labels(self, use_text=True):
-        output = set()
-        # print(self.image_paths)
-        for impath in self.image_paths:
-            image_class_hash = os.path.basename(os.path.dirname(impath))
-            if use_text:
-                image_class_hash = classname_map[image_class_hash]
-            output.add(image_class_hash)
+    def get_all_label_strings(self, use_text=True):
+        output = set(self.effective_labels)
         return output
+
+    def init_one_hot_map(self, data):
+        label_encoder = skl.preprocessing.LabelEncoder()
+        integer_encoded = label_encoder.fit_transform(data)
+        # binary encode
+        onehot_encoder = skl.preprocessing.OneHotEncoder(sparse=False)
+        integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
+        onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
+        return dict(zip(data, onehot_encoded))
 
 
 def getImageLabel(classname, use_text=True):
