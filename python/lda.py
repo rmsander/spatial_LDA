@@ -48,8 +48,8 @@ class LDA:
         feature embeddings used for our images."""
         f_img = os.path.join(self.data_path, f_name)
         A_img = cv.imread(f_img)
-        kp, _ = feature_extraction.get_feature_vector(A_img)
-        return kp
+        kp, des = feature_extraction.get_feature_vector(A_img)
+        return kp, des
 
     def create_data_matrix(self):
         self.keypoints = []
@@ -91,7 +91,7 @@ class LDA:
     def expectation_step(self):
         """This first step of the Expectation-Maximization algorithm computes
         the expectation over the distributions of interest, holding several 
-        parameters fixed""".
+        parameters fixed"""
 
         pass
 
@@ -122,6 +122,8 @@ class LDA:
 
 
 def main():
-    features = get_features()
+    data_path=""
+    lda = LDA(data_path)
+    _, features = lda.get_features()
     lda = LDA(features)
     final_params = lda.find_params()
