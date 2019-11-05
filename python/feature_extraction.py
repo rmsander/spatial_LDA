@@ -32,7 +32,7 @@ def create_feature_matrix(img_path, n_clusters=800):
     # Make clustering algorithm
     kmeans = KMeans(n_clusters=n_clusters)
     img_files = os.listdir(img_path)
-    print(img_files)
+    # print(img_files)
     print(len(img_files))
     with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl","rb") as f:
 
