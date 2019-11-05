@@ -134,7 +134,15 @@ def evaluate_main():
     with open(os.path.join(data_dir, "cluster_0_predictions.pkl"), "rb") as f:
         cluster_0_dic = pickle.load(f)
     cluster_0_count = evaluate_performance(cluster_0_dic, actual_dic, labels)
-    print(cluster_0_count)
+    print("cluster 0 count: ", cluster_0_count)
+    with open(os.path.join(data_dir, "cluster_1_predictions.pkl"), "rb") as f:
+        cluster_1_dic = pickle.load(f)
+    cluster_1_count = evaluate_performance(cluster_1_dic, actual_dic, labels)
+    print("cluster 1 count: ", cluster_1_count)
+    with open(os.path.join(data_dir, "cluster_2_predictions.pkl"), "rb") as f:
+        cluster_2_dic = pickle.load(f)
+    cluster_2_count = evaluate_performance(cluster_2_dic, actual_dic, labels)
+    print("cluster 2 count: ", cluster_2_count)
 
 def main():
     #TODO: FILL IN feature_path
