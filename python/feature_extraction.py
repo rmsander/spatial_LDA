@@ -34,14 +34,14 @@ def create_feature_matrix(img_path, n_clusters=80):
     img_files = os.listdir(img_path)
     # print(img_files)
     print(len(img_files))
-    # with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl","rb") as f:
+    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl","rb") as f:
 
-    #     descriptor_list_dic = pickle.load(f)
-    descriptor_list_dic = {}
-    for f in img_files:
-        A = cv.imread(os.path.join(img_path, f)) # read image
-        _, des = get_feature_vector(A)
-        descriptor_list_dic[f]= des
+        descriptor_list_dic = pickle.load(f)
+    # descriptor_list_dic = {}
+    # for f in img_files:
+    #     A = cv.imread(os.path.join(img_path, f)) # read image
+    #     _, des = get_feature_vector(A)
+    #     descriptor_list_dic[f]= des
     with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl", "wb") as f:
         pickle.dump(descriptor_list_dic, f)
     print([i.shape for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
