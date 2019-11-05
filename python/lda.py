@@ -115,6 +115,9 @@ class LDA2:
         return self.parameters
 
 def evaluate_performance(cluster_predictions, actual_dic, actual_labels):
+    """Given the cluster_predictions, that maps id:cluster, actual_dic that maps id:label
+    and actual_labels which is all the labels in actual_dic, returns a count of label:count
+    that is found in the cluster."""
     count = {i: 0 for i in actual_labels}
     for k in cluster_predictions:
         label = actual_dic[k]
@@ -122,7 +125,7 @@ def evaluate_performance(cluster_predictions, actual_dic, actual_labels):
     return count
 
 def evaluate_main():
-    labels = ["06z37_", "011k07", "099ssp"]
+    labels = ["06z37_", "011k07", "099ssp"] #labels in descriptors_test_0
     m_dir = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m/"
     data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
     actual_dic = {}
@@ -131,7 +134,6 @@ def evaluate_main():
         print(label_path)
         dic = crop_images.map_image_id_to_label(label_path, l)
         actual_dic.update(dic)
-    # print(actual_dic)
     with open(os.path.join(data_dir, "cluster_0_predictions.pkl"), "rb") as f:
         cluster_0_dic = pickle.load(f)
     cluster_0_count = evaluate_performance(cluster_0_dic, actual_dic, labels)

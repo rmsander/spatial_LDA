@@ -120,6 +120,7 @@ def sort_objects_by_class(img_dir, csv_path, out_root_dir):
         counter += 1
 
 def map_image_id_to_label(label_path, label):
+    """Returns a dictionary of img_id:label"""
     mapped = {}
     img_files = os.listdir(label_path)
     for f in img_files:
