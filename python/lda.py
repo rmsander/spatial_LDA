@@ -142,7 +142,7 @@ def main():
         if des is None or des.shape[0] != n_keypoints:
             continue
         feature = feature_extraction.build_histogram(des, kmeans, n_clusters)
-        predictions = lda_model.transform(feature)
+        predictions = lda_model.transform(np.reshape(feature, (1, feature.size)))
         predicted_class = np.argmax(predictions, axis=1)
         predicted_cluster[f] = predicted_class
         num_files += 1
