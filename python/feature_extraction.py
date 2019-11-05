@@ -43,8 +43,7 @@ def create_feature_matrix(img_path, n_clusters=800):
     #     descriptor_list_dic[f]= des
     # with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl", "wb") as f:
     #     pickle.dump(descriptor_list_dic, f)
-    print([i.shape for i in list(descriptor_list_dic.values())])
-    kmeans.fit(list(descriptor_list_dic.values()))
+    kmeans.fit([i for i in list(descriptor_list_dic.values()) if i not None])
 
     # Get image files
     M = []
