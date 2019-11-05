@@ -25,7 +25,7 @@ def build_histogram(descriptor_list, cluster_alg, n_clusters):
         return histogram
 
 
-def create_feature_matrix(img_path, n_clusters=50):
+def create_feature_matrix(img_path, n_clusters=80):
     """Main function for creating a matrix of size N_images x n_clusters
     using SIFT and histogramming of the descriptors by a clustering
     algorithm."""
@@ -34,7 +34,7 @@ def create_feature_matrix(img_path, n_clusters=50):
     img_files = os.listdir(img_path)
     # print(img_files)
     print(len(img_files))
-    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl","rb") as f:
+    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl","rb") as f:
 
         descriptor_list_dic = pickle.load(f)
     # descriptor_list_dic = {}
@@ -42,9 +42,8 @@ def create_feature_matrix(img_path, n_clusters=50):
     #     A = cv.imread(os.path.join(img_path, f)) # read image
     #     _, des = get_feature_vector(A)
     #     descriptor_list_dic[f]= des
-    # with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl", "wb") as f:
-    #     pickle.dump(descriptor_list_dic, f)
-    print([i.shape for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
+    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl", "wb") as f:
+        pickle.dump(descriptor_list_dic, f)
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
     kmeans.fit(vstack)
@@ -65,7 +64,7 @@ def create_feature_matrix(img_path, n_clusters=50):
     return M
 
 def main():
-    dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_0"
+    dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_1"
     M = create_feature_matrix(dataset_path)
 
 

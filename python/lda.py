@@ -20,6 +20,7 @@ from sklearn.cluster import KMeans
 # Custom module imports
 #import dataset
 import feature_extraction
+import crop_images
 
 n_keypoints = 100
 
@@ -113,12 +114,44 @@ class LDA2:
 
         return self.parameters
 
+def evaluate_performance(cluster_predictions, actual_dic, actual_labels):
+    """Given the cluster_predictions, that maps id:cluster, actual_dic that maps id:label
+    and actual_labels which is all the labels in actual_dic, returns a count of label:count
+    that is found in the cluster."""
+    count = {i: 0 for i in actual_labels}
+    for k in cluster_predictions:
+        label = actual_dic[k]
+        count[label] += 1
+    return count
+
+def evaluate_main():
+    labels = ["06c54", "011k07", "099ssp"] #labels in descriptors_test_1
+    m_dir = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m/"
+    data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
+    actual_dic = {}
+    for l in labels:
+        label_path = os.path.join(m_dir, l)
+        print(label_path)
+        dic = crop_images.map_image_id_to_label(label_path, l)
+        actual_dic.update(dic)
+    with open(os.path.join(data_dir, "cluster_0_predictions1.pkl"), "rb") as f:
+        cluster_0_dic = pickle.load(f)
+    cluster_0_count = evaluate_performance(cluster_0_dic, actual_dic, labels)
+    print("cluster 0 count: ", cluster_0_count)
+    with open(os.path.join(data_dir, "cluster_1_predictions1.pkl"), "rb") as f:
+        cluster_1_dic = pickle.load(f)
+    cluster_1_count = evaluate_performance(cluster_1_dic, actual_dic, labels)
+    print("cluster 1 count: ", cluster_1_count)
+    with open(os.path.join(data_dir, "cluster_2_predictions1.pkl"), "rb") as f:
+        cluster_2_dic = pickle.load(f)
+    cluster_2_count = evaluate_performance(cluster_2_dic, actual_dic, labels)
+    print("cluster 2 count: ", cluster_2_count)
 
 def main():
     #TODO: FILL IN feature_path
-    dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_0"
+    dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_1"
     # M = feature_extraction.create_feature_matrix(dataset_path)
-    feature_path = "/home/yaatehr/programs/spatial_LDA/data/features.pkl"
+    feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
     # with open(feature_path, "wb") as f:
     #     pickle.dump(M, f)
     lda = LDA2("", feature_path, n_topics = 3)  # Make the class
@@ -126,10 +159,10 @@ def main():
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     img_files = os.listdir(dataset_path)
-    with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl", "rb") as f:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl", "rb") as f:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {}
-    n_clusters = 50
+    n_clusters = 80
     kmeans = KMeans(n_clusters=n_clusters)
     vstack = np.vstack([i for i in list(descriptor_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
@@ -146,7 +179,7 @@ def main():
         predicted_class = np.argmax(predictions, axis=1)
         predicted_cluster[f] = predicted_class
         num_files += 1
-    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted.pkl", "wb") as f:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted1.pkl", "wb") as f:
         pickle.dump(predicted_cluster, f)
     # Now we can predict!
 
@@ -157,4 +190,4 @@ def ryan_test():
     print(M)
 
 if __name__ == "__main__":
-    main()
+    evaluate_main()
