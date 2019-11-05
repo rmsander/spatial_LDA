@@ -180,7 +180,7 @@ def main():
         predicted_class = np.argmax(predictions, axis=1)
         predicted_cluster[f] = predicted_class
         num_files += 1
-    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted.pkl", "wb") as f:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted1.pkl", "wb") as f:
         pickle.dump(predicted_cluster, f)
     # Now we can predict!
 
