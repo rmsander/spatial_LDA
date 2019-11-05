@@ -129,7 +129,7 @@ def main():
     with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl", "rb") as r:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {}
-    n_clusters = 800
+    n_clusters = 50
     kmeans = KMeans(n_clusters=n_clusters)
     vstack = np.vstack([i for i in list(descriptor_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)

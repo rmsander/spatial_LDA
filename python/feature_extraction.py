@@ -25,7 +25,7 @@ def build_histogram(descriptor_list, cluster_alg, n_clusters):
         return histogram
 
 
-def create_feature_matrix(img_path, n_clusters=800):
+def create_feature_matrix(img_path, n_clusters=50):
     """Main function for creating a matrix of size N_images x n_clusters
     using SIFT and histogramming of the descriptors by a clustering
     algorithm."""
