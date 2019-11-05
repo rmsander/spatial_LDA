@@ -120,7 +120,7 @@ def main():
     feature_path = "/home/programs/spatial_LDA/data/features.pkl"
     with open(feature_path, "wb") as f:
         pickle.dump(M, f)
-    lda = LDA("", feature_path, n_topis = 3)  # Make the class
+    lda = LDA("", feature_path, n_topics = 3)  # Make the class
     lda.get_data_matrix()    # Import the features
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
