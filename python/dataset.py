@@ -3,6 +3,7 @@ import os
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 import matplotlib
+
 matplotlib.use('Agg')
 from skimage import io
 from crop_images import *
@@ -14,14 +15,17 @@ data_root = os.path.join(os.path.dirname('__file__'), '../data')
 # train_root = os.path.join(data_root, 'train')
 # val_root = os.path.join(data_root, 'val')
 # test_root = os.path.join(data_root, 'test')
-# hierarchy_json_path = os.path.join(data_root, 'bbox_labels_600_hierarchy.json')
+# hierarchy_json_path = os.path.join(data_root,
+# 'bbox_labels_600_hierarchy.json')
 
 train_root = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m"
 test_root = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m"
-hierarchy_json_path = "/home/yaatehr/programs/spatial_LDA/data/bbox_labels_600_hierarchy.json"
+hierarchy_json_path = "/home/yaatehr/programs/spatial_LDA/data" \
+                      "/bbox_labels_600_hierarchy.json"
 path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
-                "-annotations-bbox.csv"
+              "-annotations-bbox.csv"
 path_to_classname_map_csv = os.path.join(data_root, 'class-descriptions.csv')
+
 
 def create_classname_map(path_to_csv):
     output = {}
@@ -33,25 +37,32 @@ def create_classname_map(path_to_csv):
             line = file.readline()
     return output
 
+
 classname_map = create_classname_map(path_to_classname_map_csv)
-max_hierarchy_level=3
-granularity_map = make_inverted_labelmap(max_hierarchy_level, path_to_hierarchy=hierarchy_json_path)
-#print(classname_map)
+max_hierarchy_level = 3
+granularity_map = make_inverted_labelmap(max_hierarchy_level,
+                                         path_to_hierarchy=hierarchy_json_path)
+
+# print(classname_map)
 
 resnet_transform = transforms.Compose([
     transforms.ToPILImage(),
-    transforms.Resize([118, 224]), #we willl need to fix the resize and padding since we have variable sized images, We should experiment with this
+    transforms.Resize([118, 224]),
+    # we willl need to fix the resize and padding since we have variable
+    # sized images, We should experiment with this
     transforms.Pad((0, 53)),
     transforms.ToTensor(),
-    transforms.Normalize([0.5]*3, [0.5]*3)
-    ])
+    transforms.Normalize([0.5] * 3, [0.5] * 3)
+])
+
 
 class ImageDataset(Dataset):
 
     def __init__(self, root=train_root, transform=resnet_transform):
         """
         Args:
-            root_dir (string): Directory with all the images organized into folders by class label (hash).
+            root_dir (string): Directory with all the images organized into
+            folders by class label (hash).
             transform (callable, optional): Optional transform to be applied
                 on a sample.
         """
@@ -62,8 +73,9 @@ class ImageDataset(Dataset):
 
         self.image_paths = []
         for (dirpath, dirnames, filenames) in os.walk(self.root):
-            self.image_paths.extend([os.path.join(dirpath, filename)\
-                for filename in filenames if filename.endswith('.jpg')])
+            self.image_paths.extend([os.path.join(dirpath, filename) \
+                                     for filename in filenames if
+                                     filename.endswith('.jpg')])
 
     def __len__(self):
         return len(self.image_paths)
@@ -73,14 +85,15 @@ class ImageDataset(Dataset):
         image = io.imread(impath)
         if self.transform:
             image = self.transform(image)
-        image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[-1]
-        
+        image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[
+            -1]
+
         label = getImageLabel(image_class_hash)
         return image, label
-    
+
     def get_all_labels(self, use_text=True):
         output = set()
-        #print(self.image_paths)
+        # print(self.image_paths)
         for impath in self.image_paths:
             image_class_hash = os.path.basename(os.path.dirname(impath))
             if use_text:
@@ -91,11 +104,13 @@ class ImageDataset(Dataset):
 
 def getImageLabel(classname, use_text=True):
     image_class = granularity_map[classname]
-    if( use_text):
+    if (use_text):
         return classname_map[image_class]
     return image_class
 
-def get_loaders(dataset=None, batch_size=50, validation_split=.2, random_seed=54, shuffle_dataset=True):
+
+def get_loaders(dataset=None, batch_size=50, validation_split=.2,
+                random_seed=54, shuffle_dataset=True):
     """
         returns a train and validation loader from a single dataset.
     """
@@ -105,7 +120,7 @@ def get_loaders(dataset=None, batch_size=50, validation_split=.2, random_seed=54
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
     split = int(np.floor(validation_split * dataset_size))
-    if shuffle_dataset :
+    if shuffle_dataset:
         np.random.seed(random_seed)
         np.random.shuffle(indices)
     train_indices, val_indices = indices[split:], indices[:split]
@@ -114,12 +129,13 @@ def get_loaders(dataset=None, batch_size=50, validation_split=.2, random_seed=54
     train_sampler = SubsetRandomSampler(train_indices)
     valid_sampler = SubsetRandomSampler(val_indices)
 
-    train_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, 
-                                            sampler=train_sampler)
+    train_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
+                                               sampler=train_sampler)
     val_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
-                                                    sampler=valid_sampler)
+                                             sampler=valid_sampler)
 
     return train_loader, val_loader
+
 
 def get_single_loader(dataset=None, batch_size=50):
     """
@@ -129,4 +145,3 @@ def get_single_loader(dataset=None, batch_size=50):
         dataset = ImageDataset(test_root)
 
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size)
-
