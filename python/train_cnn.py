@@ -28,7 +28,7 @@ def cnnEpoch(model, loader, device, criterion, output_period, epoch, optimizer=N
         #print(inputs)
         #print(labels)
         inputs = inputs.to(device)
-        labels = np.array(labels)).to(device)
+        labels = np.array(labels).to(device)
 
         outputs = model(inputs)
         loss = criterion(outputs, labels)

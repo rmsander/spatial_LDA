@@ -42,8 +42,26 @@ class LDA:
         self.keypoints = None
         self.n_topics = n_topics
 
+<<<<<<< HEAD
     def get_data_matrix(self):
         self.M = np.load(self.feature_path)
+=======
+
+    def get_features(self,f_name):
+        """This is a wrapper function for importing features obtained from
+        feature embeddings used for our images."""
+        f_img = os.path.join(self.data_path, f_name)
+        A_img = cv.imread(f_img)
+        kp, des = feature_extraction.get_feature_vector(A_img)
+        return kp, des
+
+    def create_data_matrix(self):
+        self.keypoints = []
+        img_files = os.listdir(self.data_path)
+        for img_file in img_files:
+            self.keypoints.append(kp)
+        kp = np.array(kp)
+>>>>>>> d678853b4564730cae6c3c3d199e5c25caad28e8
 
     def off_the_shelf_LDA(self):
         lda = LDA(n_components=self.n_topics)
@@ -78,7 +96,7 @@ class LDA:
     def expectation_step(self):
         """This first step of the Expectation-Maximization algorithm computes
         the expectation over the distributions of interest, holding several 
-        parameters fixed""".
+        parameters fixed"""
 
         pass
 
@@ -109,6 +127,7 @@ class LDA:
 
 
 def main():
+<<<<<<< HEAD
     #TODO: FILL IN feature_path
     feature_path = ""
     lda = LDA(feature_path)  # Make the class
@@ -116,3 +135,10 @@ def main():
     lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
 
     # Now we can predict!
+=======
+    data_path=""
+    lda = LDA(data_path)
+    _, features = lda.get_features()
+    lda = LDA(features)
+    final_params = lda.find_params()
+>>>>>>> d678853b4564730cae6c3c3d199e5c25caad28e8
