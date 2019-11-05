@@ -27,7 +27,7 @@ class LDA:
     the relevant posterior distribution.
 
     Arguments:
-        features:
+        features: A numpy array of size (N_images x N_descriptors)
         alpha (float): A parameter for our LDA model (TODO: add on here).
         beta (float): A parameter for our LDA model (TODO: add on here).
 
@@ -42,25 +42,12 @@ class LDA:
         self.keypoints = None
         self.n_topics = n_topics
 
-
-    def get_features(self,f_name):
-        """This is a wrapper function for importing features obtained from
-        feature embeddings used for our images."""
-        f_img = os.path.join(self.data_path, f_name)
-        A_img = cv.imread(f_img)
-        kp, _ = feature_extraction.get_feature_vector(A_img)
-        return kp
-
-    def create_data_matrix(self):
-        self.keypoints = []
-        img_files = os.listdir(self.data_path)
-        for img_file in img_files:
-            self.keypoints.append(kp)
-        kp = np.array(kp)
+    def get_data_matrix(self):
+        self.M = np.load(self.feature_path)
 
     def off_the_shelf_LDA(self):
         lda = LDA(n_components=self.n_topics)
-        lda.fit(self.keypoints)
+        lda.fit(self.M)
 
     def sample_phi_from_dirichlet(self, n=1):
         """Function to sample from a Dirichlet distribution.
@@ -122,6 +109,10 @@ class LDA:
 
 
 def main():
-    features = get_features()
-    lda = LDA(features)
-    final_params = lda.find_params()
+    #TODO: FILL IN feature_path
+    feature_path = ""
+    lda = LDA(feature_path)  # Make the class
+    lda.get_data_matrix()    # Import the features
+    lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
+
+    # Now we can predict!
