@@ -52,14 +52,15 @@ def create_feature_matrix(img_path, n_clusters=50):
     M = []
     num_files = 0
     for f in img_files:  # Iterate over all image files
-        if M % 100 == 0:
-            print(M+" files processed")
+        if num_files % 100 == 0:
+            print(num_files+" files processed")
         des = descriptor_list_dic[f]  # Get keypoints/descriptors from SIFT
         if des is None or des.shape[0] != n_keypoints:
             continue
         histogram = build_histogram(des, kmeans, n_clusters)
         
         M.append(histogram)  # Append to output matrix
+        num_files += 1
     print(M.shape)
     return M
 
