@@ -68,7 +68,7 @@ class SLDA:
     def expectation_step(self):
         """This first step of the Expectation-Maximization algorithm computes
         the expectation over the distributions of interest, holding several 
-        parameters fixed""".
+        parameters fixed"""
 
         pass
 
@@ -86,7 +86,7 @@ class SLDA:
         old_params = np.zeros(self.parameters.shape)
 
         # Iterate until our parameters converge
-        while np.linalg.norm(old_params - new_params) > self.eps:
+        while np.linalg.norm(old_params - self.parameters) > self.eps:
             # Take expectation step
             self.expectation_step()
 
@@ -100,5 +100,5 @@ class SLDA:
 
 def main():
     features = get_features()
-    lda = LDA(features)
+    lda = SLDA(features)
     final_params = lda.find_params()
