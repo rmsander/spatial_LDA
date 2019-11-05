@@ -126,7 +126,7 @@ def main():
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     img_files = os.listdir(dataset_path)
-    with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl", "rb") as r:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl", "rb") as f:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {}
     n_clusters = 50
