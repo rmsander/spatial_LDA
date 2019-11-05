@@ -4,6 +4,7 @@ import os
 from sklearn.cluster import MiniBatchKMeans, KMeans
 from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import make_multilabel_classification
+import pickle
 
 img_path = '/Users/crystalwang/Documents/test.png'
 n_keypoints = 1000 #hyperparameter, need to tune
@@ -39,8 +40,10 @@ def create_feature_matrix(img_path, n_clusters=800):
         A = cv.imread(os.path.join(img_path, f)) # read image
         _, des = get_feature_vector(A)
         descriptor_list_dic[f]= des
-        
+    with open("/home/programs/spatial_LDA/data/img_descriptors_dic.pkl") as f:
+        pickle.dump(descriptor_list_dic, f)
     kmeans.fit(descriptor_list_dic.values())
+
     # Get image files
     M = []
     for f in img_files:  # Iterate over all image files

@@ -15,6 +15,7 @@ import pickle
 import numpy as np
 import cv2 as cv
 from sklearn.decomposition import LatentDirichletAllocation as LDA
+from sklearn.cluster import KMeans
 
 # Custom module imports
 import dataset
@@ -119,8 +120,26 @@ def main():
     feature_path = "/home/programs/spatial_LDA/data/features.pkl"
     with open(feature_path, "wb") as f:
         pickle.dump(M, f)
-    lda = LDA("", feature_path)  # Make the class
+    lda = LDA("", feature_path, n_topis = 3)  # Make the class
     lda.get_data_matrix()    # Import the features
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
-
+    predicted = {}
+    img_files = os.listdir(dataset_path)
+    with open ("/home/programs/spatial_LDA/data/img_descriptors_dic.pkl", "rb") as r:
+        descriptor_dic = pickle.load(f)
+    predicted_cluster = {}
+    n_clusters = 800
+    kmeans = KMeans(n_clusters=n_clusters)
+    kmeans.fit(descriptor_dic.values())
+    for f in img_files:
+        des = descriptor_dic[f]
+        feature = build_histogram(des, kmeans, n_clusters)
+        predictions = lda_model.transform(feature)
+        predicted_class = np.argmax(predictions, axis=1)
+        predicted_cluster[f] = predicted_class
+    with open ("/home/programs/spatial_LDA/data/predicted.pkl", "wb") as f:
+        pickle.dump(predicted_cluster, f)
     # Now we can predict!
+
+if __name__ == "__main__":
+    main()
