@@ -131,7 +131,9 @@ def main():
     predicted_cluster = {}
     n_clusters = 800
     kmeans = KMeans(n_clusters=n_clusters)
-    kmeans.fit(descriptor_dic.values())
+    vstack = np.vstack([i for i in list(descriptor_dic.values()) if i is not None and i.shape[0] == n_keypoints])
+    print(vstack.shape)
+    kmeans.fit(vstack)
     for f in img_files:
         des = descriptor_dic[f]
         if des is None or des.shape[0] != n_keypoints:
