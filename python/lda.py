@@ -121,6 +121,7 @@ def evaluate_performance(cluster_predictions, actual_dic, actual_labels):
     count = {i: 0 for i in actual_labels}
     for k in cluster_predictions:
         label = actual_dic[k]
+        print(label)
         count[label] += 1
     return count
 
