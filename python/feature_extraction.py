@@ -6,7 +6,6 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import make_multilabel_classification
 import pickle
 
-img_path = '/Users/crystalwang/Documents/test.png'
 n_keypoints = 1000 #hyperparameter, need to tune
 
 def get_feature_vector(img):
@@ -40,7 +39,7 @@ def create_feature_matrix(img_path, n_clusters=800):
         A = cv.imread(os.path.join(img_path, f)) # read image
         _, des = get_feature_vector(A)
         descriptor_list_dic[f]= des
-    with open("~/programs/spatial_LDA/data/img_descriptors_dic.pkl") as f:
+    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl") as f:
         pickle.dump(descriptor_list_dic, f)
     kmeans.fit(descriptor_list_dic.values())
 
@@ -54,7 +53,7 @@ def create_feature_matrix(img_path, n_clusters=800):
     return M
 
 def main():
-    dataset_path = "~/programs/spatial_LDA/data/descriptors_test_0"
+    dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_0"
     M = create_feature_matrix(dataset_path)
 
 

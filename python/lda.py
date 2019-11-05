@@ -115,7 +115,7 @@ class LDA:
 
 def main():
     #TODO: FILL IN feature_path
-    dataset_path = "~/programs/spatial_LDA/data/descriptors_test_0"
+    dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_0"
     M = feature_extraction.create_feature_matrix(dataset_path)
     feature_path = "~/programs/spatial_LDA/data/features.pkl"
     with open(feature_path, "wb") as f:
@@ -125,7 +125,7 @@ def main():
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     img_files = os.listdir(dataset_path)
-    with open ("~/programs/spatial_LDA/data/img_descriptors_dic.pkl", "rb") as r:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl", "rb") as r:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {}
     n_clusters = 800
@@ -137,7 +137,7 @@ def main():
         predictions = lda_model.transform(feature)
         predicted_class = np.argmax(predictions, axis=1)
         predicted_cluster[f] = predicted_class
-    with open ("~/programs/spatial_LDA/data/predicted.pkl", "wb") as f:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted.pkl", "wb") as f:
         pickle.dump(predicted_cluster, f)
     # Now we can predict!
 
