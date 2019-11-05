@@ -23,7 +23,7 @@ import feature_extraction
 
 n_keypoints = 100
 
-class LDA:
+class LDA2:
     """Class that implements Latent Dirichlet Allocation using an
     Expectation-Maximization framework.  This function iterates through the
     following two steps to find a locally-optimal maximum likelihood estimate of
@@ -117,11 +117,11 @@ class LDA:
 def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_0"
-    M = feature_extraction.create_feature_matrix(dataset_path)
+    # M = feature_extraction.create_feature_matrix(dataset_path)
     feature_path = "/home/yaatehr/programs/spatial_LDA/data/features.pkl"
-    with open(feature_path, "wb") as f:
-        pickle.dump(M, f)
-    lda = LDA("", feature_path, n_topics = 3)  # Make the class
+    # with open(feature_path, "wb") as f:
+    #     pickle.dump(M, f)
+    lda = LDA2("", feature_path, n_topics = 3)  # Make the class
     lda.get_data_matrix()    # Import the features
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
