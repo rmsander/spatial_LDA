@@ -116,7 +116,7 @@ class LDA:
 def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/programs/spatial_LDA/data/descriptors_test_0"
-    M = create_feature_matrix(dataset_path)
+    M = feature_extraction.create_feature_matrix(dataset_path)
     feature_path = "/home/programs/spatial_LDA/data/features.pkl"
     with open(feature_path, "wb") as f:
         pickle.dump(M, f)
@@ -133,7 +133,7 @@ def main():
     kmeans.fit(descriptor_dic.values())
     for f in img_files:
         des = descriptor_dic[f]
-        feature = build_histogram(des, kmeans, n_clusters)
+        feature = feature_extraction.build_histogram(des, kmeans, n_clusters)
         predictions = lda_model.transform(feature)
         predicted_class = np.argmax(predictions, axis=1)
         predicted_cluster[f] = predicted_class
