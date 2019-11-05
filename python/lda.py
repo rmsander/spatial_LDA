@@ -134,7 +134,10 @@ def main():
     vstack = np.vstack([i for i in list(descriptor_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
     kmeans.fit(vstack)
+    num_files = 0
     for f in img_files:
+        if num_files % 100 == 0:
+            print(num_files)
         des = descriptor_dic[f]
         if des is None or des.shape[0] != n_keypoints:
             continue
@@ -142,6 +145,7 @@ def main():
         predictions = lda_model.transform(feature)
         predicted_class = np.argmax(predictions, axis=1)
         predicted_cluster[f] = predicted_class
+        num_files += 1
     with open ("/home/yaatehr/programs/spatial_LDA/data/predicted.pkl", "wb") as f:
         pickle.dump(predicted_cluster, f)
     # Now we can predict!
