@@ -133,6 +133,8 @@ def main():
     kmeans.fit(descriptor_dic.values())
     for f in img_files:
         des = descriptor_dic[f]
+        if des is None:
+            continue
         feature = feature_extraction.build_histogram(des, kmeans, n_clusters)
         predictions = lda_model.transform(feature)
         predicted_class = np.argmax(predictions, axis=1)
