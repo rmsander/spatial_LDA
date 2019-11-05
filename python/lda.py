@@ -117,7 +117,7 @@ def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_0"
     M = feature_extraction.create_feature_matrix(dataset_path)
-    feature_path = "~/programs/spatial_LDA/data/features.pkl"
+    feature_path = "/home/yaatehr/programs/spatial_LDA/data/features.pkl"
     with open(feature_path, "wb") as f:
         pickle.dump(M, f)
     lda = LDA("", feature_path, n_topics = 3)  # Make the class

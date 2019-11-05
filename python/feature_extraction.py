@@ -39,7 +39,7 @@ def create_feature_matrix(img_path, n_clusters=800):
         A = cv.imread(os.path.join(img_path, f)) # read image
         _, des = get_feature_vector(A)
         descriptor_list_dic[f]= des
-    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl") as f:
+    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl", "wb") as f:
         pickle.dump(descriptor_list_dic, f)
     kmeans.fit(descriptor_list_dic.values())
 
