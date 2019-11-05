@@ -34,14 +34,16 @@ def create_feature_matrix(img_path, n_clusters=800):
     img_files = os.listdir(img_path)
     print(img_files)
     print(len(img_files))
-    descriptor_list_dic = {}
-    for f in img_files:
-        A = cv.imread(os.path.join(img_path, f)) # read image
-        _, des = get_feature_vector(A)
-        descriptor_list_dic[f]= des
-    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl", "wb") as f:
-        pickle.dump(descriptor_list_dic, f)
-    kmeans.fit(descriptor_list_dic.values())
+    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl","rb") as f:
+
+        descriptor_list_dic = pickle.load(f)
+    # for f in img_files:
+    #     A = cv.imread(os.path.join(img_path, f)) # read image
+    #     _, des = get_feature_vector(A)
+    #     descriptor_list_dic[f]= des
+    # with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic.pkl", "wb") as f:
+    #     pickle.dump(descriptor_list_dic, f)
+    kmeans.fit(list(descriptor_list_dic.values()))
 
     # Get image files
     M = []
