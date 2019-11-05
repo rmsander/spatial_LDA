@@ -15,7 +15,7 @@ def main():
     img = cv.imread(img_path)
     img2 = img
     kp, des = get_feature_vector(img)
-    # print(kp)
+    print(kp)
     print(des)
     print(des.shape)
     img2=cv.drawKeypoints(img,kp,img2)
