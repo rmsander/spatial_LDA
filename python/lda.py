@@ -18,7 +18,7 @@ from sklearn.decomposition import LatentDirichletAllocation as LDA
 from sklearn.cluster import KMeans
 
 # Custom module imports
-import dataset
+#import dataset
 import feature_extraction
 
 
@@ -140,6 +140,12 @@ def main():
     with open ("/home/yaatehr/programs/spatial_LDA/data/predicted.pkl", "wb") as f:
         pickle.dump(predicted_cluster, f)
     # Now we can predict!
+
+def ryan_test():
+    dataset_path = "/home/rmsander/Documents/6.867/test_dir/WelshCorgi.jpeg"
+    img = cv.imread(dataset_path)
+    M = feature_extraction.get_feature_vector(img)
+    print(M)
 
 if __name__ == "__main__":
     main()
