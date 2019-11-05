@@ -20,6 +20,7 @@ from sklearn.cluster import KMeans
 # Custom module imports
 #import dataset
 import feature_extraction
+import crop_images
 
 n_keypoints = 100
 
@@ -113,6 +114,27 @@ class LDA2:
 
         return self.parameters
 
+def evaluate_performance(cluster_predictions, actual_dic, actual_labels):
+    count = {i: 0 for i in actual_labels}
+    for k in cluster_predictions:
+        label = actual_dic[k]
+        count[label] += 1
+    return count
+
+def evaluate_main():
+    labels = ["06z37_", "011k07", "099ssp"]
+    m_dir = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m/"
+    data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
+    actual_dic = {}
+    for l in labels:
+        label_path = os.path.join(m_dir, l)
+        print(label_path)
+        dic = crop_images.map_image_id_to_label(label_path, l)
+        actual_dic.update(dic)
+    with open(os.path.join(data_dir, "cluster_0_predictions.pkl"), "rb") as f:
+        cluster_0_dic = pickle.load(f)
+    cluster_0_count = evaluate_performance(cluster_0_dic, actual_dic, labels)
+    print(cluster_0_count)
 
 def main():
     #TODO: FILL IN feature_path
@@ -157,4 +179,4 @@ def ryan_test():
     print(M)
 
 if __name__ == "__main__":
-    main()
+    evaluate_main()
