@@ -6,7 +6,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import make_multilabel_classification
 import pickle
 
-n_keypoints = 1000 #hyperparameter, need to tune
+n_keypoints = 100 #hyperparameter, need to tune
 
 def get_feature_vector(img):
     # Get keypoints and feature descriptors
@@ -50,11 +50,15 @@ def create_feature_matrix(img_path, n_clusters=800):
 
     # Get image files
     M = []
+    num_files = 0
     for f in img_files:  # Iterate over all image files
+        if M % 100 == 0:
+            print(M+" files processed")
         des = descriptor_list_dic[f]  # Get keypoints/descriptors from SIFT
         if des is None or des.shape[0] != n_keypoints:
             continue
         histogram = build_histogram(des, kmeans, n_clusters)
+        
         M.append(histogram)  # Append to output matrix
     print(M.shape)
     return M

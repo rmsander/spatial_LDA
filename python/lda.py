@@ -21,7 +21,7 @@ from sklearn.cluster import KMeans
 #import dataset
 import feature_extraction
 
-n_keypoints = 1000
+n_keypoints = 100
 
 class LDA:
     """Class that implements Latent Dirichlet Allocation using an
