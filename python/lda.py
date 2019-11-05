@@ -131,7 +131,7 @@ def evaluate_main():
         print(label_path)
         dic = crop_images.map_image_id_to_label(label_path, l)
         actual_dic.update(dic)
-    print(actual_dic)
+    # print(actual_dic)
     with open(os.path.join(data_dir, "cluster_0_predictions.pkl"), "rb") as f:
         cluster_0_dic = pickle.load(f)
     cluster_0_count = evaluate_performance(cluster_0_dic, actual_dic, labels)
