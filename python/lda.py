@@ -9,6 +9,7 @@ import copy
 # External package imports
 import numpy as np
 import cv2 as cv
+import pickle
 
 # External package imports
 import numpy as np
@@ -32,8 +33,9 @@ class LDA:
         beta (float): A parameter for our LDA model (TODO: add on here).
 
     """
-    def __init__(self, data_path, alpha=1, beta=1, eps=1e-5,n_topics=10):
+    def __init__(self, data_path, feature_path, alpha=1, beta=1, eps=1e-5,n_topics=10):
         self.data_path = data_path  # File path for data
+        self.feature_path = feature_path
         self.alpha = alpha  # Dirichlet dist hyperparameter
         self.beta = beta  # Dirichlet dist hyperparameter
         self.log_likelihood = None  # Array of log likelihoods
@@ -42,30 +44,14 @@ class LDA:
         self.keypoints = None
         self.n_topics = n_topics
 
-<<<<<<< HEAD
     def get_data_matrix(self):
-        self.M = np.load(self.feature_path)
-=======
-
-    def get_features(self,f_name):
-        """This is a wrapper function for importing features obtained from
-        feature embeddings used for our images."""
-        f_img = os.path.join(self.data_path, f_name)
-        A_img = cv.imread(f_img)
-        kp, des = feature_extraction.get_feature_vector(A_img)
-        return kp, des
-
-    def create_data_matrix(self):
-        self.keypoints = []
-        img_files = os.listdir(self.data_path)
-        for img_file in img_files:
-            self.keypoints.append(kp)
-        kp = np.array(kp)
->>>>>>> d678853b4564730cae6c3c3d199e5c25caad28e8
+        with open(self.feature_path, 'rb') as f:
+            self.M = pickle.load(f)
 
     def off_the_shelf_LDA(self):
         lda = LDA(n_components=self.n_topics)
         lda.fit(self.M)
+        return lda
 
     def sample_phi_from_dirichlet(self, n=1):
         """Function to sample from a Dirichlet distribution.
@@ -127,18 +113,14 @@ class LDA:
 
 
 def main():
-<<<<<<< HEAD
     #TODO: FILL IN feature_path
-    feature_path = ""
-    lda = LDA(feature_path)  # Make the class
+    dataset_path = "/home/programs/spatial_LDA/data/descriptors_test_0"
+    M = create_feature_matrix(dataset_path)
+    feature_path = "/home/programs/spatial_LDA/data/features.pkl"
+    with open(feature_path, "wb") as f:
+        pickle.dump(M, f)
+    lda = LDA("", feature_path)  # Make the class
     lda.get_data_matrix()    # Import the features
-    lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
+    lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
 
     # Now we can predict!
-=======
-    data_path=""
-    lda = LDA(data_path)
-    _, features = lda.get_features()
-    lda = LDA(features)
-    final_params = lda.find_params()
->>>>>>> d678853b4564730cae6c3c3d199e5c25caad28e8

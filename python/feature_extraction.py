@@ -25,39 +25,35 @@ def build_histogram(descriptor_list, cluster_alg, n_clusters):
         return histogram
 
 
-def create_feature_matrix(img_path, descriptor_list, n_clusters=800):
+def create_feature_matrix(img_path, n_clusters=800):
     """Main function for creating a matrix of size N_images x n_clusters
     using SIFT and histogramming of the descriptors by a clustering
     algorithm."""
     # Make clustering algorithm
     kmeans = KMeans(n_clusters=n_clusters)
-    kmeans.fit(descriptor_list)
-    # Get image files
     img_files = os.listdir(img_path)
     print(img_files)
-
+    print(len(img_files))
+    descriptor_list_dic = {}
+    for f in img_files:
+        A = cv.imread(os.path.join(img_path, f)) # read image
+        _, des = get_feature_vector(A)
+        descriptor_list_dic[f]= des
+        
+    kmeans.fit(descriptor_list_dic.values())
+    # Get image files
     M = []
     for f in img_files:  # Iterate over all image files
-        A = cv.imread(os.path.join(img_path, f))  # Read image
-        kp, des = get_feature_vector(A)  # Get keypoints/descriptors from SIFT
+        des = descriptor_list_dic[f]  # Get keypoints/descriptors from SIFT
         histogram = build_histogram(des, kmeans, n_clusters)
         M.append(histogram)  # Append to output matrix
     print(M.shape)
+    return M
 
 def main():
-    # img = cv.imread(img_path)
-    # img2 = img
-    # # Get keypoints and descriptors from SIFT
-    # kp, des = get_feature_vector(img)
-    # print(len(kp))
-    # print(des)
-    # print(des.shape)
-    # img2 = cv.drawKeypoints(img, kp, img2)
-    # img2 = cv.drawKeypoints(img, kp, img2)
-    # cv.imwrite("/Users/crystalwang/Documents/test_keypoints.png", img2)
-    X , _ = make_multilabel_classification(random_state=5)
-    print(X.shape)
-    print(X)
+    dataset_path = "/home/programs/spatial_LDA/data/descriptors_test_0"
+    M = create_feature_matrix(dataset_path)
+
 
 
 if __name__ == "__main__":
