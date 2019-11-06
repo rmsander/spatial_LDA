@@ -22,8 +22,8 @@ from sklearn.cluster import KMeans
 import feature_extraction
 import crop_images
 
-n_keypoints = 100
-
+#n_keypoints = 100
+n_keypoints=49*4
 class LDA2:
     """Class that implements Latent Dirichlet Allocation using an
     Expectation-Maximization framework.  This function iterates through the
@@ -151,18 +151,18 @@ def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_1"
     # M = feature_extraction.create_feature_matrix(dataset_path)
-    CnnM = feature_extraction.create_feature_matrix_cnn(dataset_path)
+    #CnnM = feature_extraction.create_feature_matrix_cnn(dataset_path)
     # feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
-    feature_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_features1.pkl"
-    with open(feature_path, "wb") as f:
-        pickle.dump(CnnM, f)
+    feature_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix"
+    with open(feature_path, "rb") as f:
+        CnnM = pickle.load(f)
     lda = LDA2("", feature_path, n_topics = 3)  # Make the class
     lda.get_data_matrix()    # Import the features
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     img_files = os.listdir(dataset_path)
     # with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl", "rb") as f:
-    with open ("/home/yaatehr/programs/spatial_LDA/data/cnn_descriptors_dic1.pkl", "rb") as f:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/cnn_descriptors_dict01.pkl", "rb") as f:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {}
     n_clusters = 80
@@ -194,4 +194,5 @@ def ryan_test():
     print(M)
 
 if __name__ == "__main__":
-    evaluate_main()
+    #evaluate_main()
+    main()
