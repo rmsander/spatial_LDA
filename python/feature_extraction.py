@@ -7,7 +7,7 @@ from sklearn.datasets import make_multilabel_classification
 import pickle
 from torchvision import transforms
 from skimage import io
-from train_cnn import get_model
+from train_cnn import get_model, resnet_transform
 
 n_keypoints = 100 #hyperparameter, need to tune
 n_cnn_keypoints = 4*49
@@ -71,22 +71,22 @@ def create_feature_matrix_cnn(img_path, model, n_clusters=80):
     kmeans = KMeans(n_clusters=n_clusters)
     img_files = os.listdir(img_path)
     print(len(img_files))
-    # with open("/home/yaatehr/programs/spatial_LDA/data/cnn_descriptors_dict01.pkl","rb") as f:
-    #     descriptor_list_dic = pickle.load(f)
-    descriptor_list_dic = {}
-    for f in img_files:
-        test_img = io.imread(image_path)
-        inputs = resnet_transform(test_img)
-        inputs = inputs.unsqueeze(0)
-        des = model(inputs).view(4*49,128).numpy()
-
-        descriptor_list_dic[f]= des
-        del test_image
+    with open("/home/yaatehr/programs/spatial_LDA/data/cnn_descriptors_dict01.pkl","rb") as f:
+        descriptor_list_dic = pickle.load(f)
+    #print(img_files)
+    #descriptor_list_dic = {}
+    #for f in img_files:
+    #    test_img = io.imread(f)
+    #    inputs = resnet_transform(test_img)
+    #    inputs = inputs.unsqueeze(0)
+    #    des = model(inputs).view(4*49,128).detach().numpy()
+    #    descriptor_list_dic[f]= des
+    #    del test_img
     box_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_descriptors_dict01.pkl"
     local_path = "/Users/yaatehr/Programs/spatial_LDA/cnn_descriptors_dict01.pkl"
     with open(box_path, "wb") as f:
         pickle.dump(descriptor_list_dic, f)
-    vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
+    vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_cnn_keypoints])
     print(vstack.shape)
     kmeans.fit(vstack)
 
