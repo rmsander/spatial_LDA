@@ -5,6 +5,8 @@ from models.ResNet import *
 import matplotlib.pyplot as plt
 import numpy as np
 # from dataset import *
+from torchvision import transforms
+from skimage import io
 import gc
 import sys
 import os
@@ -20,6 +22,17 @@ cnnModelPath = os.path.join('models', 'bestCNNmodel')
 multiGPU = torch.cuda.device_count() > 1
 cnnLr, cnnDropout = 1e-3, 0.5
 
+
+resnet_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.RandomCrop(224, padding=False, pad_if_needed=True, fill=0, padding_mode='constant'),
+    transforms.ToTensor(),
+    # transforms.Normalize([0.5] * 3, [0.5] * 3)
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
+                         0.229, 0.224, 0.225])  # for the pytorch resnet impl
+])
+
+image_path = "/Users/yaatehr/Programs/spatial_LDA/data/ef741c8e8b81c793.jpg"
 
 # def cnnEpoch(model, loader, device, criterion, output_period, epoch, optimizer=None):
 #     """
@@ -135,38 +148,34 @@ cnnLr, cnnDropout = 1e-3, 0.5
 
 
 def test():
-    model = torch.hub.load('pytorch/vision', 'resnet18', pretrained=True)
+    model = get_model()
+    batch_size = 50
+    test_img = io.imread(image_path)
+    inputs = resnet_transform(test_img)
+    inputs = inputs.unsqueeze(0)
+    print(inputs.shape)
+    # test_loader = get_single_loader(batch_size=batch_size)
+    # num_batches = len(test_loader)
+    # errors = np.zeros(2)
+    # numSamples = len(test_loader) * batch_size
+    # print(inputs.shape[1:])
+    # inputs = inputs.view(inputs.shape[1:]).to(device)
+    batchOutput = model(inputs).view(-1,4,128)
+    batchOutput = model(inputs).view(-1,4*49,128)
+
+    gc.collect()
+    print(batchOutput.shape)
+
+def get_model():
+    model = torch.hub.load('pytorch/vision', 'resnet34', pretrained=True)
+    #cut off the last layer of this classifier
+    new_classifier = nn.Sequential(*list(model.children())[:-2])
+    model = new_classifier
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
     model.eval()
-    batch_size = 50
-    test_loader = get_single_loader(batch_size=batch_size)
-    num_batches = len(test_loader)
-    errors = np.zeros(2)
-    numSamples = len(test_loader) * batch_size
-    outputs, labels = None, None
-    with torch.no_grad():
-        for batch_num, (inputs, batchLabels) in enumerate(test_loader, 1):
-            if batch_num % 100 == 0:
-                print('Batch', batch_num, '/', num_batches)
-            inputs = inputs.view(inputs.shape[1:]).to(device)
-            batchLabels = batchLabels.to(device)
-            batchOutput = model(inputs)
-            batchOutput = torch.sum(batchOutput, 1)
-            errors += topNError(batchOutput, batchLabels, [1, 2], False)
-            if outputs is None:
-                outputs = batchOutput
-            else:
-                outputs = torch.cat((outputs, batchOutput))
-            if labels is None:
-                labels = batchLabels
-            else:
-                labels = torch.cat((labels, batchLabels))
-            gc.collect()
-    errors /= numSamples
-    print('Classification Error, Top 2 Error:', *errors)
-    print('Confusion Matrix:', confusionMatrix(outputs, labels))
 
+    return model
 
 if __name__ == '__main__':
     test()
