@@ -151,15 +151,18 @@ def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_1"
     # M = feature_extraction.create_feature_matrix(dataset_path)
-    feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
-    # with open(feature_path, "wb") as f:
-    #     pickle.dump(M, f)
+    CnnM = feature_extraction.create_feature_matrix_cnn(dataset_path)
+    # feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
+    feature_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_features1.pkl"
+    with open(feature_path, "wb") as f:
+        pickle.dump(CnnM, f)
     lda = LDA2("", feature_path, n_topics = 3)  # Make the class
     lda.get_data_matrix()    # Import the features
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     img_files = os.listdir(dataset_path)
-    with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl", "rb") as f:
+    # with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl", "rb") as f:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/cnn_descriptors_dic1.pkl", "rb") as f:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {}
     n_clusters = 80
@@ -179,7 +182,8 @@ def main():
         predicted_class = np.argmax(predictions, axis=1)
         predicted_cluster[f] = predicted_class
         num_files += 1
-    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted1.pkl", "wb") as f:
+    # with open ("/home/yaatehr/programs/spatial_LDA/data/predicted1.pkl", "wb") as f:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/cnn_predicted1.pkl", "wb") as f:
         pickle.dump(predicted_cluster, f)
     # Now we can predict!
 

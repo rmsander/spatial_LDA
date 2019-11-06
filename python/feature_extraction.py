@@ -111,6 +111,8 @@ def main():
     model = get_model()
     CnnMatrix = create_feature_matrix_cnn(dataset_path, model)
 
+    with open("/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix", "wb") as f:
+        pickle.dump(CnnMatrix, f)
 
 
 if __name__ == "__main__":
