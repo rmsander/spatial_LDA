@@ -132,10 +132,11 @@ class LDA2:
 
         return self.parameters
 
-def evaluate_performance(cluster_predictions, actual_dic, actual_labels):
+def compute_num_labels_in_cluster(cluster_predictions, actual_dic):
     """Given the cluster_predictions, that maps id:cluster, actual_dic that maps id:label
     and actual_labels which is all the labels in actual_dic, returns a count of label:count
     that is found in the cluster."""
+    actual_labels = list(actual_dic.values())
     count = {i: 0 for i in actual_labels}
     for k in cluster_predictions:
         label = actual_dic[k]
@@ -145,28 +146,32 @@ def evaluate_performance(cluster_predictions, actual_dic, actual_labels):
 def compute_symmetric_KL(dist_a, dist_b):
     return 0.5 * (kl_div(dist_a, dist_b)) + 0.5 * (kl_div(dist_b, dist_a))
 
+def compute_probability_distr_difference(dist1, dist2):
+    """computes l2 distance between two probabilty distributions"""
+    return np.sum(np.square(dist1-dist2))
+
 def evaluate_main():
-    labels = ["06c54", "011k07", "099ssp"] #labels in descriptors_test_1
+    # labels = ["06c54", "011k07", "099ssp"] #labels in descriptors_test_1
     m_dir = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m/"
     data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
     actual_dic = {}
+    with open(os.path.join(data_dir, "predictions1.pkl", "rb")) as f:
+        predicted = pickle.load(f)
+    with open(os.path.join(data_dir, "clustered_images.pkl")) as f:
+        clustered_images = pickle.load(f)
+    labels = os.listdir(m_dir)
     for l in labels:
         label_path = os.path.join(m_dir, l)
         print(label_path)
         dic = crop_images.map_image_id_to_label(label_path, l)
         actual_dic.update(dic)
-    with open(os.path.join(data_dir, "cluster_0_predictions1.pkl"), "rb") as f:
-        cluster_0_dic = pickle.load(f)
-    cluster_0_count = evaluate_performance(cluster_0_dic, actual_dic, labels)
-    print("cluster 0 count: ", cluster_0_count)
-    with open(os.path.join(data_dir, "cluster_1_predictions1.pkl"), "rb") as f:
-        cluster_1_dic = pickle.load(f)
-    cluster_1_count = evaluate_performance(cluster_1_dic, actual_dic, labels)
-    print("cluster 1 count: ", cluster_1_count)
-    with open(os.path.join(data_dir, "cluster_2_predictions1.pkl"), "rb") as f:
-        cluster_2_dic = pickle.load(f)
-    cluster_2_count = evaluate_performance(cluster_2_dic, actual_dic, labels)
-    print("cluster 2 count: ", cluster_2_count)
+
+    num_in_each_cluster = {} #maps cluster to dictionary of label to count
+    for cluster in clustered_images:
+        #get number of labels in each cluster
+        dic = compute_num_labels_in_cluster(clustered_images[cluster], actual_dic)
+        num_in_each_cluster[cluster] = dic
+    
 
 def main():
     #TODO: FILL IN feature_path
@@ -210,6 +215,8 @@ def main():
     # with open ("/home/yaatehr/programs/spatial_LDA/data/predicted1.pkl", "wb") as f:
     with open ("/home/yaatehr/programs/spatial_LDA/data/cnn_predicted1.pkl", "wb") as f:
         pickle.dump(predicted_cluster, f)
+    with open("/home/yaatehr/programs/spatial_LDA/data/clustered_images.pkl", "wb") as f:
+        pickle.dump(cluster_dic, f)
     # Now we can predict!
 
 def ryan_test():
