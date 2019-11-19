@@ -28,6 +28,11 @@ def build_histogram(descriptor_list, cluster_alg, n_clusters):
         histogram[i] += 1.0
         return histogram
 
+def get_difference_histograms(hist1, hist2, metric="l2"):
+    if metric == 'l2':
+        return np.sum(np.square(hist2 - hist1))
+    if metric == 'l1':
+        return np.sum(np.abs(hist1-hist2))
 
 def create_feature_matrix(img_path, n_clusters=80):
     """Main function for creating a matrix of size N_images x n_clusters

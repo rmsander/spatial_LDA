@@ -21,9 +21,10 @@ from sklearn.cluster import KMeans
 #import dataset
 import feature_extraction
 import crop_images
+from feature_extraction import n_keypoints, n_cnn_keypoints
 
 #n_keypoints = 100
-n_keypoints=49*4
+# n_keypoints=49*4
 class LDA2:
     """Class that implements Latent Dirichlet Allocation using an
     Expectation-Maximization framework.  This function iterates through the
@@ -164,7 +165,8 @@ def main():
     # with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl", "rb") as f:
     with open ("/home/yaatehr/programs/spatial_LDA/data/cnn_descriptors_dict01.pkl", "rb") as f:
         descriptor_dic = pickle.load(f)
-    predicted_cluster = {}
+    predicted_cluster = {} #dictionary of imgid: cluster
+    cluster_dic = {} #dictionary of cluster: [images in cluster]
     n_clusters = 80
     kmeans = KMeans(n_clusters=n_clusters)
     vstack = np.vstack([i for i in list(descriptor_dic.values()) if i is not None and i.shape[0] == n_keypoints])
@@ -175,12 +177,16 @@ def main():
         if num_files % 100 == 0:
             print(num_files)
         des = descriptor_dic[f]
-        if des is None or des.shape[0] != n_keypoints:
+        if des is None or des.shape[0] != n_keypoints: #only use images with n_keypoints
             continue
         feature = feature_extraction.build_histogram(des, kmeans, n_clusters)
         predictions = lda_model.transform(np.reshape(feature, (1, feature.size)))
         predicted_class = np.argmax(predictions, axis=1)
         predicted_cluster[f] = predicted_class
+        if predicted_class in cluster_dic:
+            cluster_dic[predicted_class].append(f)
+        else:
+            cluster_dic[predicted_class] = [f]
         num_files += 1
     # with open ("/home/yaatehr/programs/spatial_LDA/data/predicted1.pkl", "wb") as f:
     with open ("/home/yaatehr/programs/spatial_LDA/data/cnn_predicted1.pkl", "wb") as f:
