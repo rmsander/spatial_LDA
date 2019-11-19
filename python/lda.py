@@ -16,6 +16,7 @@ import numpy as np
 import cv2 as cv
 from sklearn.decomposition import LatentDirichletAllocation as LDA
 from sklearn.cluster import KMeans
+from scipy.special import kl_div
 
 # Custom module imports
 #import dataset
@@ -36,7 +37,9 @@ class LDA2:
         beta (float): A parameter for our LDA model (TODO: add on here).
 
     """
-    def __init__(self, data_path, feature_path, alpha=1, beta=1, eps=1e-5,n_topics=10):
+    # TODO: How do we represent the cardinality of our "vocabulary"
+    def __init__(self, data_path, feature_path, alpha=1, beta=1, eps=1e-5,
+                 n_topics=10, V=100):
         self.data_path = data_path  # File path for data
         self.feature_path = feature_path
         self.alpha = alpha  # Dirichlet dist hyperparameter
@@ -45,16 +48,38 @@ class LDA2:
         self.parameters = None  # Numpy vector of parameters
         self.eps = eps  # Convergence threshold
         self.keypoints = None
-        self.n_topics = n_topics
+        self.k_topics = n_topics
+        self.get_data_matrix()  # Call in constructor method
+        self.m_documents = self.M.shape[0]
+        self.vocab_size = V
+        self.init_LDA()  # Call in constructor method
 
     def get_data_matrix(self):
         with open(self.feature_path, 'rb') as f:
             self.M = pickle.load(f)
+        self.m_documents =
 
     def off_the_shelf_LDA(self):
         lda = LDA(n_components=self.n_topics)
         lda.fit(self.M)
         return lda
+
+    def init_LDA(self):
+        self.M_word_topic = np.zeros((self.k_topics, self.m_documents)) #(k x m)
+        self.M_topic_vocab = np.zeros((self.k_topics, self.vocab_size)) #(k x v)
+        self.M_count_k = np.zeros((self.k_topics, 1))  # (k x 1)
+
+        # Now we need to randomly initialize documents and vocab over topics
+        self.document_topics = np.random.randint(1, self.k_topics,
+                                                 size=(self.k_topics,
+                                                       self.m_documents))
+        # TODO: FINISH THIS
+
+    def compute_conditional_dist(self, m, n):
+        # Return a probability distribution for word n in document m
+        # belonging to a topic
+        vector = [self.M_word_topic[k,m]
+
 
     def sample_phi_from_dirichlet(self, n=1):
         """Function to sample from a Dirichlet distribution.
@@ -69,6 +94,12 @@ class LDA2:
 
         return np.random.dirichlet(self.beta, size=n)
 
+    def gibbs_sampler(self, T):
+        for t in T:  # Iterate over timesteps
+            for i in
+                pass
+
+
     def sample_pi_from_dirichlet(self, n=1):
         """Function to sample from a Dirichlet distribution.
 
@@ -81,20 +112,6 @@ class LDA2:
         """
 
         return np.random.dirichlet(self.alpha, size=n)
-
-    def expectation_step(self):
-        """This first step of the Expectation-Maximization algorithm computes
-        the expectation over the distributions of interest, holding several 
-        parameters fixed"""
-
-        pass
-
-    def maximization_step(self):
-        """This second step of the Expectation-Maximization algorithm finds
-        a set of parameters that optimizes the log likelihood of the
-        distributions of interest (i.e. Maximum Likelihood Estimation)."""
-
-        self.parameters = np.argmax(self.log_likelihood)  # Update parameters
 
     def find_params(self):
         """Function that iterates over the expectation and maximization steps
@@ -123,6 +140,9 @@ def evaluate_performance(cluster_predictions, actual_dic, actual_labels):
         label = actual_dic[k]
         count[label] += 1
     return count
+
+def compute_symmetric_KL(dist_a, dist_b):
+    return 0.5 * (kl_div(dist_a, dist_b)) + 0.5 * (kl_div(dist_b, dist_a))
 
 def evaluate_main():
     labels = ["06c54", "011k07", "099ssp"] #labels in descriptors_test_1
@@ -157,7 +177,6 @@ def main():
     with open(feature_path, "rb") as f:
         CnnM = pickle.load(f)
     lda = LDA2("", feature_path, n_topics = 3)  # Make the class
-    lda.get_data_matrix()    # Import the features
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     img_files = os.listdir(dataset_path)
@@ -195,4 +214,4 @@ def ryan_test():
 
 if __name__ == "__main__":
     #evaluate_main()
-    main()
+    ryan_test()
