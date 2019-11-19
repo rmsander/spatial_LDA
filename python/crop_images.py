@@ -109,7 +109,7 @@ def sort_objects_by_class(img_dir, csv_path, out_root_dir):
     # Iterate over all images via ids
     for id in ids:
         # Get filename
-        fname = os.path.join(img_dir, id+ ".jpg")
+        fname = os.path.join(img_dir, id + ".jpg")
         # Extract all objects from file
         if fname.split("/")[-1] in files:
             crop_object(fname, parsed[id], out_root_dir, class_names)

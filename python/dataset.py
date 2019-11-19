@@ -47,13 +47,22 @@ resnet_transform = transforms.Compose([
     transforms.ToTensor(),
     # transforms.Normalize([0.5] * 3, [0.5] * 3)
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
-                         0.229, 0.224, 0.225])  # for the pytorch resnet impl
+        0.229, 0.224, 0.225])  # for the pytorch resnet impl
+])
+#  Note: these constants are the normalization constants for normalize
+segnet_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding='constant'),
+    transforms.ToTensor(),
+    # transforms.Normalize([0.5] * 3, [0.5] * 3)
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
+        0.229, 0.224, 0.225])  # for the pytorch segnet impl
 ])
 
 
 class ImageDataset(Dataset):
 
-    def __init__(self, root=train_root, transform=resnet_transform):
+    def __init__(self, root=train_root, transform=segnet_transform):
         """
         Args:
             root_dir (string): Directory with all the images organized into
@@ -71,8 +80,9 @@ class ImageDataset(Dataset):
             self.image_paths.extend([os.path.join(dirpath, filename)
                                      for filename in filenames if
                                      filename.endswith('.jpg')])
-        self.image_class_hashes = [os.path.basename(os.path.dirname(impath)).split("/")[
-            -1] for impath in self.image_paths]
+        self.image_class_hashes = [
+            os.path.basename(os.path.dirname(impath)).split("/")[
+                -1] for impath in self.image_paths]
         self.effective_hashes = [granularity_map[imhash]
                                  for imhash in self.image_class_hashes]
         self.effective_labels = [classname_map[imhash]
@@ -87,6 +97,7 @@ class ImageDataset(Dataset):
         image = io.imread(impath)
         if self.transform:
             image = self.transform(image)
+        # TODO: Splitting might mess this up
         image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[
             -1]
 
