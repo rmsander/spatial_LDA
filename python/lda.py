@@ -179,11 +179,12 @@ def evaluate_main():
     #get average l2 distance between pairs of each cluster
     avg_dist = {}  #maps cluster to average l2 distance
     avg_kl = {}  #maps cluster to average kl distance
-    for cluster in clustered_images:
+    for label in labels: #should be in label
         dist_count = 0
         kl_count = 0
         counter =  0
-        images = clustered_images[cluster]
+        label_path = os.path.join(m_dir, label)
+        images = os.listdir(label_path)
         for j in images:
             for k in images:
                 if j==k:
@@ -195,8 +196,8 @@ def evaluate_main():
                 dist = compute_probability_distr_difference(probj, probk)
                 dist_count += dist
                 counter += 1
-        avg_dist[cluster] = dist_count/counter
-        avg_kl[cluster] = kl_count/counter
+        avg_dist[label] = dist_count/counter
+        avg_kl[label] = kl_count/counter
     with open(os.path.join(data_dir, "avg_dist_in_cluster.pkl"), "wb") as f:
         pickle.dump(avg_dist, f)
     with open(os.path.join(data_dir, "avg_kl_in_cluster.pkl"), "wb") as f:
