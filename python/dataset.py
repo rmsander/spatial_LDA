@@ -60,9 +60,9 @@ segnet_transform = transforms.Compose([
 ])
 
 
-class ImageDataset(Dataset):
+class ADE20K(Dataset):
 
-    def __init__(self, root=train_root, transform=segnet_transform):
+    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False):
         """
         Args:
             root_dir (string): Directory with all the images organized into
@@ -74,6 +74,59 @@ class ImageDataset(Dataset):
 
         self.root = root
         self.transform = transform
+        self.grayscale = grayscale
+        self.image_paths = []
+        for (dirpath, dirnames, filenames) in os.walk(self.root):
+            self.image_paths.extend([os.path.join(dirpath, filename)
+                                     for filename in filenames if
+                                     filename.endswith('.jpg')])
+        self.image_classes = [os.path.basename(os.path.dirname(impath)).split("/")[
+            -1] for impath in self.image_paths]
+        self.onehot_labelmap = self.init_one_hot_map(self.image_classes)
+
+    def __len__(self):
+        return len(self.image_paths)
+
+    def __getitem__(self, idx):
+        impath = self.image_paths[idx]
+        image = io.imread(impath, as_gray=self.grayscale)
+        if self.transform:
+            image = self.transform(image)
+        image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[
+            -1]
+
+        label = self.image_classes[idx]
+        return image, self.onehot_labelmap[label]
+
+    def get_all_label_strings(self, use_text=True):
+        output = set(self.image_classes)
+        return output
+
+    def init_one_hot_map(self, data):
+        label_encoder = skl.preprocessing.LabelEncoder()
+        integer_encoded = label_encoder.fit_transform(data)
+        # binary encode
+        onehot_encoder = skl.preprocessing.OneHotEncoder(sparse=False)
+        integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
+        onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
+        return dict(zip(data, onehot_encoded))
+
+
+class ImageDataset(Dataset):
+
+    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False):
+        """
+        Args:
+            root_dir (string): Directory with all the images organized into
+            folders by class label (hash).
+            transform (callable, optional): Optional transform to be applied
+                on a sample.
+        """
+        super(Dataset, self).__init__()
+
+        self.root = root
+        self.transform = transform
+        self.grayscale = grayscale
 
         self.image_paths = []
         for (dirpath, dirnames, filenames) in os.walk(self.root):
@@ -94,7 +147,7 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, idx):
         impath = self.image_paths[idx]
-        image = io.imread(impath)
+        image = io.imread(impath, as_gray=self.grayscale)
         if self.transform:
             image = self.transform(image)
         # TODO: Splitting might mess this up
