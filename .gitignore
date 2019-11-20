@@ -663,3 +663,5 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/python,opencv,pycharm,eclipse,visualstudio,jupyternotebooks,visualstudiocode
+
+data/
