@@ -28,6 +28,11 @@ def build_histogram(descriptor_list, cluster_alg, n_clusters):
         histogram[i] += 1.0
         return histogram
 
+def get_difference_histograms(hist1, hist2, metric="l2"):
+    if metric == 'l2':
+        return np.sum(np.square(hist2 - hist1))
+    if metric == 'l1':
+        return np.sum(np.abs(hist1-hist2))
 
 def create_feature_matrix(img_path, n_clusters=80):
     """Main function for creating a matrix of size N_images x n_clusters
@@ -40,8 +45,8 @@ def create_feature_matrix(img_path, n_clusters=80):
     print(len(img_files))
     with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl","rb") as f:
 
-        descriptor_list_dic = pickle.load(f)
-    # descriptor_list_dic = {}
+        descriptor_list_dic = pickle.load(f) 
+    # descriptor_list_dic = {} #f: descriptor vectors
     # for f in img_files:
     #     A = cv.imread(os.path.join(img_path, f)) # read image
     #     _, des = get_feature_vector(A)
