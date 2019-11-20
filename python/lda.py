@@ -159,6 +159,8 @@ def evaluate_main():
         predicted = pickle.load(f)
     with open(os.path.join(data_dir, "clustered_images.pkl")) as f:
         clustered_images = pickle.load(f)
+    with open(os.path.join(data_dir, "prob_distrs.pkl"), "rb") as f:
+        prob_distrs = pickle.load(f)
     labels = os.listdir(m_dir)
     for l in labels:
         label_path = os.path.join(m_dir, l)
@@ -171,7 +173,35 @@ def evaluate_main():
         #get number of labels in each cluster
         dic = compute_num_labels_in_cluster(clustered_images[cluster], actual_dic)
         num_in_each_cluster[cluster] = dic
-    
+    with open(os.path.join(data_dir, "num_in_each_cluster.pkl"), "wb") as f:
+        pickle.dump(num_in_each_cluster, f)
+
+    #get average l2 distance between pairs of each cluster
+    avg_dist = {}  #maps cluster to average l2 distance
+    avg_kl = {}  #maps cluster to average kl distance
+    for cluster in clustered_images:
+        dist_count = 0
+        kl_count = 0
+        counter =  0
+        images = clustered_images[cluster]
+        for j in images:
+            for k in images:
+                if j==k:
+                    continue
+                probj = prob_distrs[j]
+                probk = prob_distrs[k]
+                kl = compute_symmetric_KL(probj, probk)
+                kl_count += kl
+                dist = compute_probability_distr_difference(probj, probk)
+                dist_count += dist
+                counter += 1
+        avg_dist[cluster] = dist_count/counter
+        avg_kl[cluster] = kl_count/counter
+    with open(os.path.join(data_dir, "avg_dist_in_cluster.pkl"), "wb") as f:
+        pickle.dump(avg_dist, f)
+    with open(os.path.join(data_dir, "avg_kl_in_cluster.pkl"), "wb") as f:
+        pickle.dump(avg_kl, f)
+
 
 def main():
     #TODO: FILL IN feature_path
@@ -191,12 +221,14 @@ def main():
         descriptor_dic = pickle.load(f)
     predicted_cluster = {} #dictionary of imgid: cluster
     cluster_dic = {} #dictionary of cluster: [images in cluster]
+    prob_distr_dic = {} #maps id: probability distribution over clusters
     n_clusters = 80
     kmeans = KMeans(n_clusters=n_clusters)
     vstack = np.vstack([i for i in list(descriptor_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
     kmeans.fit(vstack)
     num_files = 0
+    
     for f in img_files:
         if num_files % 100 == 0:
             print(num_files)
@@ -205,6 +237,7 @@ def main():
             continue
         feature = feature_extraction.build_histogram(des, kmeans, n_clusters)
         predictions = lda_model.transform(np.reshape(feature, (1, feature.size)))
+        prob_distr_dic[f] = predictions
         predicted_class = np.argmax(predictions, axis=1)
         predicted_cluster[f] = predicted_class
         if predicted_class in cluster_dic:
@@ -217,6 +250,8 @@ def main():
         pickle.dump(predicted_cluster, f)
     with open("/home/yaatehr/programs/spatial_LDA/data/clustered_images.pkl", "wb") as f:
         pickle.dump(cluster_dic, f)
+    with open("/home/yaatehr/programs/spatial_LDA/data/prob_distrs.pkl", "wb") as f:
+        pickle.dump(prob_distr_dic, f)   
     # Now we can predict!
 
 def ryan_test():
