@@ -51,7 +51,7 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
                                       label_letters}
     # Iterate over each letter label
     for label_letter in label_letters:
-        sub_dir = os.path.join(label_dir, label_letter):
+        sub_dir = os.path.join(label_dir, label_letter)
         all_files = os.listdir(sub_dir)
         input_imgs = [file for file in all_files if file.endswith(".jpg")
 
