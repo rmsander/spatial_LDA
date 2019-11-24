@@ -11,7 +11,7 @@ from train_cnn import get_model, resnet_transform
 
 n_keypoints = 100 #hyperparameter, need to tune
 n_cnn_keypoints = 4*49
-n_clusters = 80 #also need to tune this
+n_clusters = 100 #also need to tune this
 def get_feature_vector(img):
     # Get keypoints and feature descriptors
     sift = cv.xfeatures2d_SIFT.create(n_keypoints)
@@ -67,9 +67,8 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                 if f[-3:]!="jpg":
                     continue
                 num_files += 1
-                print(f)
                 if num_files %99==0:
-                    print(str(num_files)+" files processed")
+                    print(str(num_files+1)+" files processed")
                 A = cv.imread(os.path.join(singular_label_path, f)) # read image
                 _, des = get_feature_vector(A)
                 descriptor_list_dic[f]= des
@@ -79,6 +78,10 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
     kmeans.fit(vstack)
+    kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters.pkl" % n_clusters
+    with open(kmeans_path, "wb") as f:
+        pickle.dump(kmeans_path, f)
+    print('dumped kmeans model')
 
     # Get image files
     M = []

@@ -162,11 +162,14 @@ def evaluate_main():
     with open(os.path.join(data_dir, "prob_distrs.pkl"), "rb") as f:
         prob_distrs = pickle.load(f)
     labels = os.listdir(m_dir)
-    for l in labels:
-        label_path = os.path.join(m_dir, l)
-        print(label_path)
-        dic = crop_images.map_image_id_to_label(label_path, l)
-        actual_dic.update(dic)
+    for l in labels: 
+        label_path = os.path.join(m_dir, l) #a/
+        labels = os.listdir(label_path) #a/amusement_park
+        for label in labels:
+            label_path = os.path.join(m_dir, label)
+            print(label_path)
+            dic = crop_images.map_image_id_to_label(label_path, label)
+            actual_dic.update(dic)
 
     num_in_each_cluster = {} #maps cluster to dictionary of label to count
     for cluster in clustered_images:
@@ -208,9 +211,10 @@ def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/yaatehr/datasets/seg_data/images/training/"
     sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix"
-    M = feature_extraction.create_feature_matrix(dataset_path)
+    M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
     with open(sift_feature_path, "wb") as f:
         pickle.dump(M, f)
+    print("dumped feature matrix")
     #CnnM = feature_extraction.create_feature_matrix_cnn(dataset_path)
     # feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
     feature_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix"
@@ -231,23 +235,29 @@ def main():
     print(vstack.shape)
     kmeans.fit(vstack)
     num_files = 0
-    
-    for f in img_files:
-        if num_files % 100 == 0:
-            print(num_files)
-        des = descriptor_dic[f]
-        if des is None or des.shape[0] != n_keypoints: #only use images with n_keypoints
-            continue
-        feature = feature_extraction.build_histogram(des, kmeans, n_clusters)
-        predictions = lda_model.transform(np.reshape(feature, (1, feature.size)))
-        prob_distr_dic[f] = predictions
-        predicted_class = np.argmax(predictions, axis=1)
-        predicted_cluster[f] = predicted_class
-        if predicted_class in cluster_dic:
-            cluster_dic[predicted_class].append(f)
-        else:
-            cluster_dic[predicted_class] = [f]
-        num_files += 1
+    for l in img_files: 
+        label_path = os.path.join(dataset_path, l) #a/
+        labels = os.listdir(label_path) #a/amusement_park
+        for label in labels:
+            singular_label_path = os.path.join(label_path, label)
+            print(singular_label_path)
+            images = os.listidr(singular_label_path)
+            for f in images:
+                if num_files % 100 == 0:
+                    print(num_files)
+                des = descriptor_dic[f]
+                if des is None or des.shape[0] != n_keypoints: #only use images with n_keypoints
+                    continue
+                feature = feature_extraction.build_histogram(des, kmeans, n_clusters)
+                predictions = lda_model.transform(np.reshape(feature, (1, feature.size)))
+                prob_distr_dic[f] = predictions
+                predicted_class = np.argmax(predictions, axis=1)
+                predicted_cluster[f] = predicted_class
+                if predicted_class in cluster_dic:
+                    cluster_dic[predicted_class].append(f)
+                else:
+                    cluster_dic[predicted_class] = [f]
+                num_files += 1
     # with open ("/home/yaatehr/programs/spatial_LDA/data/predicted1.pkl", "wb") as f:
     with open ("/home/yaatehr/programs/spatial_LDA/data/cnn_predicted1.pkl", "wb") as f:
         pickle.dump(predicted_cluster, f)
