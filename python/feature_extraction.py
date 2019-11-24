@@ -67,6 +67,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                 if f[-3:]!="jpg":
                     continue
                 num_files += 1
+                print(f)
                 if num_files %99==0:
                     print(str(num_files)+" files processed")
                 A = cv.imread(os.path.join(singular_label_path, f)) # read image
