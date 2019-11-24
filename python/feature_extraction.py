@@ -4,7 +4,7 @@ import os
 from sklearn.cluster import MiniBatchKMeans, KMeans
 from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import make_multilabel_classification
-import scipy.special.kl_div as KL
+# import scipy.special.kl_div as KL
 import pickle
 from torchvision import transforms
 from skimage import io
