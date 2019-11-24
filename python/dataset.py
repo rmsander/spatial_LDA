@@ -3,13 +3,15 @@ import os
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 from skimage import io
+from skimage.color import rgb2gray
+
 import sklearn as skl
 from crop_images import *
 from utils import *
 from torch.utils.data.sampler import SubsetRandomSampler
 import numpy as np
 
-data_root = os.path.join(os.path.dirname('__file__'), '../data')
+data_root = os.path.join(os.path.dirname(__file__), '../data')
 # train_root = os.path.join(data_root, 'train')
 # val_root = os.path.join(data_root, 'val')
 # test_root = os.path.join(data_root, 'test')
@@ -25,6 +27,7 @@ path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
 path_to_classname_map_csv = os.path.join(data_root, 'class-descriptions.csv')
 
 
+
 def create_classname_map(path_to_csv):
     output = {}
     with open(path_to_csv, 'r') as file:
@@ -36,10 +39,16 @@ def create_classname_map(path_to_csv):
     return output
 
 
-classname_map = create_classname_map(path_to_classname_map_csv)
-max_hierarchy_level = 3
-granularity_map = make_inverted_labelmap(max_hierarchy_level,
-                                         path_to_hierarchy=hierarchy_json_path)
+try:
+    classname_map = create_classname_map(path_to_classname_map_csv)
+    max_hierarchy_level = 3
+    granularity_map = make_inverted_labelmap(max_hierarchy_level,
+                                            path_to_hierarchy=hierarchy_json_path)
+except Exception as e:
+    classname_map = None
+    granularity_map = None
+    print("could not initialize classname map or granularity map for google open images")
+
 
 resnet_transform = transforms.Compose([
     transforms.ToPILImage(),
