@@ -46,7 +46,7 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
 
     # Get files and directory
     label_dir = "~/programs/datasets/seg_data/images/training/"
-    label_letters = os.listdir(label_data)  # E.g. directories given by "a/"
+    label_letters = os.listdir(label_dir)  # E.g. directories given by "a/"
     labels_distribution_dictionary = {label_letter:{} for label_letter in
                                       label_letters}
     # Iterate over each letter label
