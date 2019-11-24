@@ -155,7 +155,7 @@ def evaluate_main():
     m_dir = "/home/yaatehr/programs/datasets/seg_data/images/training/" #labels
     data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
     actual_dic = {}
-    with open(os.path.join(data_dir, "predictions1.pkl", "rb")) as f:
+    with open(os.path.join(data_dir, "predictions.pkl", "rb")) as f:
         predicted = pickle.load(f)
     with open(os.path.join(data_dir, "clustered_images.pkl")) as f:
         clustered_images = pickle.load(f)
@@ -259,7 +259,7 @@ def main():
                     cluster_dic[predicted_class] = [f]
                 num_files += 1
     # with open ("/home/yaatehr/programs/spatial_LDA/data/predicted1.pkl", "wb") as f:
-    with open ("/home/yaatehr/programs/spatial_LDA/data/cnn_predicted1.pkl", "wb") as f:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted.pkl", "wb") as f:
         pickle.dump(predicted_cluster, f)
     with open("/home/yaatehr/programs/spatial_LDA/data/clustered_images.pkl", "wb") as f:
         pickle.dump(cluster_dic, f)
@@ -276,3 +276,4 @@ def ryan_test():
 if __name__ == "__main__":
     #evaluate_main()
     main()
+    evaluate_main()
