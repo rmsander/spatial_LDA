@@ -42,14 +42,18 @@ def get_difference_histograms(hist1, hist2, metric="l2"):
 def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
     """Evaluation function for computing the k-means cluster distributions
     for images in the same ground truth classes.  Uses the descriptor list
-    and clustering algorithm produced by the "create_feature_matrix" below."""
+    and clustering algorithm produced by the "create_feature_matrix" below.
+
+    The distances can be indexed by their labels; i.e. each label key maps to a
+    float distance value.
+    """
 
     # Get files and directory
     label_dir = "~/programs/datasets/seg_data/images/training/"
     label_letters = os.listdir(label_data)  # E.g. directories given by "a/"
-    labels_distribution_dictionary = {label_letter:{} for label_letter in
-                                      label_letters}
+    histogram_distance_dict = {}
     # Iterate over each letter label
+<<<<<<< Updated upstream
     for label_letter in label_letters:
         sub_dir = os.path.join(label_dir, label_letter)
         all_files = os.listdir(sub_dir)
@@ -69,6 +73,60 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
                         get_difference_histograms(hist1, hist2, metric=metric)
 
     return labels_distribution_dictionary
+=======
+    for label_letter in label_letters:  # Iterate over each label letter categ.
+        sub_dir = os.path.join(label_dir, label_letter):
+        label_names = os.listdir(sub_dir)  # Lists labels as directories
+        for label in label_names:  # Iterate over each individual label
+            # Get files in sub-sub directory
+            label_dir_name = os.path.join(label_dir, label_letter, label)
+            label_dir_files = os.listdir(label_dir_name)
+
+            # Get input imagee files and number of images
+            input_imgs = [file for file in label_dir_files if file.endswith(
+                ".jpg")
+            N = len(input_images)
+
+            # Hash table to efficiently check if we've seen images before
+            seen = {}
+
+            # Now iterate through all the files for each ground truth label
+            for f1 in input_imgs:
+                for f2 in input_imgs:
+                    if f1 != f2:  # Don't need to compare the same file
+                        # Check if we've seen image before
+                        if seen.get((f1, f2)) is not None or \
+                           seen.get((f2, f1)) is not None:
+                            continue
+                        # Build both histograms
+                        hist1 = build_histogram(descriptor_list[f1], kmeans,
+                                                n_clusters)
+                        hist2 = build_histogram(descriptor_list[f2], kmeans,
+                                                n_clusters)
+                        # Add to label distribution dictionary with distance
+                        histogram_distance_dict[label] += float(
+                            get_difference_histograms(hist1, hist2, metric=metric)
+
+                        # Now we've seen the pair of images
+                        seen[(f1,f2)] = 0
+
+            #  Take the mean by dividing by all combinations of images
+            histogram_distance_dict[label] /= (N**2 - N) / 2
+            
+    return histogram_distance_dict
+
+def plot_eval_results(ks, distances, out_file_path = "", metric="L2 Norm"):
+    """Function for plotting average histogram distance between images with
+    the same labels as a function of the number of k-means clusters used."""
+
+    plt.plot(ks, distances)
+    plt.xlabel("Number of clusters (k)")
+    plt.ylabel("Distance ({})".format(metric))
+    plt.title("Average Histogram Distance Between "
+              "Histograms as a Function of K-Means Clusters ")
+    plt.savefig(out_file_path)
+    print("Figure saved in: {}".format(out_file_path))
+>>>>>>> Stashed changes
 
 def create_feature_matrix(img_path, n_clusters=n_clusters):
     """Main function for creating a matrix of size N_images x n_clusters
