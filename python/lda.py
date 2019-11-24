@@ -152,7 +152,7 @@ def compute_probability_distr_difference(dist1, dist2):
 
 def evaluate_main():
     # labels = ["06c54", "011k07", "099ssp"] #labels in descriptors_test_1
-    m_dir = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m/"
+    m_dir = "/home/yaatehr/programs/datasets/seg_data/images/training/" #labels
     data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
     actual_dic = {}
     with open(os.path.join(data_dir, "predictions1.pkl", "rb")) as f:
@@ -198,16 +198,16 @@ def evaluate_main():
                 counter += 1
         avg_dist[label] = dist_count/counter
         avg_kl[label] = kl_count/counter
-    with open(os.path.join(data_dir, "avg_dist_in_cluster.pkl"), "wb") as f:
+    with open(os.path.join(data_dir, "avg_dist_in_label.pkl"), "wb") as f:
         pickle.dump(avg_dist, f)
-    with open(os.path.join(data_dir, "avg_kl_in_cluster.pkl"), "wb") as f:
+    with open(os.path.join(data_dir, "avg_kl_in_label.pkl"), "wb") as f:
         pickle.dump(avg_kl, f)
 
 
 def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_1"
-    # M = feature_extraction.create_feature_matrix(dataset_path)
+    M = feature_extraction.create_feature_matrix(dataset_path)
     #CnnM = feature_extraction.create_feature_matrix_cnn(dataset_path)
     # feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
     feature_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix"

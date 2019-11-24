@@ -34,7 +34,14 @@ def get_difference_histograms(hist1, hist2, metric="l2"):
     if metric == 'l1':
         return np.sum(np.abs(hist1-hist2))
 
-def create_feature_matrix(img_path, n_clusters=80):
+def evaluate_kmeans():
+    label_dir = "/home"
+    #for each label, pairwise compare the distances of the generated kmeans clustered featuers
+    #create dictionary for label: distance
+    #generate plots of histogram 
+    #comparison between k and distance
+
+def create_feature_matrix(img_path, n_clusters=n_keypoints):
     """Main function for creating a matrix of size N_images x n_clusters
     using SIFT and histogramming of the descriptors by a clustering
     algorithm."""
@@ -72,7 +79,7 @@ def create_feature_matrix(img_path, n_clusters=80):
         num_files += 1
     return M
 
-def create_feature_matrix_cnn(img_path, model, n_clusters=80):
+def create_feature_matrix_cnn(img_path, model, n_clusters=n_keypoints):
     kmeans = KMeans(n_clusters=n_clusters)
     img_files = os.listdir(img_path)
     print(len(img_files))
