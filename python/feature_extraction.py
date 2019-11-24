@@ -61,6 +61,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
         labels = os.listdir(label_path) #a/amusement_park
         for label in labels:
             singular_label_path = os.path.join(label_path, label)
+            print(singular_label_path)
             images = os.listidr(singular_label_path)
             for f in images:
                 num_files += 1
@@ -71,6 +72,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                 descriptor_list_dic[f]= des
     with open(descriptor_path, "wb") as f:
         pickle.dump(descriptor_list_dic, f)
+    print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
     kmeans.fit(vstack)
@@ -78,16 +80,22 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     # Get image files
     M = []
     num_files = 0
-    for f in img_files:  # Iterate over all image files
-        if num_files % 100 == 0:
-            print(str(num_files)+" files processed")
-        des = descriptor_list_dic[f]  # Get keypoints/descriptors from SIFT
-        if des is None or des.shape[0] != n_keypoints:
-            continue
-        histogram = build_histogram(des, kmeans, n_clusters)
-        
-        M.append(histogram)  # Append to output matrix
-        num_files += 1
+    for l in img_files: 
+        label_path = os.path.join(img_path, l) #a/
+        labels = os.listdir(label_path) #a/amusement_park
+        for label in labels:
+            singular_label_path = os.path.join(label_path, label)
+            images = os.listidr(singular_label_path)
+            for f in images:  # Iterate over all image files
+                if num_files % 100 == 0:
+                    print(str(num_files)+" files processed")
+                des = descriptor_list_dic[f]  # Get keypoints/descriptors from SIFT
+                if des is None or des.shape[0] != n_keypoints:
+                    continue
+                histogram = build_histogram(des, kmeans, n_clusters)
+                
+                M.append(histogram)  # Append to output matrix
+                num_files += 1
     return M, kmeans
 
 def create_feature_matrix_cnn(img_path, model, n_clusters=n_keypoints):
