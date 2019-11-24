@@ -4,6 +4,7 @@ import os
 from sklearn.cluster import MiniBatchKMeans, KMeans
 from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import make_multilabel_classification
+import scipy.stats.entropy as KL
 import pickle
 from torchvision import transforms
 from skimage import io
@@ -29,17 +30,45 @@ def build_histogram(descriptor_list, cluster_alg, n_clusters):
         return histogram
 
 def get_difference_histograms(hist1, hist2, metric="l2"):
-    if metric == 'l2':
+    """Helper function/sub-routine to compute the distance between two
+    distributions."""
+    if metric == 'l2': # Euclidean distance
         return np.sum(np.square(hist2 - hist1))
-    if metric == 'l1':
+    if metric == 'l1': # Norm distance
         return np.sum(np.abs(hist1-hist2))
+    if metric == 'kl': # Symmetric KL Divergence
+        return 0.5*KL(hist1, qk=hist2) + 0.5*KL(hist2, qk=hist1)
 
-def evaluate_kmeans():
-    label_dir = "/home"
-    #for each label, pairwise compare the distances of the generated kmeans clustered featuers
-    #create dictionary for label: distance
-    #generate plots of histogram 
-    #comparison between k and distance
+def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
+    """Evaluation function for computing the k-means cluster distributions
+    for images in the same ground truth classes.  Uses the descriptor list
+    and clustering algorithm produced by the "create_feature_matrix" below."""
+
+    # Get files and directory
+    label_dir = "~/programs/datasets/seg_data/images/training/"
+    label_letters = os.listdir(label_data)  # E.g. directories given by "a/"
+    labels_distribution_dictionary = {label_letter:{} for label_letter in
+                                      label_letters}
+    # Iterate over each letter label
+    for label_letter in label_letters:
+        sub_dir = os.path.join(label_dir, label_letter):
+        all_files = os.listdir(sub_dir)
+        input_imgs = [file for file in all_files if file.endswith(".jpg")
+
+        # Now iterate through all the files for each ground truth label
+        for f1 in input_imgs:
+            for f2 in input_imgs:
+                if f1 != f2:  # Don't need to compare the same file
+                    # Build both histograms
+                    hist1 = build_histogram(descriptor_list[f1], kmeans,
+                                            n_clusters)
+                    hist2 = build_histogram(descriptor_list[f2], kmeans,
+                                            n_clusters)
+                    # Add to label distribution dictionary with distance
+                    labels_distribution_dictionary[label_letter][(f1,f2)] = \
+                        get_difference_histograms(hist1, hist2, metric=metric)
+
+    return labels_distribution_dictionary
 
 def create_feature_matrix(img_path, n_clusters=n_clusters):
     """Main function for creating a matrix of size N_images x n_clusters
