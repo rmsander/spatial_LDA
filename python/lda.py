@@ -206,8 +206,11 @@ def evaluate_main():
 
 def main():
     #TODO: FILL IN feature_path
-    dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_1"
+    dataset_path = "/home/yaatehr/datasets/seg_data/images/training/"
+    sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix"
     M = feature_extraction.create_feature_matrix(dataset_path)
+    with open(sift_feature_path, "wb") as f:
+        pickle.dump(M, f)
     #CnnM = feature_extraction.create_feature_matrix_cnn(dataset_path)
     # feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
     feature_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix"

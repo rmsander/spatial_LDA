@@ -41,24 +41,35 @@ def evaluate_kmeans():
     #generate plots of histogram 
     #comparison between k and distance
 
-def create_feature_matrix(img_path, n_clusters=n_keypoints):
+def create_feature_matrix(img_path, n_clusters=n_clusters):
     """Main function for creating a matrix of size N_images x n_clusters
     using SIFT and histogramming of the descriptors by a clustering
     algorithm."""
     # Make clustering algorithm
     kmeans = KMeans(n_clusters=n_clusters)
-    img_files = os.listdir(img_path)
+    img_files = os.listdir(img_path) #img_file should be "/home/yaatehr/datasets/seg_data/images/training/"
     # print(img_files)
     print(len(img_files))
-    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl","rb") as f:
-
+    descriptor_path = "/home/yaatehr/programs/spatial_LDA/data/image_descriptors_dictionary_%s_keypoints.pkl" %n_keypoints
+    print(descriptor_path)
+    with open(descriptor_path,"rb") as f:
         descriptor_list_dic = pickle.load(f) 
-    # descriptor_list_dic = {} #f: descriptor vectors
-    # for f in img_files:
-    #     A = cv.imread(os.path.join(img_path, f)) # read image
-    #     _, des = get_feature_vector(A)
-    #     descriptor_list_dic[f]= des
-    with open("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl", "wb") as f:
+    descriptor_list_dic = {} #f: descriptor vectors
+    num_files = 0
+    for l in img_files: 
+        label_path = os.path.join(img_path, l) #a/
+        labels = os.listdir(label_path) #a/amusement_park
+        for label in labels:
+            singular_label_path = os.path.join(label_path, label)
+            images = os.listidr(singular_label_path)
+            for f in images:
+                num_files += 1
+                if num_files %99==0:
+                    print(str(num_files)+" files processed")
+                A = cv.imread(os.path.join(singular_label_path, f)) # read image
+                _, des = get_feature_vector(A)
+                descriptor_list_dic[f]= des
+    with open(descriptor_path, "wb") as f:
         pickle.dump(descriptor_list_dic, f)
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
@@ -77,7 +88,7 @@ def create_feature_matrix(img_path, n_clusters=n_keypoints):
         
         M.append(histogram)  # Append to output matrix
         num_files += 1
-    return M
+    return M, kmeans
 
 def create_feature_matrix_cnn(img_path, model, n_clusters=n_keypoints):
     kmeans = KMeans(n_clusters=n_clusters)
