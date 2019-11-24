@@ -265,4 +265,4 @@ def ryan_test():
 
 if __name__ == "__main__":
     #evaluate_main()
-    ryan_test()
+    main()
