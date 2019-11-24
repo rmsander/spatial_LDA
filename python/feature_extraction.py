@@ -52,8 +52,8 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     print(len(img_files))
     descriptor_path = "/home/yaatehr/programs/spatial_LDA/data/image_descriptors_dictionary_%s_keypoints.pkl" %n_keypoints
     print(descriptor_path)
-    with open(descriptor_path,"rb") as f:
-        descriptor_list_dic = pickle.load(f) 
+   # with open(descriptor_path,"rb") as f:
+    #    descriptor_list_dic = pickle.load(f) 
     descriptor_list_dic = {} #f: descriptor vectors
     num_files = 0
     for l in img_files: 
@@ -62,12 +62,12 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
         for label in labels:
             singular_label_path = os.path.join(label_path, label)
             print(singular_label_path)
-            images = os.listidr(singular_label_path)
+            images = os.listdir(singular_label_path)
             for f in images:
                 if f[-3:]!="jpg":
                     continue
                 num_files += 1
-                print(f)
+#                print(f)
                 if num_files %99==0:
                     print(str(num_files)+" files processed")
                 A = cv.imread(os.path.join(singular_label_path, f)) # read image
@@ -88,7 +88,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
         labels = os.listdir(label_path) #a/amusement_park
         for label in labels:
             singular_label_path = os.path.join(label_path, label)
-            images = os.listidr(singular_label_path)
+            images = os.listdir(singular_label_path)
             for f in images:  # Iterate over all image files
                 if num_files % 100 == 0:
                     print(str(num_files)+" files processed")
