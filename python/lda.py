@@ -22,7 +22,7 @@ from scipy.special import kl_div
 #import dataset
 import feature_extraction
 import crop_images
-from feature_extraction import n_keypoints, n_cnn_keypoints
+from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters
 
 #n_keypoints = 100
 # n_keypoints=49*4
@@ -226,7 +226,6 @@ def main():
     predicted_cluster = {} #dictionary of imgid: cluster
     cluster_dic = {} #dictionary of cluster: [images in cluster]
     prob_distr_dic = {} #maps id: probability distribution over clusters
-    n_clusters = 80
     kmeans = KMeans(n_clusters=n_clusters)
     vstack = np.vstack([i for i in list(descriptor_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
