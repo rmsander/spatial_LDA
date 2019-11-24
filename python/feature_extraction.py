@@ -11,7 +11,7 @@ from train_cnn import get_model, resnet_transform
 
 n_keypoints = 100 #hyperparameter, need to tune
 n_cnn_keypoints = 4*49
-n_clusters = 80
+n_clusters = 80 #also need to tune this
 def get_feature_vector(img):
     # Get keypoints and feature descriptors
     sift = cv.xfeatures2d_SIFT.create(n_keypoints)
@@ -64,6 +64,8 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
             print(singular_label_path)
             images = os.listidr(singular_label_path)
             for f in images:
+                if f[-3:]!="jpg":
+                    continue
                 num_files += 1
                 if num_files %99==0:
                     print(str(num_files)+" files processed")
