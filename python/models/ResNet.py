@@ -178,7 +178,7 @@ class ResNetWithDropout(ResNet):
 def resnet_18():
     model = ResNet(BasicBlock, [2, 2, 2, 2])
     return model
- vc
+ 
 
 def resnet_34():
     model = ResNet(BasicBlock, [3, 4, 6, 3])
