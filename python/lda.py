@@ -210,17 +210,18 @@ def evaluate_main():
 def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/yaatehr/programs/datasets/seg_data/images/training/"
-    sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix"
+    sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
     M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
     with open(sift_feature_path, "wb") as f:
+        print(sift_feature_path)
         pickle.dump(M, f)
     print("dumped feature matrix")
     #CnnM = feature_extraction.create_feature_matrix_cnn(dataset_path)
     # feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
-    feature_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix"
-    with open(feature_path, "rb") as f:
-        CnnM = pickle.load(f)
-    lda = LDA2("", feature_path, n_topics = 3)  # Make the class
+    # feature_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix"
+    # with open(feature_path, "rb") as f:
+        # CnnM = pickle.load(f)
+    lda = LDA2("", sift_feature_path, n_topics = 3)  # Make the class
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     img_files = os.listdir(dataset_path)
