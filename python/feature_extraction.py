@@ -143,7 +143,8 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     #         print(singular_label_path)
     #         images = os.listdir(singular_label_path)
     #         for f in images:
-    #             if f[-3:]!="jpg":
+    #             
+    # :
     #                 continue
     #             num_files += 1
 
@@ -157,11 +158,12 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     # print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
-    kmeans.fit(vstack)
+    # kmeans.fit(vstack)
     kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
     with open(kmeans_path, "wb") as f:
-        pickle.dump(kmeans_path, f)
-    print('dumped kmeans model')
+        # pickle.dump(kmeans_path, f)
+        kmeans = pickle.load(f)
+    print('loaded kmeans model')
 
     # Get image files
     M = []
@@ -173,10 +175,11 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
             singular_label_path = os.path.join(label_path, label)
             images = os.listdir(singular_label_path)
             for f in images:  # Iterate over all image files
+                if f[-3:]!="jpg":
+                    continue
                 if num_files % 100 == 0:
                     print(str(num_files) + " files processed")
-                des = descriptor_list_dic[
-                    f]  # Get keypoints/descriptors from SIFT
+                des = descriptor_list_dic[f]  # Get keypoints/descriptors from SIFT
                 if des is None or des.shape[0] != n_keypoints:
                     continue
                 histogram = build_histogram(des, kmeans, n_clusters)
