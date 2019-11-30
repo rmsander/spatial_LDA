@@ -208,8 +208,8 @@ def evaluate_main():
                     dist = compute_probability_distr_difference(probj, probk)
                     dist_count += dist
                     counter += 1
-            avg_dist[label] = dist_count/counter
-            avg_kl[label] = kl_count/counter
+            avg_dist[label] = dist_count/counter if counter!=0 else None
+            avg_kl[label] = kl_count/counter if counter!=0 else None
     with open(os.path.join(data_dir, "avg_dist_in_label_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(avg_dist, f)
     with open(os.path.join(data_dir, "avg_kl_in_label_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
