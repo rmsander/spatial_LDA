@@ -50,7 +50,7 @@ class LDA2:
         self.parameters = None  # Numpy vector of parameters
         self.eps = eps  # Convergence threshold
         self.keypoints = None
-        self.k_topics = n_topics
+        self.n_topics = n_topics
         self.get_data_matrix()  # Call in constructor method
         # self.m_documents = self.M.shape[0]
         self.vocab_size = V
