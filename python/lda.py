@@ -196,10 +196,14 @@ def evaluate_main():
             for j in images:
                 if j[-3:] != 'jpg':
                     continue
+                if j not in prob_distrs: #not enough keypoints
+                    continue
                 for k in images:
                     if j==k:
                         continue
                     if k[-3:] != 'jpg':
+                        continue
+                    if k not in prob_distrs:
                         continue
                     probj = prob_distrs[j]
                     probk = prob_distrs[k]
