@@ -54,7 +54,7 @@ class LDA2:
         self.get_data_matrix()  # Call in constructor method
         # self.m_documents = self.M.shape[0]
         self.vocab_size = V
-        self.init_LDA()  # Call in constructor method
+        # self.init_LDA()  # Call in constructor method
 
     def get_data_matrix(self):
         with open(self.feature_path, 'rb') as f:
@@ -212,10 +212,10 @@ def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/yaatehr/programs/datasets/seg_data/images/training/"
     sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
-    M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
-    with open(sift_feature_path, "wb") as f:
+    # M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
+    with open(sift_feature_path, "rb") as f:
         print(sift_feature_path)
-        pickle.dump(M, f)
+        M = pickle.load(f)
     print("dumped feature matrix")
     #CnnM = feature_extraction.create_feature_matrix_cnn(dataset_path)
     # feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
