@@ -156,9 +156,9 @@ def evaluate_main():
     m_dir = "/home/yaatehr/programs/datasets/seg_data/images/training/" #labels
     data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
     actual_dic = {}
-    with open(os.path.join(data_dir, "predicted_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), "rb")) as f:
+    with open(os.path.join(data_dir, "predicted_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
         predicted = pickle.load(f)
-    with open(os.path.join(data_dir, "clustered_images_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), 'rb')) as f:
+    with open(os.path.join(data_dir, "clustered_images_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), 'rb') as f:
         clustered_images = pickle.load(f)
     with open(os.path.join(data_dir, "prob_distrs_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
         prob_distrs = pickle.load(f)
