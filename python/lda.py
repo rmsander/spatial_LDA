@@ -52,7 +52,7 @@ class LDA2:
         self.keypoints = None
         self.k_topics = n_topics
         self.get_data_matrix()  # Call in constructor method
-        self.m_documents = self.M.shape[0]
+        # self.m_documents = self.M.shape[0]
         self.vocab_size = V
         self.init_LDA()  # Call in constructor method
 
@@ -245,7 +245,7 @@ def main():
             print(singular_label_path)
             images = os.listidr(singular_label_path)
             for f in images:
-                if f[-3] != 'jpg':
+                if f[-3:] != 'jpg':
                     continue
                 if num_files % 100 == 0:
                     print(num_files)
