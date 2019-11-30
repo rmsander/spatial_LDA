@@ -246,7 +246,7 @@ def main():
         for label in labels:
             singular_label_path = os.path.join(label_path, label)
             print(singular_label_path)
-            images = os.listidr(singular_label_path)
+            images = os.listdir(singular_label_path)
             for f in images:
                 if f[-3:] != 'jpg':
                     continue
