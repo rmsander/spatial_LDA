@@ -177,7 +177,7 @@ def evaluate_main():
         #get number of labels in each cluster
         dic = compute_num_labels_in_cluster(clustered_images[cluster], actual_dic)
         num_in_each_cluster[cluster] = dic
-    with open(os.path.join(data_dir, "num_in_each_cluster.pkl"), "wb") as f:
+    with open(os.path.join(data_dir, "num_in_each_cluster_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(num_in_each_cluster, f)
 
     #get average l2 distance between pairs of each cluster
@@ -193,8 +193,6 @@ def evaluate_main():
             dist_count = 0
             kl_count = 0
             counter =  0
-            label_path = os.path.join(m_dir, label)
-            images = os.listdir(label_path)
             for j in images:
                 for k in images:
                     if j==k:
@@ -208,9 +206,9 @@ def evaluate_main():
                     counter += 1
             avg_dist[label] = dist_count/counter
             avg_kl[label] = kl_count/counter
-    with open(os.path.join(data_dir, "avg_dist_in_label.pkl"), "wb") as f:
+    with open(os.path.join(data_dir, "avg_dist_in_label_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(avg_dist, f)
-    with open(os.path.join(data_dir, "avg_kl_in_label.pkl"), "wb") as f:
+    with open(os.path.join(data_dir, "avg_kl_in_label_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(avg_kl, f)
 
 
