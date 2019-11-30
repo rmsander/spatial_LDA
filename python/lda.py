@@ -226,8 +226,11 @@ def main():
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     img_files = os.listdir(dataset_path)
+    descriptor_path = "/home/yaatehr/programs/spatial_LDA/data" \
+                      "/image_descriptors_dictionary_%s_keypoints.pkl" % \
+                      n_keypoints
     # with open ("/home/yaatehr/programs/spatial_LDA/data/img_descriptors_dic1.pkl", "rb") as f:
-    with open ("/home/yaatehr/programs/spatial_LDA/data/cnn_descriptors_dict01.pkl", "rb") as f:
+    with open (descriptor_path, "rb") as f:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {} #dictionary of imgid: cluster
     cluster_dic = {} #dictionary of cluster: [images in cluster]
