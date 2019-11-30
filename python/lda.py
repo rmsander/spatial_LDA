@@ -26,6 +26,7 @@ from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters
 
 #n_keypoints = 100
 # n_keypoints=49*4
+n_topics = 100
 class LDA2:
     """Class that implements Latent Dirichlet Allocation using an
     Expectation-Maximization framework.  This function iterates through the
@@ -155,11 +156,11 @@ def evaluate_main():
     m_dir = "/home/yaatehr/programs/datasets/seg_data/images/training/" #labels
     data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
     actual_dic = {}
-    with open(os.path.join(data_dir, "predictions.pkl", "rb")) as f:
+    with open(os.path.join(data_dir, "predicted_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), "rb")) as f:
         predicted = pickle.load(f)
-    with open(os.path.join(data_dir, "clustered_images.pkl")) as f:
+    with open(os.path.join(data_dir, "clustered_images_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), 'rb')) as f:
         clustered_images = pickle.load(f)
-    with open(os.path.join(data_dir, "prob_distrs.pkl"), "rb") as f:
+    with open(os.path.join(data_dir, "prob_distrs_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
         prob_distrs = pickle.load(f)
     labels = os.listdir(m_dir)
     for l in labels: 
@@ -221,7 +222,7 @@ def main():
     # feature_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix"
     # with open(feature_path, "rb") as f:
         # CnnM = pickle.load(f)
-    lda = LDA2("", sift_feature_path, n_topics = 3)  # Make the class
+    lda = LDA2("", sift_feature_path, n_topics = n_topics)  # Make the class
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     img_files = os.listdir(dataset_path)
@@ -231,10 +232,10 @@ def main():
     predicted_cluster = {} #dictionary of imgid: cluster
     cluster_dic = {} #dictionary of cluster: [images in cluster]
     prob_distr_dic = {} #maps id: probability distribution over clusters
-    kmeans = KMeans(n_clusters=n_clusters)
-    vstack = np.vstack([i for i in list(descriptor_dic.values()) if i is not None and i.shape[0] == n_keypoints])
-    print(vstack.shape)
-    kmeans.fit(vstack)
+    kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
+
+    with open(kmeans_path, "rb") as f:
+        kmeans = pickle.load(f)
     num_files = 0
     for l in img_files: 
         label_path = os.path.join(dataset_path, l) #a/
@@ -244,6 +245,8 @@ def main():
             print(singular_label_path)
             images = os.listidr(singular_label_path)
             for f in images:
+                if f[-3] != 'jpg':
+                    continue
                 if num_files % 100 == 0:
                     print(num_files)
                 des = descriptor_dic[f]
@@ -260,11 +263,11 @@ def main():
                     cluster_dic[predicted_class] = [f]
                 num_files += 1
     # with open ("/home/yaatehr/programs/spatial_LDA/data/predicted1.pkl", "wb") as f:
-    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted.pkl", "wb") as f:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
         pickle.dump(predicted_cluster, f)
-    with open("/home/yaatehr/programs/spatial_LDA/data/clustered_images.pkl", "wb") as f:
+    with open("/home/yaatehr/programs/spatial_LDA/data/clustered_images_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
         pickle.dump(cluster_dic, f)
-    with open("/home/yaatehr/programs/spatial_LDA/data/prob_distrs.pkl", "wb") as f:
+    with open("/home/yaatehr/programs/spatial_LDA/data/prob_distrs_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
         pickle.dump(prob_distr_dic, f)   
     # Now we can predict!
 
