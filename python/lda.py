@@ -162,14 +162,14 @@ def evaluate_main():
         clustered_images = pickle.load(f)
     with open(os.path.join(data_dir, "prob_distrs_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
         prob_distrs = pickle.load(f)
-    labels = os.listdir(m_dir)
-    for l in labels: 
+    img_files = os.listdir(m_dir)
+    for l in img_files: 
         label_path = os.path.join(m_dir, l) #a/
         labels = os.listdir(label_path) #a/amusement_park
         for label in labels:
-            label_path = os.path.join(m_dir, label)
-            print(label_path)
-            dic = crop_images.map_image_id_to_label(label_path, label)
+            singular_label_path = os.path.join(label_path, label)
+            print(singular_label_path)
+            dic = crop_images.map_image_id_to_label(singular_label_path, label)
             actual_dic.update(dic)
 
     num_in_each_cluster = {} #maps cluster to dictionary of label to count
@@ -183,25 +183,31 @@ def evaluate_main():
     #get average l2 distance between pairs of each cluster
     avg_dist = {}  #maps cluster to average l2 distance
     avg_kl = {}  #maps cluster to average kl distance
-    for label in labels: #should be in label
-        dist_count = 0
-        kl_count = 0
-        counter =  0
-        label_path = os.path.join(m_dir, label)
-        images = os.listdir(label_path)
-        for j in images:
-            for k in images:
-                if j==k:
-                    continue
-                probj = prob_distrs[j]
-                probk = prob_distrs[k]
-                kl = compute_symmetric_KL(probj, probk)
-                kl_count += kl
-                dist = compute_probability_distr_difference(probj, probk)
-                dist_count += dist
-                counter += 1
-        avg_dist[label] = dist_count/counter
-        avg_kl[label] = kl_count/counter
+    for l in img_files: #should be in label
+        label_path = os.path.join(m_dir, l)
+        labels = os.listdir(label_path)
+        for label in labels:
+            singular_label_path = os.path.join(label_path, label)
+            print(singular_label_path)
+            images = os.listdir(singular_label_path)
+            dist_count = 0
+            kl_count = 0
+            counter =  0
+            label_path = os.path.join(m_dir, label)
+            images = os.listdir(label_path)
+            for j in images:
+                for k in images:
+                    if j==k:
+                        continue
+                    probj = prob_distrs[j]
+                    probk = prob_distrs[k]
+                    kl = compute_symmetric_KL(probj, probk)
+                    kl_count += kl
+                    dist = compute_probability_distr_difference(probj, probk)
+                    dist_count += dist
+                    counter += 1
+            avg_dist[label] = dist_count/counter
+            avg_kl[label] = kl_count/counter
     with open(os.path.join(data_dir, "avg_dist_in_label.pkl"), "wb") as f:
         pickle.dump(avg_dist, f)
     with open(os.path.join(data_dir, "avg_kl_in_label.pkl"), "wb") as f:
