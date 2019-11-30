@@ -194,8 +194,12 @@ def evaluate_main():
             kl_count = 0
             counter =  0
             for j in images:
+                if j[-3:] != 'jpg':
+                    continue
                 for k in images:
                     if j==k:
+                        continue
+                    if k[-3:] != 'jpg':
                         continue
                     probj = prob_distrs[j]
                     probk = prob_distrs[k]
