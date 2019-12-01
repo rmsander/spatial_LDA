@@ -4,7 +4,8 @@ import os
 from sklearn.cluster import MiniBatchKMeans, KMeans
 from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import make_multilabel_classification
-# import scipy.special.kl_div as KL
+import scipy
+from scipy.special import kl_div as KL
 import pickle
 from torchvision import transforms
 from skimage import io
@@ -41,7 +42,7 @@ def get_difference_histograms(hist1, hist2, metric="l2"):
     if metric == 'l1':  # Norm distance
         return np.sum(np.abs(hist1 - hist2))
     if metric == 'kl':  # Symmetric KL Divergence
-        return 0.5 * KL(hist1, hist2) + 0.5 * KL(hist2, hist1)
+        return 0.5 * np.sum(KL(hist1, hist2)) + 0.5 * np.sum(KL(hist2, hist1))
 
 
 def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
