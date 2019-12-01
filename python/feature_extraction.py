@@ -12,9 +12,9 @@ from skimage import io
 from train_cnn import get_model, resnet_transform
 import matplotlib.pyplot as plt
 
-n_keypoints = 500  # hyperparameter, need to tune
+n_keypoints = 200  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
-n_clusters = 500  # also need to tune this
+n_clusters = 200  # also need to tune this
 
 
 def get_feature_vector(img):
