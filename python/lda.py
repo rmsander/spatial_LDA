@@ -26,7 +26,7 @@ from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters
 
 #n_keypoints = 100
 # n_keypoints=49*4
-n_topics = 100
+n_topics = 200
 class LDA2:
     """Class that implements Latent Dirichlet Allocation using an
     Expectation-Maximization framework.  This function iterates through the
@@ -177,7 +177,7 @@ def evaluate_main():
         #get number of labels in each cluster
         dic = compute_num_labels_in_cluster(clustered_images[cluster], actual_dic)
         num_in_each_cluster[cluster] = dic
-    with open(os.path.join(data_dir, "num_in_each_cluster_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
+    with open(os.path.join(data_dir, "num_in_each_cluster_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(num_in_each_cluster, f)
 
     #get average l2 distance between pairs of each cluster
@@ -214,20 +214,21 @@ def evaluate_main():
                     counter += 1
             avg_dist[label] = dist_count/counter if counter!=0 else None
             avg_kl[label] = kl_count/counter if counter!=0 else None
-    with open(os.path.join(data_dir, "avg_dist_in_label_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
+    with open(os.path.join(data_dir, "avg_dist_in_label_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(avg_dist, f)
-    with open(os.path.join(data_dir, "avg_kl_in_label_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
+    with open(os.path.join(data_dir, "avg_kl_in_label_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(avg_kl, f)
 
 
 def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/yaatehr/programs/datasets/seg_data/images/training/"
+    
     sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
-    # M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
-    with open(sift_feature_path, "rb") as f:
+    M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
+    with open(sift_feature_path, "wb") as f:
         print(sift_feature_path)
-        M = pickle.load(f)
+        pickle.dump(M, f)
     print("dumped feature matrix")
     #CnnM = feature_extraction.create_feature_matrix_cnn(dataset_path)
     # feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
@@ -277,7 +278,6 @@ def main():
                 else:
                     cluster_dic[predicted_class] = [f]
                 num_files += 1
-    # with open ("/home/yaatehr/programs/spatial_LDA/data/predicted1.pkl", "wb") as f:
     with open ("/home/yaatehr/programs/spatial_LDA/data/predicted_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
         pickle.dump(predicted_cluster, f)
     with open("/home/yaatehr/programs/spatial_LDA/data/clustered_images_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
@@ -293,6 +293,5 @@ def ryan_test():
     print(M)
 
 if __name__ == "__main__":
-    #evaluate_main()
     main()
     evaluate_main()
