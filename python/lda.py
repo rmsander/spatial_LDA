@@ -26,7 +26,9 @@ from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters
 
 #n_keypoints = 100
 # n_keypoints=49*4
-n_topics = 200
+n_topics = 500
+
+
 class LDA2:
     """Class that implements Latent Dirichlet Allocation using an
     Expectation-Maximization framework.  This function iterates through the
