@@ -7,51 +7,21 @@ from itertools import zip_longest
 import os
 from torchvision import transforms
 import pickle
-
+from pca import pca, featureNormalize
+from collections import Counter
 data_root = os.path.join(os.path.dirname(__file__), '../data')
 
 
 NUM_KMEANS_CLUSTERS = 100
 
 YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data"
-PICKLE_SAVE_RUN = False
-IMAGE_MATRIX_PATH = os.path.join(data_root, "grayscale_img_matrix.pkl")
+BOX_DATA_ROOT = "~/programs/datasets/seg_data/images/training/"
+PICKLE_SAVE_RUN = True
+def get_matrix_path(edge_len):
+    return os.path.join(data_root, "grayscale_img_matrix_%d.pkl" % edge_len)
 
 
-def pca(X):
-    """
-    Computes eigenvectors of the covariance matrix of X
-    """
-    m,n = X.shape[0], X.shape[1]
-    xsquared = X.T @ X
-    
-    sigma = 1/m * xsquared
-    print('entering SVD loop')
-
-    
-    U,S,V = np.linalg.svd(sigma)
-    print('SVD loop complete')
-
-    return U,S,V
-
-
-def featureNormalize(X):
-    """
-    Returns a normalized version of X where the mean value of each feature is 0 and the standard deviation is 1.
-    Note that this operates on unraveled images in a matrix X (each image is a row)
-    """
-    mu = np.mean(X,axis=1)
-    sigma = np.std(X,axis=1)
-    print(mu)
-    print(sigma)
-    centeredX = (X.T- mu).T
-    
-    X_norm = centeredX/sigma[:, None]
-    
-    return X_norm, mu , sigma
-
-
-def stack_images_rows_with_pad(list_of_images):
+def stack_images_rows_with_pad(list_of_images,edge_len):
     """
     If/when we use a transform this won't be necessary
     """
@@ -59,19 +29,13 @@ def stack_images_rows_with_pad(list_of_images):
     out = np.vstack([np.concatenate([b, np.zeros(maxlen-len(b))]) for b in list_of_images])
     print(out.shape)
     if PICKLE_SAVE_RUN:
-        with open(IMAGE_MATRIX_PATH, 'wb') as f:
+        path = get_matrix_path(edge_len)
+        with open(path, 'wb') as f:
             pickle.dump(out, f)
     return out
 
 
-# def dataloaderToMatrix(loader):
-#     np.ndarray = 
-
-
-pca_rescale_factor = .25
-
-
-def resize_im_shape(img_shape, maxEdgeLen = 225):
+def resize_im_shape(img_shape, maxEdgeLen = 50):
     x,y = img_shape
     if x > y:
         maxEdge = x
@@ -84,45 +48,62 @@ def resize_im_shape(img_shape, maxEdgeLen = 225):
         return maxEdgeLen, remainderEdge
     return remainderEdge, maxEdgeLen
 
-def resize_im(im):
-    return resize(im, resize_im_shape(im.shape), anti_aliasing=False)
+def resize_im(im, edge_len):
+    return resize(im, resize_im_shape(im.shape, maxEdgeLen=edge_len), anti_aliasing=False)
     
 
-def createFeatureVectors():
-    grayscaleDataset = ADE20K(grayscale=True, root=YAATEH_DATA_ROOT, transform=resize_im)
-    dataset = get_single_loader(grayscaleDataset, batch_size=1)
+def createFeatureVectors(max_edge_len):
+    cnt = Counter()
+    grayscaleDataset = ADE20K(grayscale=True, root=BOX_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), withOneHotLabels=False,)
+    dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
     print(grayscaleDataset.__getitem__(0)[0].shape)
+    # print(grayscaleDataset.get_all_label_strings())
 
     flattened_image_list = []
     label_list = []
-    for step, (img, label) in enumerate(grayscaleDataset):
+    for step, (img, label) in enumerate(dataset):
         if step > 100:
             break
         flattened_image_list.append(img.flatten())
+        cnt[label] +=1
         label_list.append(label)
-    stacked_images = stack_images_rows_with_pad(flattened_image_list)
+    
+    print(cnt)
+    print(len(cnt))
+    stacked_images = stack_images_rows_with_pad(flattened_image_list, max_edge_len)
     normalized_images = featureNormalize(stacked_images)[0]
-    print('entering PCA loop')
     U = pca(normalized_images)[0]
-    print('entering KMEANS')
-
-    kmeans = KMeans(n_clusters=NUM_KMEANS_CLUSTERS)
+    kmeans = KMeans(n_clusters=len(cnt))
     print('fitting KMEANS')
 
     kmeans.fit(U)
 
-
     print('stacking vectors KMEANS')
 
 
+    for step, img in enumerate(normalized_images):
+        if step == 0:
+            vstack = img
+            continue
+        vstack = np.vstack((vstack, img))
     
+    # print(vstack)
+    prediction = kmeans.predict(vstack)
+    print(prediction)
+    path= os.path.join(data_root, "baseline_run_%d.pkl" % max_edge_len)
+    with open("path", "wb") as f:
+        eval_tup = (prediction, label_list, kmeans, vstack.shape)
+        pickle.dump(eval_tup, f)
 
-    for i,d in enumerate(dataset):
-        vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
+# createFeatureVectors()
+
+for i in range(50, 400, 50):
+    createFeatureVectors(i)
 
 
-        print(i)
-        print(d)
 
+# def evaluate_predictions(eval_tup_path):
+#     with open(eval_tup_path, "rb") as f:
+#         prediction, label_list, kmeans = pickle.load(f)
 
-createFeatureVectors()
+#     for pred_label in prediction

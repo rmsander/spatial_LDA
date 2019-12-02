@@ -71,7 +71,7 @@ segnet_transform = transforms.Compose([
 
 class ADE20K(Dataset):
 
-    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False):
+    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False, withOneHotLabels=True):
         """
         Args:
             root_dir (string): Directory with all the images organized into
@@ -84,11 +84,24 @@ class ADE20K(Dataset):
         self.root = root
         self.transform = transform
         self.grayscale = grayscale
+        self.withOneHotLabels = withOneHotLabels
         self.image_paths = []
+        self.class_indices = {}
+        index = 0
         for (dirpath, dirnames, filenames) in os.walk(self.root):
             self.image_paths.extend([os.path.join(dirpath, filename)
                                      for filename in filenames if
                                      filename.endswith('.jpg')])
+
+
+        # for (dirpath, dirnames, filenames) in os.walk(self.root):
+        #     for filename in filenames:
+        #         if filename.endswith('.jpg'):
+        #             self.image_paths.extend(os.path.join(dirpath, filename))
+        #             # if self.class_indices.
+        #             # self.class_indices[os.dirname(dirpath)] # TODO
+
+
         self.image_classes = [os.path.basename(os.path.dirname(impath)).split("/")[
             -1] for impath in self.image_paths]
         self.onehot_labelmap = self.init_one_hot_map(self.image_classes)
@@ -105,11 +118,16 @@ class ADE20K(Dataset):
             -1]
 
         label = self.image_classes[idx]
-        return image, self.onehot_labelmap[label]
+        if self.withOneHotLabels:
+            label = self.onehot_labelmap[label]
+
+        return image, label
 
     def get_all_label_strings(self, use_text=True):
         output = set(self.image_classes)
         return output
+    def get_onehot_label(self, label):
+        return self.onehot_labelmap[label]
 
     def init_one_hot_map(self, data):
         label_encoder = skl.preprocessing.LabelEncoder()
@@ -215,11 +233,19 @@ def get_loaders(dataset=None, batch_size=50, validation_split=.2,
     return train_loader, val_loader
 
 
-def get_single_loader(dataset=None, batch_size=50):
+def get_single_loader(dataset=None, batch_size=50, shuffle_dataset=False, random_seed=54):
     """
         returns a single data loader, should be used for test dataset
     """
     if not dataset:
         dataset = ImageDataset(test_root)
+    
+    dataset_size = len(dataset)
+    indices = list(range(dataset_size))
+    if shuffle_dataset:
+        np.random.seed(random_seed)
+        np.random.shuffle(indices)
 
-    return torch.utils.data.DataLoader(dataset, batch_size=batch_size)
+    sampler = SubsetRandomSampler(indices)
+
+    return torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=sampler)

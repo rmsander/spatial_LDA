@@ -199,6 +199,7 @@ def get_model():
     # cut off the last layer of this classifier
     new_classifier = nn.Sequential(*list(model.children())[:-2])
     model = new_classifier
+    return model
 
 
 def cnnEpoch(model, loader, device, criterion, output_period, epoch,
