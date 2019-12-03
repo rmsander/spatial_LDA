@@ -40,8 +40,8 @@ def main():
     print("Evaluation finished")
     # Pickle distance dictionary
     f_out_pickle = "/home/yaatehr/programs/spatial_LDA/data/EVAL_kmeans_" \
-                   "%s_clusters_" \
-               "%s_keypoints.pkl" % (num_clusters, num_keypoints)
+                   "%s_clusters_%s_keypoints_%s_metric.pkl" % (num_clusters,
+                                                      num_keypoints, metric)
     with open(f_out, "rb") as f:
         pickle.dump(histogram_distance_dict, f)
         f.close()
