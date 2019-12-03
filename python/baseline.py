@@ -15,7 +15,7 @@ data_root = os.path.join(os.path.dirname(__file__), '../data')
 NUM_KMEANS_CLUSTERS = 100
 
 YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data"
-BOX_DATA_ROOT = "~/programs/datasets/seg_data/images/training/"
+BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
 PICKLE_SAVE_RUN = True
 def get_matrix_path(edge_len):
     return os.path.join(data_root, "grayscale_img_matrix_%d.pkl" % edge_len)

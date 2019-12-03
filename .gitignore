@@ -12,7 +12,9 @@ __pycache__
 *.tar
 *.json
 
-
+data/cnn_feature_matrix
+data/cnn_feature_matrix
+saved_pickles/
 
 
 # Created by https://www.gitignore.io/api/python,opencv,pycharm,eclipse,visualstudio,jupyternotebooks,visualstudiocode
