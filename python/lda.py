@@ -251,7 +251,7 @@ def main():
     with open (descriptor_path, "rb") as f:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {} #dictionary of imgid: cluster
-    cluster_dic = {} #dictionary of cluster: [images in cluster]
+    cluster_dic = {} #ictionary of cluster: [images in cluster]
     prob_distr_dic = {} #maps id: probability distribution over clusters
     kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
 

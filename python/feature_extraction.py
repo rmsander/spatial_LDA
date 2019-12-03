@@ -11,6 +11,7 @@ from torchvision import transforms
 from skimage import io
 from train_cnn import get_model, resnet_transform
 import matplotlib.pyplot as plt
+import argparse
 
 n_keypoints = 500  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
@@ -242,7 +243,6 @@ def main():
     with open("/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix",
               "wb") as f:
         pickle.dump(CnnMatrix, f)
-
 
 if __name__ == "__main__":
     main()
