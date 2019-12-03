@@ -54,7 +54,7 @@ def resize_im(im, edge_len):
 
 def createFeatureVectors(max_edge_len):
     cnt = Counter()
-    grayscaleDataset = ADE20K(grayscale=True, root=YAATEH_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=45, numLabelsLoaded=5)
+    grayscaleDataset = ADE20K(grayscale=True, root=YAATEH_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=45, labelSubset=['bathroom'])
     dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
     print(grayscaleDataset.__getitem__(0)[0].shape)
     # print(grayscaleDataset.class_indices)
