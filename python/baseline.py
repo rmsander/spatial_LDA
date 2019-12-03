@@ -49,12 +49,12 @@ def resize_im_shape(img_shape, maxEdgeLen = 50):
     return remainderEdge, maxEdgeLen
 
 def resize_im(im, edge_len):
-    return resize(im, resize_im_shape(im.shape, maxEdgeLen=edge_len), anti_aliasing=False, mode='constant')
+    return resize(im, resize_im_shape(im.shape, maxEdgeLen=edge_len), anti_aliasing=False)
     
 
 def createFeatureVectors(max_edge_len):
     cnt = Counter()
-    grayscaleDataset = ADE20K(grayscale=True, root=YAATEH_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=45, numLabelsLoaded=10)#labelSubset=['bathroom'])
+    grayscaleDataset = ADE20K(grayscale=True, root=YAATEH_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=45, labelSubset=['bathroom'])
     dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
     print(grayscaleDataset.__getitem__(0)[0].shape)
     # print(grayscaleDataset.class_indices)

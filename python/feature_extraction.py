@@ -61,10 +61,11 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
     histogram_distance_dict = {}
     # Iterate over each letter label
     for label_letter in label_letters:  # Iterate over each label letter categ.
+        print("Label letter is: {}".format(label_letter))
         sub_dir = os.path.join(label_dir, label_letter)
         label_names = os.listdir(sub_dir)  # Lists labels as directories
         for label in label_names:  # Iterate over each individual label
-            histogram_distance_dict[label] = 0
+            histogram_distance_dict[label] = np.nan
             # Get files in sub-sub directory
             label_dir_name = os.path.join(label_dir, label_letter, label)
             label_dir_files = os.listdir(label_dir_name)
@@ -73,10 +74,11 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
             input_imgs = [file for file in label_dir_files if file.endswith(
                 ".jpg")]
             N = len(input_imgs)
-
             # Hash table to efficiently check if we've seen images before
             seen = {}
-
+            if N <= 1:
+                continue
+            histogram_distance_dict[label] = 0
             # Now iterate through all the files for each ground truth label
             for f1 in input_imgs:
                 for f2 in input_imgs:
