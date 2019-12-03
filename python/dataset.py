@@ -9,7 +9,7 @@ from collections import Counter
 import sklearn as skl
 from crop_images import *
 from utils import *
-from torch.utils.data.sampler import SubsetRandomSampler
+from torch.utils.data.sampler import SubsetRandomSampler, WeightedRandomSampler
 import numpy as np
 
 data_root = os.path.join(os.path.dirname(__file__), '../data')
@@ -72,7 +72,7 @@ segnet_transform = transforms.Compose([
 
 class ADE20K(Dataset):
 
-    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False, numLabelsLoaded=0, labelSubset=None, useStringLabels=True, randomSeed=34):
+    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False, numLabelsLoaded=0, labelSubset=None, useStringLabels=True, randomSeed=33, normalizeWeights=False):
         """
         Args:
             root_dir (string): Directory with all the images organized into
@@ -82,7 +82,8 @@ class ADE20K(Dataset):
             grayscale: convert to greyscale (load with skimage imread)
             numLabelsLoaded: pick a subset of labels (ran tune with randomSeed)
             labelSubset: manually pick labels, overrides numLabelsLoaded
-            useStringLabels: 
+            useStringLabels: use string over one hot
+            normalizeWeights: if label subsets in effct, will make sure there are equal numbers of each class
 
 
         """
@@ -112,7 +113,7 @@ class ADE20K(Dataset):
                     index +=1
 
     
-        # self.image_classes = list(self.class_indices.keys())
+        self.class_set = list(self.class_indices.keys())
 
         #select subset of classes
         if labelSubset is not None or numLabelsLoaded > 0: 
@@ -127,9 +128,11 @@ class ADE20K(Dataset):
             #for random subset fo classes
             elif(numLabelsLoaded > 0):
                 np.random.seed(randomSeed)
-                indices = list(range(len(self.image_classes)))
+                indices = list(range(len(self.class_set)))
                 np.random.shuffle(indices)
-                labelSubset = [self.image_classes[j] for i, j in enumerate(indices) if i < numLabelsLoaded]
+                labelSubset = [self.class_set[j] for i, j in enumerate(indices) if i < numLabelsLoaded]
+                print(len(labelSubset))
+                print(labelSubset)
                 indToRemove = copy.copy(self.class_indices)
                 for label in labelSubset:
                     del indToRemove[label]
@@ -141,17 +144,28 @@ class ADE20K(Dataset):
             self.image_paths = np.delete(np.array(self.image_paths), indices).tolist()
             self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
             index = 0
+            min_label_samples = min([len(self.class_indices[i]) for i in labelSubset])
             self.class_indices = {}
             self.counter = Counter()
-            for path in self.image_paths:
+            new_impaths = []
+            new_labels = []
+            for i, path in enumerate(self.image_paths):
                 label = os.path.basename(os.path.dirname(path)).split("/")[-1]
+
+                if(normalizeWeights):
+                    if self.counter[label] == min_label_samples:
+                        continue
+                    new_impaths.append(path)
+                    new_labels.append(self.image_classes[i])
                 self.counter[label] +=1
                 if label in self.class_indices.keys():
                     self.class_indices[label].append(index)
                 else:
                     self.class_indices[label] = [index]
                 index +=1 
-            # self.image_classes = labelSubset
+            if(normalizeWeights):
+                self.image_paths = new_impaths
+                self.clas_labels = new_labels
             
         print("Loaded ADE20K ewith follwoing distribution: ", self.counter)
 
@@ -291,12 +305,14 @@ def get_single_loader(dataset=None, batch_size=50, shuffle_dataset=False, random
     if not dataset:
         dataset = ImageDataset(test_root)
     
+    # if getattr(dataset, 'counter', None) != None:
+    #     sampler = WeightedRandomSampler(list(np.array([i for i in dataset.counter.values()])/sum(dataset.counter.values())), 100)
+    # else:
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
     if shuffle_dataset:
         np.random.seed(random_seed)
         np.random.shuffle(indices)
-
     sampler = SubsetRandomSampler(indices)
 
     return torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=sampler)
