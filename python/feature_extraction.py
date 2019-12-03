@@ -237,7 +237,7 @@ def create_feature_matrix_cnn(img_path, model, n_clusters=n_clusters):
 
 def main():
     dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_1"
-    # M = create_feature_matrix(dataset_path)
+    # M = create_feature_matrix(dataset_npath)
     model = get_model()
     CnnMatrix = create_feature_matrix_cnn(dataset_path, model)
 
