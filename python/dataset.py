@@ -5,7 +5,7 @@ from torch.utils.data import Dataset, DataLoader
 from skimage import io
 from skimage.color import rgb2gray
 import copy
-
+from collections import Counter
 import sklearn as skl
 from crop_images import *
 from utils import *
@@ -48,7 +48,7 @@ try:
 except Exception as e:
     classname_map = None
     granularity_map = None
-    print("could not initialize classname map or granularity map for google open images")
+    # print("could not initialize classname map or granularity map for google open images")
 
 
 resnet_transform = transforms.Compose([
@@ -95,6 +95,7 @@ class ADE20K(Dataset):
         self.image_paths = []
         self.class_indices = {}
         self.image_classes = []
+        self.counter = Counter()
         index = 0
         for (dirpath, dirnames, filenames) in os.walk(self.root):
             for filename in filenames:
@@ -103,6 +104,7 @@ class ADE20K(Dataset):
                     label = os.path.basename(dirpath).split("/")[-1]
                     self.image_classes.append(label)
                     # print(label)
+                    self.counter[label]+=1
                     if label in self.class_indices.keys():
                         self.class_indices[label].append(index)
                     else:
@@ -140,15 +142,18 @@ class ADE20K(Dataset):
             self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
             index = 0
             self.class_indices = {}
+            self.counter = Counter()
             for path in self.image_paths:
                 label = os.path.basename(os.path.dirname(path)).split("/")[-1]
-                # print(label)
+                self.counter[label] +=1
                 if label in self.class_indices.keys():
                     self.class_indices[label].append(index)
                 else:
                     self.class_indices[label] = [index]
                 index +=1 
             # self.image_classes = labelSubset
+            
+        print("Loaded ADE20K ewith follwoing distribution: ", self.counter)
 
         self.onehot_labelmap = self.init_one_hot_map(list(self.class_indices.keys()))
 
@@ -179,7 +184,7 @@ class ADE20K(Dataset):
         label_encoder = skl.preprocessing.LabelEncoder()
         integer_encoded = label_encoder.fit_transform(data)
         # binary encode
-        onehot_encoder = skl.preprocessing.OneHotEncoder(sparse=False)
+        onehot_encoder = skl.preprocessing.OneHotEncoder(sparse=False, categories='auto')
         integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
         onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
         return dict(zip(data, onehot_encoded))
