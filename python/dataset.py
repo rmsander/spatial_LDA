@@ -4,6 +4,7 @@ from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 from skimage import io
 from skimage.color import rgb2gray
+import copy
 
 import sklearn as skl
 from crop_images import *
@@ -71,40 +72,81 @@ segnet_transform = transforms.Compose([
 
 class ADE20K(Dataset):
 
-    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False, withOneHotLabels=True):
+    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False, numLabelsLoaded=0, labelSubset=None, useStringLabels=True, randomSeed=34):
         """
         Args:
             root_dir (string): Directory with all the images organized into
             folders by class label (hash).
             transform (callable, optional): Optional transform to be applied
                 on a sample.
+            grayscale: convert to greyscale (load with skimage imread)
+            numLabelsLoaded: pick a subset of labels (ran tune with randomSeed)
+            labelSubset: manually pick labels, overrides numLabelsLoaded
+            useStringLabels: 
+
+
         """
         super(Dataset, self).__init__()
 
         self.root = root
         self.transform = transform
         self.grayscale = grayscale
-        self.withOneHotLabels = withOneHotLabels
+        self.useStringLabels = useStringLabels
         self.image_paths = []
         self.class_indices = {}
+        self.image_classes = []
         index = 0
         for (dirpath, dirnames, filenames) in os.walk(self.root):
-            self.image_paths.extend([os.path.join(dirpath, filename)
-                                     for filename in filenames if
-                                     filename.endswith('.jpg')])
+            for filename in filenames:
+                if filename.endswith('.jpg'):
+                    self.image_paths.append(os.path.join(dirpath, filename))
+                    label = os.path.basename(dirpath).split("/")[-1]
+                    self.image_classes.append(label)
+                    # print(label)
+                    if label in self.class_indices.keys():
+                        self.class_indices[label].append(index)
+                    else:
+                        self.class_indices[label] = [index]
+                    index +=1
 
+    
+        # self.image_classes = list(self.class_indices.keys())
 
-        # for (dirpath, dirnames, filenames) in os.walk(self.root):
-        #     for filename in filenames:
-        #         if filename.endswith('.jpg'):
-        #             self.image_paths.extend(os.path.join(dirpath, filename))
-        #             # if self.class_indices.
-        #             # self.class_indices[os.dirname(dirpath)] # TODO
+        #select subset of classes
+        if labelSubset is not None or numLabelsLoaded > 0: 
+            np.random.seed(randomSeed)
+            if labelSubset is not None:
+                indToRemove = copy.copy(self.class_indices)
+                for label in labelSubset:
+                    del indToRemove[label]
+                
+            elif(numLabelsLoaded > 0):
+                indices = list(range(len(self.image_classes)))
+                np.random.shuffle(indices)
+                labelSubset = [self.image_classes[j] for i, j in enumerate(indices) if i < numLabelsLoaded]
+                indToRemove = copy.copy(self.class_indices)
+                for label in labelSubset:
+                    del indToRemove[label]
+            indices = []
+            for l in [indToRemove[key] for key in indToRemove.keys()]:
+                indices.extend(l)
+            indices = np.array(indices)
+            # print(indices.shape)
+            self.image_paths = np.delete(np.array(self.image_paths), indices).tolist()
+            self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
+            index = 0
+            self.class_indices = {}
+            for path in self.image_paths:
+                label = os.path.basename(os.path.dirname(path)).split("/")[-1]
+                # print(label)
+                if label in self.class_indices.keys():
+                    self.class_indices[label].append(index)
+                else:
+                    self.class_indices[label] = [index]
+                index +=1 
+            # self.image_classes = labelSubset
 
-
-        self.image_classes = [os.path.basename(os.path.dirname(impath)).split("/")[
-            -1] for impath in self.image_paths]
-        self.onehot_labelmap = self.init_one_hot_map(self.image_classes)
+        self.onehot_labelmap = self.init_one_hot_map(list(self.class_indices.keys()))
 
     def __len__(self):
         return len(self.image_paths)
@@ -118,7 +160,7 @@ class ADE20K(Dataset):
             -1]
 
         label = self.image_classes[idx]
-        if self.withOneHotLabels:
+        if not self.useStringLabels:
             label = self.onehot_labelmap[label]
 
         return image, label
