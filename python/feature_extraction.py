@@ -29,8 +29,10 @@ def build_histogram(descriptor_list, cluster_alg, n_clusters):
     and a descriptor list for an image to a histogram."""
     histogram = np.zeros(n_clusters)
     cluster_result = cluster_alg.predict(descriptor_list)
+    print(cluster_result)
     for i in cluster_result:
         histogram[i] += 1.0
+    print(histogram)
     return histogram
 
 
