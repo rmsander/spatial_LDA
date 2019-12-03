@@ -56,8 +56,7 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
     """
 
     # Get files and directory
-    label_dir = "~/programs/datasets/seg_data/images/training/"
-    print("IS DIRECTORY: {}".format(os.path.isdir(label_dir)))
+    label_dir = "/home/yaatehr/programs/datasets/seg_data/images/training/"
     label_letters = os.listdir(label_dir)  # E.g. directories given by "a/"
     histogram_distance_dict = {}
     # Iterate over each letter label
