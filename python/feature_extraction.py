@@ -64,6 +64,7 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
         sub_dir = os.path.join(label_dir, label_letter)
         label_names = os.listdir(sub_dir)  # Lists labels as directories
         for label in label_names:  # Iterate over each individual label
+            histogram_distance_dict[label] = 0
             # Get files in sub-sub directory
             label_dir_name = os.path.join(label_dir, label_letter, label)
             label_dir_files = os.listdir(label_dir_name)
