@@ -275,8 +275,6 @@ def main():
                     continue
                 feature = feature_extraction.build_histogram(des, kmeans, n_clusters)
                 predictions = lda_model.transform(np.reshape(feature, (1, feature.size)))
-                print("prediction: ")
-                print(predictions)
                 prob_distr_dic[f] = predictions
                 predicted_class = np.argmax(predictions, axis=1)[0]
                 predicted_cluster[f] = predicted_class
