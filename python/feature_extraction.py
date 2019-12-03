@@ -159,7 +159,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     # print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
-    kmeans.fit(vstack)
+    # kmeans.fit(vstack)
     kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
     with open(kmeans_path, "rb") as f:
         # pickle.dump(kmeans, f)
