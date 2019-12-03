@@ -26,7 +26,7 @@ from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters
 
 #n_keypoints = 100
 # n_keypoints=49*4
-n_topics = 20
+n_topics = 150
 
 
 class LDA2:
@@ -147,7 +147,7 @@ def compute_num_labels_in_cluster(cluster_predictions, actual_dic):
     return count
 
 def compute_symmetric_KL(dist_a, dist_b):
-    return 0.5 * (kl_div(dist_a, dist_b)) + 0.5 * (kl_div(dist_b, dist_a))
+    return 0.5 * np.sum((kl_div(dist_a, dist_b))) + 0.5 * np.sum((kl_div(dist_b, dist_a)))
 
 def compute_probability_distr_difference(dist1, dist2):
     """computes l2 distance between two probabilty distributions"""
