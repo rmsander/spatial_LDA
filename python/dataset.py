@@ -114,13 +114,17 @@ class ADE20K(Dataset):
 
         #select subset of classes
         if labelSubset is not None or numLabelsLoaded > 0: 
-            np.random.seed(randomSeed)
-            if labelSubset is not None:
+            #for manually selected strings
+            if labelSubset is not None:              
                 indToRemove = copy.copy(self.class_indices)
+                existing_classes = set(self.image_classes)
                 for label in labelSubset:
+                    if label not in existing_classes:
+                        raise Exception("Invalid class name in labelSubset: " + label)
                     del indToRemove[label]
-                
+            #for random subset fo classes
             elif(numLabelsLoaded > 0):
+                np.random.seed(randomSeed)
                 indices = list(range(len(self.image_classes)))
                 np.random.shuffle(indices)
                 labelSubset = [self.image_classes[j] for i, j in enumerate(indices) if i < numLabelsLoaded]
