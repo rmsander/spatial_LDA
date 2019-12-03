@@ -11,10 +11,11 @@ from torchvision import transforms
 from skimage import io
 from train_cnn import get_model, resnet_transform
 import matplotlib.pyplot as plt
+import argparse
 
-n_keypoints = 100  # hyperparameter, need to tune
+n_keypoints = 150  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
-n_clusters = 100  # also need to tune this
+n_clusters = 150  # also need to tune this
 
 
 def get_feature_vector(img):
@@ -162,7 +163,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     with open(kmeans_path, "rb") as f:
         # pickle.dump(kmeans, f)
         kmeans = pickle.load(f)
-    print('dumped kmeans model')
+    print('loaded kmeans model')
 
     # Get image files
     M = []
@@ -242,7 +243,6 @@ def main():
     with open("/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix",
               "wb") as f:
         pickle.dump(CnnMatrix, f)
-
 
 if __name__ == "__main__":
     main()

@@ -26,7 +26,7 @@ from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters
 
 #n_keypoints = 100
 # n_keypoints=49*4
-n_topics = 150
+n_topics = 100
 
 
 class LDA2:
@@ -158,11 +158,11 @@ def evaluate_main():
     m_dir = "/home/yaatehr/programs/datasets/seg_data/images/training/" #labels
     data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
     actual_dic = {}
-    with open(os.path.join(data_dir, "predicted_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
+    with open(os.path.join(data_dir, "predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
         predicted = pickle.load(f)
-    with open(os.path.join(data_dir, "clustered_images_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), 'rb') as f:
+    with open(os.path.join(data_dir, "clustered_images_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), 'rb') as f:
         clustered_images = pickle.load(f)
-    with open(os.path.join(data_dir, "prob_distrs_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
+    with open(os.path.join(data_dir, "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
         prob_distrs = pickle.load(f)
     img_files = os.listdir(m_dir)
     for l in img_files: 
@@ -251,7 +251,7 @@ def main():
     with open (descriptor_path, "rb") as f:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {} #dictionary of imgid: cluster
-    cluster_dic = {} #dictionary of cluster: [images in cluster]
+    cluster_dic = {} #ictionary of cluster: [images in cluster]
     prob_distr_dic = {} #maps id: probability distribution over clusters
     kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
 
@@ -283,11 +283,11 @@ def main():
                 else:
                     cluster_dic[predicted_class] = [f]
                 num_files += 1
-    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+    with open ("/home/yaatehr/programs/spatial_LDA/data/predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
         pickle.dump(predicted_cluster, f)
-    with open("/home/yaatehr/programs/spatial_LDA/data/clustered_images_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+    with open("/home/yaatehr/programs/spatial_LDA/data/clustered_images_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
         pickle.dump(cluster_dic, f)
-    with open("/home/yaatehr/programs/spatial_LDA/data/prob_distrs_%s_topics_%s_keypoints_%s_descriptors.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+    with open("/home/yaatehr/programs/spatial_LDA/data/prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
         pickle.dump(prob_distr_dic, f)   
     # Now we can predict!
 
