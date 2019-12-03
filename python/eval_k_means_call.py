@@ -9,9 +9,9 @@ def main():
     parser.add_argument("-m", "--metric", \
                         help="Distance metric ('l2', 'l1', 'kl')")
     parser.add_argument("-n", "--num_clusters", \
-                        help="Number of clusters")
+                        help="Number of clusters", type=int)
     parser.add_argument("-k", "--num_keypoints", \
-                        help="Number of keypoints")
+                        help="Number of keypoints", type=int)
     parsed_args = vars(parser.parse_args())
 
     # Get params
