@@ -233,8 +233,8 @@ def main():
         pickle.dump(M, f)
     print("dumped feature matrix")
 
-    with open(sift_feature_path, "rb") as f:
-        M = pickle.load(f)
+    # with open(sift_feature_path, "rb") as f:
+        # M = pickle.load(f)
     #CnnM = feature_extraction.create_feature_matrix_cnn(dataset_path)
     # feature_path = "/home/yaatehr/programs/spatial_LDA/data/features1.pkl"
     # feature_path = "/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix"
