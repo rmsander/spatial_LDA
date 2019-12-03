@@ -14,11 +14,11 @@ data_root = os.path.join(os.path.dirname(__file__), '../data')
 
 NUM_KMEANS_CLUSTERS = 100
 
-YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data"
+YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data/images/training"
 BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
 PICKLE_SAVE_RUN = True
 def get_matrix_path(edge_len):
-    return os.path.join("../data", "grayscale_img_matrix_%d.pkl" % edge_len)
+    return os.path.join(data_root, "grayscale_img_matrix_%d.pkl" % edge_len)
 
 
 def stack_images_rows_with_pad(list_of_images,edge_len):
@@ -54,15 +54,17 @@ def resize_im(im, edge_len):
 
 def createFeatureVectors(max_edge_len):
     cnt = Counter()
-    grayscaleDataset = ADE20K(grayscale=True, root=BOX_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), withOneHotLabels=False,)
+    grayscaleDataset = ADE20K(grayscale=True, root=YAATEH_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=45, numLabelsLoaded=5)
     dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
     print(grayscaleDataset.__getitem__(0)[0].shape)
-    # print(grayscaleDataset.get_all_label_strings())
+    # print(grayscaleDataset.class_indices)
+    print("dataset len: ", len(grayscaleDataset.image_paths))
 
     flattened_image_list = []
     label_list = []
+    print("dataloader len: ", len(dataset))
     for step, (img, label) in enumerate(dataset):
-        if step > 1000:
+        if step > 100 or step > len(dataset) - 1:
             break
         flattened_image_list.append(img.flatten())
         cnt[label] +=1
@@ -90,7 +92,7 @@ def createFeatureVectors(max_edge_len):
     # print(vstack)
     prediction = kmeans.predict(vstack)
     print(prediction)
-    path = os.path.join("../data", "baseline_run_%d.pkl" % max_edge_len)
+    path = os.path.join(data_root, "baseline_run_%d.pkl" % max_edge_len)
     with open(path, "wb") as f:
         eval_tup = (prediction, label_list, kmeans, vstack.shape)
         pickle.dump(eval_tup, f)
