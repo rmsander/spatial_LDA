@@ -12,9 +12,9 @@ from skimage import io
 from train_cnn import get_model, resnet_transform
 import matplotlib.pyplot as plt
 
-n_keypoints = 50  # hyperparameter, need to tune
+n_keypoints = 100  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
-n_clusters = 50  # also need to tune this
+n_clusters = 100  # also need to tune this
 
 
 def get_feature_vector(img):
@@ -131,39 +131,39 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                       "/image_descriptors_dictionary_%s_keypoints.pkl" % \
                       n_keypoints
     print(descriptor_path)
-    # with open(descriptor_path,"rb") as f:
-    #    descriptor_list_dic = pickle.load(f) 
     with open(descriptor_path,"rb") as f:
-        print(descriptor_path)
-        descriptor_list_dic = pickle.load(f)
-    descriptor_list_dic = {} #f: descriptor vectors
-    num_files = 0
-    for l in img_files: 
-        label_path = os.path.join(img_path, l) #a/
-        labels = os.listdir(label_path) #a/amusement_park
-        for label in labels:
-            singular_label_path = os.path.join(label_path, label)
-            print(singular_label_path)
-            images = os.listdir(singular_label_path)
-            for f in images:
-                if f[-3:] != 'jpg':
-                    continue
-                num_files += 1
-                if num_files %99==0:
-                    print(str(num_files+1)+" files processed")
-                A = cv.imread(os.path.join(singular_label_path, f)) # read image
-                _, des = get_feature_vector(A)
-                descriptor_list_dic[f]= des
-    with open(descriptor_path, "wb") as f:
-        pickle.dump(descriptor_list_dic, f)
-    print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
+       descriptor_list_dic = pickle.load(f) 
+    # with open(descriptor_path,"rb") as f:
+    #     print(descriptor_path)
+    #     descriptor_list_dic = pickle.load(f)
+    # descriptor_list_dic = {} #f: descriptor vectors
+    # num_files = 0
+    # for l in img_files: 
+    #     label_path = os.path.join(img_path, l) #a/
+    #     labels = os.listdir(label_path) #a/amusement_park
+    #     for label in labels:
+    #         singular_label_path = os.path.join(label_path, label)
+    #         print(singular_label_path)
+    #         images = os.listdir(singular_label_path)
+    #         for f in images:
+    #             if f[-3:] != 'jpg':
+    #                 continue
+    #             num_files += 1
+    #             if num_files %99==0:
+    #                 print(str(num_files+1)+" files processed")
+    #             A = cv.imread(os.path.join(singular_label_path, f)) # read image
+    #             _, des = get_feature_vector(A)
+    #             descriptor_list_dic[f]= des
+    # with open(descriptor_path, "wb") as f:
+    #     pickle.dump(descriptor_list_dic, f)
+    # print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
     kmeans.fit(vstack)
     kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
-    with open(kmeans_path, "wb") as f:
-        pickle.dump(kmeans, f)
-        # kmeans = pickle.load(f)
+    with open(kmeans_path, "rb") as f:
+        # pickle.dump(kmeans, f)
+        kmeans = pickle.load(f)
     print('dumped kmeans model')
 
     # Get image files
