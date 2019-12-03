@@ -57,6 +57,7 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
 
     # Get files and directory
     label_dir = "~/programs/datasets/seg_data/images/training/"
+    print("IS DIRECTORY: {}".format(os.path.isdir(label_dir)))
     label_letters = os.listdir(label_dir)  # E.g. directories given by "a/"
     histogram_distance_dict = {}
     # Iterate over each letter label
@@ -236,7 +237,7 @@ def create_feature_matrix_cnn(img_path, model, n_clusters=n_clusters):
 
 def main():
     dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_1"
-    # M = create_feature_matrix(dataset_path)
+    # M = create_feature_matrix(dataset_npath)
     model = get_model()
     CnnMatrix = create_feature_matrix_cnn(dataset_path, model)
 
