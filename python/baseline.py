@@ -18,7 +18,7 @@ YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data"
 BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
 PICKLE_SAVE_RUN = True
 def get_matrix_path(edge_len):
-    return os.path.join(data_root, "grayscale_img_matrix_%d.pkl" % edge_len)
+    return os.path.join("../data", "grayscale_img_matrix_%d.pkl" % edge_len)
 
 
 def stack_images_rows_with_pad(list_of_images,edge_len):
@@ -62,7 +62,7 @@ def createFeatureVectors(max_edge_len):
     flattened_image_list = []
     label_list = []
     for step, (img, label) in enumerate(dataset):
-        if step > 100:
+        if step > 1000:
             break
         flattened_image_list.append(img.flatten())
         cnt[label] +=1
@@ -90,14 +90,14 @@ def createFeatureVectors(max_edge_len):
     # print(vstack)
     prediction = kmeans.predict(vstack)
     print(prediction)
-    path= os.path.join(data_root, "baseline_run_%d.pkl" % max_edge_len)
-    with open("path", "wb") as f:
+    path = os.path.join("../data", "baseline_run_%d.pkl" % max_edge_len)
+    with open(path, "wb") as f:
         eval_tup = (prediction, label_list, kmeans, vstack.shape)
         pickle.dump(eval_tup, f)
 
 # createFeatureVectors()
 
-for i in range(50, 400, 50):
+for i in range(20, 400, 20):
     createFeatureVectors(i)
 
 
