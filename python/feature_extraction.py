@@ -251,7 +251,10 @@ def make_dataset_directory(dataset_filepath):
     grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     if not os.path.exists(dataset_filepath):
         os.mkdir(dataset_filepath)
+        print("created directory")
+    print('going into loop')
     for idx, (image, label) in enumerate(grayscaleDataset):
+        print('hi')
         letter = label[0]
         letter_path = os.path.join(dataset_filepath, letter)
         if not os.path.exists(letter_path):
