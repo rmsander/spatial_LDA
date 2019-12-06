@@ -15,16 +15,15 @@ import matplotlib.pyplot as plt
 import argparse
 from dataset import get_single_loader, ADE20K
 
-n_keypoints = 50  # hyperparameter, need to tune
+n_keypoints = 150  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
-n_clusters = 50  # also need to tune this
+n_clusters = 150  # also need to tune this
 
 
 def get_feature_vector(img):
     # Get keypoints and feature descriptors
     sift = cv.xfeatures2d_SIFT.create(n_keypoints)
     kp, des = sift.detectAndCompute(img, None)
-    print(kp)
     return kp, des
 
 
@@ -137,8 +136,8 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                       "/image_descriptors_dictionary_%s_keypoints.pkl" % \
                       n_keypoints
     print(descriptor_path)
-    with open(descriptor_path, "rb") as f:
-        descriptor_list_dic = pickle.load(f)
+    # with open(descriptor_path, "rb") as f:
+        # descriptor_list_dic = pickle.load(f)
         # with open(descriptor_path,"rb") as f:
         # print(descriptor_path)
         # descriptor_list_dic = pickle.load(f)
@@ -160,9 +159,9 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                 A = cv.imread(os.path.join(singular_label_path, f)) # read
                 _, des = get_feature_vector(A)
                 descriptor_list_dic[f]= des
-    # with open(descriptor_path, "wb") as f:
-    #     pickle.dump(descriptor_list_dic, f)
-    # print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
+    with open(descriptor_path, "wb") as f:
+        pickle.dump(descriptor_list_dic, f)
+    print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if
                         i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
