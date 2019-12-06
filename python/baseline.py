@@ -54,14 +54,15 @@ def resize_im(im, edge_len):
 
 def createFeatureVectors(max_edge_len):
     cnt = Counter()
+    grayscaleDataset = ADE20K(grayscale=True, root=BOX_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=49)#, numLabelsLoaded=10)
 
-    grayscaleDataset = ADE20K(grayscale=True, root=BOX_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=49, \
-        labelSubset=['bathroom', 'game_room', 'dining_room', 'hotel_room', 'attic', 'outdoor'], normalizeWeights=True)
+    #select most commoon label strings from tuples of (label, count)
+    mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
+    grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
 
     dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
-    print(grayscaleDataset.__getitem__(0)[0].shape)
-    # print(grayscaleDataset.class_indices)
-    print("dataset len: ", len(grayscaleDataset.image_paths))
+    print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
+    print("dataset len is: ", len(grayscaleDataset.image_paths))
 
     flattened_image_list = []
     label_list = []

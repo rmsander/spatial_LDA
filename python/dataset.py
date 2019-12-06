@@ -96,78 +96,35 @@ class ADE20K(Dataset):
         self.image_paths = []
         self.class_indices = {}
         self.image_classes = []
+        self.randomSeed = randomSeed
         self.counter = Counter()
         index = 0
-        for (dirpath, dirnames, filenames) in os.walk(self.root):
-            for filename in filenames:
-                if filename.endswith('.jpg'):
-                    self.image_paths.append(os.path.join(dirpath, filename))
-                    label = os.path.basename(dirpath).split("/")[-1]
-                    self.image_classes.append(label)
-                    # print(label)
-                    self.counter[label]+=1
-                    if label in self.class_indices.keys():
-                        self.class_indices[label].append(index)
-                    else:
-                        self.class_indices[label] = [index]
-                    index +=1
-
-    
+        label_letters = os.listdir(self.root)  # E.g. directories given by "a/"
+        # Iterate over each letter label
+        for label_letter in label_letters:  # Iterate over each label letter categ.
+            sub_dir = os.path.join(self.root, label_letter)
+            label_names = os.listdir(sub_dir)  # Lists labels as directories
+            for label in label_names:  # Iterate over each individual label
+                # Get files in sub-sub directory
+                label_dir_name = os.path.join(self.root, label_letter, label)
+                label_dir_files = os.listdir(label_dir_name)
+                for filename in label_dir_files:
+                    if filename.endswith('.jpg'):
+                        self.image_paths.append(os.path.join(label_dir_name, filename))
+                        self.image_classes.append(label)
+                        # print(label)
+                        self.counter[label]+=1
+                        if label in self.class_indices.keys():
+                            self.class_indices[label].append(index)
+                        else:
+                            self.class_indices[label] = [index]
+                        index +=1
         self.class_set = list(self.class_indices.keys())
 
         #select subset of classes
         if labelSubset is not None or numLabelsLoaded > 0: 
-            #for manually selected strings
-            if labelSubset is not None:              
-                indToRemove = copy.copy(self.class_indices)
-                existing_classes = set(self.image_classes)
-                for label in labelSubset:
-                    if label not in existing_classes:
-                        raise Exception("Invalid class name in labelSubset: " + label)
-                    del indToRemove[label]
-            #for random subset fo classes
-            elif(numLabelsLoaded > 0):
-                np.random.seed(randomSeed)
-                indices = list(range(len(self.class_set)))
-                np.random.shuffle(indices)
-                labelSubset = [self.class_set[j] for i, j in enumerate(indices) if i < numLabelsLoaded]
-                print(len(labelSubset))
-                print(labelSubset)
-                indToRemove = copy.copy(self.class_indices)
-                for label in labelSubset:
-                    del indToRemove[label]
-            indices = []
-            for l in [indToRemove[key] for key in indToRemove.keys()]:
-                indices.extend(l)
-            indices = np.array(indices)
-            # print(indices.shape)
-            self.image_paths = np.delete(np.array(self.image_paths), indices).tolist()
-            self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
-            index = 0
-            min_label_samples = min([len(self.class_indices[i]) for i in labelSubset])
-            self.class_indices = {}
-            self.counter = Counter()
-            new_impaths = []
-            new_labels = []
-            for i, path in enumerate(self.image_paths):
-                label = os.path.basename(os.path.dirname(path)).split("/")[-1]
-
-                if(normalizeWeights):
-                    if self.counter[label] == min_label_samples:
-                        continue
-                    new_impaths.append(path)
-                    new_labels.append(self.image_classes[i])
-                self.counter[label] +=1
-                if label in self.class_indices.keys():
-                    self.class_indices[label].append(index)
-                else:
-                    self.class_indices[label] = [index]
-                index +=1 
-            if(normalizeWeights):
-                self.image_paths = new_impaths
-                self.clas_labels = new_labels
+            self.selectSubset(labelSubset, numLabelsLoaded, normalizeWeights)
             
-        print("Loaded ADE20K ewith follwoing distribution: ", self.counter)
 
         self.onehot_labelmap = self.init_one_hot_map(list(self.class_indices.keys()))
 
@@ -203,6 +160,56 @@ class ADE20K(Dataset):
         onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
         return dict(zip(data, onehot_encoded))
 
+    def selectSubset(self, labelSubset=None, numLabelsLoaded=0, normalizeWeights=False):
+        #for manually selected strings
+        if labelSubset is not None:              
+            indToRemove = copy.copy(self.class_indices)
+            existing_classes = set(self.image_classes)
+            for label in labelSubset:
+                if label not in existing_classes:
+                    raise Exception("Invalid class name in labelSubset: " + label)
+                del indToRemove[label]
+        #for random subset fo classes
+        elif(numLabelsLoaded > 0):
+            np.random.seed(self.randomSeed)
+            indices = list(range(len(self.class_set)))
+            np.random.shuffle(indices)
+            labelSubset = [self.class_set[j] for i, j in enumerate(indices) if i < numLabelsLoaded]
+            print(len(labelSubset))
+            print(labelSubset)
+            indToRemove = copy.copy(self.class_indices)
+            for label in labelSubset:
+                del indToRemove[label]
+        indices = []
+        for l in [indToRemove[key] for key in indToRemove.keys()]:
+            indices.extend(l)
+        indices = np.array(indices)
+        # print(indices.shape)
+        self.image_paths = np.delete(np.array(self.image_paths), indices).tolist()
+        self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
+        index = 0
+        min_label_samples = min([len(self.class_indices[i]) for i in labelSubset])
+        self.class_indices = {}
+        self.counter = Counter()
+        new_impaths = []
+        new_labels = []
+        for i, path in enumerate(self.image_paths):
+            label = os.path.basename(os.path.dirname(path)).split("/")[-1]
+            if(normalizeWeights):
+                if self.counter[label] == min_label_samples:
+                    continue
+                new_impaths.append(path)
+                new_labels.append(self.image_classes[i])
+            self.counter[label] +=1
+            if label in self.class_indices.keys():
+                self.class_indices[label].append(index)
+            else:
+                self.class_indices[label] = [index]
+            index +=1 
+        if(normalizeWeights):
+            self.image_paths = new_impaths
+            self.clas_labels = new_labels
+        print("Selected the following distribution: ", self.counter)
 
 class ImageDataset(Dataset):
 
