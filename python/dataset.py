@@ -11,6 +11,7 @@ from crop_images import *
 from utils import *
 from torch.utils.data.sampler import SubsetRandomSampler, WeightedRandomSampler
 import numpy as np
+from PIL import Image
 
 data_root = os.path.join(os.path.dirname(__file__), '../data')
 # train_root = os.path.join(data_root, 'train')
@@ -53,7 +54,7 @@ except Exception as e:
 
 resnet_transform = transforms.Compose([
     transforms.ToPILImage(),
-    transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding='constant'),
+    transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding_mode='constant'),
     transforms.ToTensor(),
     # transforms.Normalize([0.5] * 3, [0.5] * 3)
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
@@ -62,17 +63,24 @@ resnet_transform = transforms.Compose([
 #  Note: these constants are the normalization constants for normalize
 segnet_transform = transforms.Compose([
     transforms.ToPILImage(),
-    transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding='constant'),
+    transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding_mode='constant'),
     transforms.ToTensor(),
     # transforms.Normalize([0.5] * 3, [0.5] * 3)
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
         0.229, 0.224, 0.225])  # for the pytorch segnet impl
 ])
 
+vae_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding_mode='constant'),
+    transforms.Grayscale(),
+    transforms.ToTensor(),
+])
+
 
 class ADE20K(Dataset):
 
-    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False, numLabelsLoaded=0, labelSubset=None, useStringLabels=True, randomSeed=33, normalizeWeights=False):
+    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False, numLabelsLoaded=0, labelSubset=None, useStringLabels=True, randomSeed=33, normalizeWeights=False, usePIL=False):
         """
         Args:
             root_dir (string): Directory with all the images organized into
@@ -98,6 +106,7 @@ class ADE20K(Dataset):
         self.image_classes = []
         self.randomSeed = randomSeed
         self.counter = Counter()
+        self.usePIL = usePIL
         index = 0
         label_letters = os.listdir(self.root)  # E.g. directories given by "a/"
         # Iterate over each letter label
@@ -133,7 +142,10 @@ class ADE20K(Dataset):
 
     def __getitem__(self, idx):
         impath = self.image_paths[idx]
-        image = io.imread(impath, as_gray=self.grayscale)
+        if not self.usePIL:
+            image = io.imread(impath, as_gray=self.grayscale)
+        else:
+            image = Image.open(impath)
         if self.transform:
             image = self.transform(image)
         image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[
@@ -212,6 +224,11 @@ class ADE20K(Dataset):
             self.image_classes = new_labels
         assert len(self.image_paths) == len(self.image_classes), "impath length %d and imclass length %d " % (len(self.image_paths), len(self.image_classes))
         print("Selected the following distribution: ", self.counter)
+
+    def useStringLabels(self):
+        self.useStringLabels = True
+    def useOneHotLabels(self):
+        self.useStringLabels = False
 
 class ImageDataset(Dataset):
 
