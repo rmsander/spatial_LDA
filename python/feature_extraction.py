@@ -80,6 +80,7 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
                 continue
             histogram_distance_dict[label] = 0
             # Now iterate through all the files for each ground truth label
+            if N > 0:
             for f1 in input_imgs:
                 for f2 in input_imgs:
                     if f1 != f2:  # Don't need to compare the same file
