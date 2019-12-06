@@ -249,6 +249,8 @@ def make_dataset_directory(dataset_filepath):
     # dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=False)
     mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
     grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
+    if not os.path.exists(dataset_filepath):
+        os.mkdir(dataset_filepath)
     for idx, (image, label) in enumerate(grayscaleDataset):
         letter = label[0]
         letter_path = os.path.join(dataset_filepath, letter)
@@ -260,6 +262,7 @@ def make_dataset_directory(dataset_filepath):
         img_path = grayscaleDataset.image_paths[idx]
         image_filename = img_path.split('/')[-1]
         complete_pathname = os.path.join(label_path, image_filename)
+        print(complete_pathname)
         cv.imwrite(complete_pathname, image)
 
 
