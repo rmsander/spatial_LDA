@@ -60,7 +60,7 @@ def main_plot():
         num_clusters = split_fname[2]
         num_keypoints = split_fname[4]
         metric = split_fname[6]
-        with open(kmeans_file, "rb") as f:
+        with open(os.path.join(kmeans_eval_dir, kmeans_file), "rb") as f:
             kmeans_aggregate_dict[(num_clusters, num_keypoints, metric)] = \
                 pickle.load(f)
             f.close()
