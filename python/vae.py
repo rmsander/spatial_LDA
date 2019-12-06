@@ -6,20 +6,11 @@ import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import os
 from torch.autograd import Variable
-from tensorflow.examples.tutorials.mnist import input_data
-
 import numpy as np
-# import matplotlib as plt
-from sklearn.cluster import KMeans
-from skimage.transform import rescale, resize
 from dataset import ADE20K, get_single_loader, vae_transform
-from itertools import zip_longest
 import os
-from torchvision import transforms
 import pickle
-import torch
 data_root = os.path.join(os.path.dirname(__file__), '../data')
 
 
