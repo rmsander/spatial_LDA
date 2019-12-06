@@ -245,7 +245,7 @@ def create_feature_matrix_cnn(img_path, model, n_clusters=n_clusters):
 
 def make_dataset_directory(dataset_filepath):
     BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
-    grayscaleDataset = ADE20K(grayscale=True, root=BOX_DATA_ROOT, useStringLabels=True, randomSeed=49)
+    grayscaleDataset = ADE20K(grayscale=True, root=BOX_DATA_ROOT, transform = None, useStringLabels=True, randomSeed=49)
     # dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=False)
     mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
     grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)

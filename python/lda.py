@@ -155,7 +155,7 @@ def compute_probability_distr_difference(dist1, dist2):
 
 def evaluate_main():
     # labels = ["06c54", "011k07", "099ssp"] #labels in descriptors_test_1
-    m_dir = "/home/yaatehr/programs/datasets/seg_data/images/training/dataset1/" #labels
+    m_dir = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/" #labels
     data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
     actual_dic = {}
     with open(os.path.join(data_dir, "predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
@@ -224,7 +224,7 @@ def evaluate_main():
 
 def main():
     #TODO: FILL IN feature_path
-    dataset_path = "/home/yaatehr/programs/datasets/seg_data/images/training/dataset1/"
+    dataset_path = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/"
     feature_extraction.make_dataset_directory(dataset_path)
     # sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
     # M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
