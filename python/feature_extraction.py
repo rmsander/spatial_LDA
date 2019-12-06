@@ -13,7 +13,6 @@ from train_cnn import get_model, resnet_transform
 import matplotlib.pyplot as plt
 import argparse
 from dataset import get_single_loader, ADE20K
-from baseline import BOX_DATA_ROOT, resize_im
 
 n_keypoints = 150  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
@@ -245,16 +244,17 @@ def create_feature_matrix_cnn(img_path, model, n_clusters=n_clusters):
     return M
 
 def make_dataset_directory(dataset_filepath):
+    BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
     grayscaleDataset = ADE20K(grayscale=True, root=BOX_DATA_ROOT, useStringLabels=True, randomSeed=49)
     # dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=False)
     mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
     grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
-    # if not os.path.exists(dataset_filepath):
-        # os.mkdir(dataset_filepath)
-        # print("created directory")
+    if not os.path.exists(dataset_filepath):
+        os.mkdir(dataset_filepath)
+        print("created directory")
     print('going into loop')
     for idx, (image, label) in enumerate(grayscaleDataset):
-        print('hi')
+        # print('hi')
         letter = label[0]
         letter_path = os.path.join(dataset_filepath, letter)
         if not os.path.exists(letter_path):
