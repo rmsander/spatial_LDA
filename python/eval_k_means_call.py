@@ -3,7 +3,7 @@ from feature_extraction import evaluate_kmeans
 import pickle
 
 
-def main():
+def main_eval():
     # Parse arguments
     parser = argparse.ArgumentParser()
     #parser.add_argument("-m", "--metric", \
@@ -48,6 +48,39 @@ def main():
             f.close()
         print("Pickle file dumped at: {}".format(f_out_pickle))
 
+def main_plot():
+    kmeans_eval_dir = "/home/yaatehr/programs/spatial_LDA/data/"
+    files = os.listdir(kmeans_eval_dir)
+    kmeans_eval_files = [file for file in files if file.startswith("EVAL")]
+    kmeans_aggregate_dict = {}
+    print(kmeans_eval_files)
+    for kmeans_file in kmeans_eval_files:
+        split_fname = kmeans.split("_")
+        num_clusters = split_fname[2]
+        num_keypoints = split_fname[4]
+        metric = split_fname[6]
+        with open(kmeans_file, "rb") as f:
+            kmeans_aggregate_dict[(num_clusters, num_keypoints, metric)] = \
+                pickle.load(f)
+                f.close()
+    
+    keys = list(kmeans_aggregate_dict.keys())
+    color_index = 0
+    for key in keys:
+        if key[2] == "l2":
+            x1s.append(key[0])
+            x2s.append(key[1])
+            avg_val = np.mean(np.array(kmeans_aggregate_dict[key].values()))
+            zs.append(avg_val)
+            classes = kmeans_aggregate_dict[key][classes]
+            colors = ["r", "b", "g", "y", "c"]
+            plt.contour(kmeans_aggregate_dict[key], \
+                     color=colors[i],
+                     label="{} clusters, {} keypoints".format(key[0], ke[1])
+    plt.legend()
+    plt.xlabel()
+
+            color_index += 1
 
 if __name__ == "__main__":
-    main()
+    main_eval()
