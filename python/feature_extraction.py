@@ -167,7 +167,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     kmeans.fit(vstack)
     kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_" \
                   "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
-    with open(kmeans_path, "rb") as f:
+    with open(kmeans_path, "wb") as f:
         pickle.dump(kmeans, f)
         # kmeans = pickle.load(f)
     print('dumped kmeans model')
