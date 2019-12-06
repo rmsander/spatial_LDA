@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 import argparse
 from dataset import get_single_loader, ADE20K
 
-n_keypoints = 150  # hyperparameter, need to tune
+n_keypoints = 200  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
-n_clusters = 150  # also need to tune this
+n_clusters = 200  # also need to tune this
 
 
 def get_feature_vector(img):
