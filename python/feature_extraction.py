@@ -5,7 +5,7 @@ from sklearn.cluster import MiniBatchKMeans, KMeans
 from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import make_multilabel_classification
 import scipy
-from scipy.misc import imsave
+from skimage import io
 from scipy.special import kl_div as KL
 import pickle
 from torchvision import transforms
@@ -268,7 +268,7 @@ def make_dataset_directory(dataset_filepath):
         image_filename = img_path.split('/')[-1]
         complete_pathname = os.path.join(label_path, image_filename)
         print(complete_pathname)
-        imsave(complete_pathname, image)
+        io.imsave(complete_pathname, image)
 
 
 def main():
