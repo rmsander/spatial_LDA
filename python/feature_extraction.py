@@ -12,6 +12,8 @@ from skimage import io
 from train_cnn import get_model, resnet_transform
 import matplotlib.pyplot as plt
 import argparse
+from dataset import get_single_loader, ADE20K
+from baseline import BOX_DATA_ROOT, resize_im
 
 n_keypoints = 150  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
@@ -241,6 +243,24 @@ def create_feature_matrix_cnn(img_path, model, n_clusters=n_clusters):
         M.append(histogram)  # Append to output matrix
         num_files += 1
     return M
+
+def make_dataset_directory(dataset_filepath):
+    grayscaleDataset = ADE20K(grayscale=True, root=BOX_DATA_ROOT, useStringLabels=True, randomSeed=49)
+    # dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=False)
+    mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
+    grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
+    for idx, (image, label) in enumerate(grayscaleDataset):
+        letter = label[0]
+        letter_path = os.path.join(dataset_filepath, letter)
+        if not os.path.exists(letter_path):
+            os.mkdir(letter_path)
+        label_path = os.path.join(letter_path, label)
+        if not os.path.exists(label_path):
+            os.mkdir(label_path)
+        img_path = grayscaleDataset.image_paths[idx]
+        image_filename = img_path.split('/')[-1]
+        complete_pathname = os.path.join(label_path, image_filename)
+        cv.imwrite(complete_pathname, image)
 
 
 def main():
