@@ -187,6 +187,7 @@ class ADE20K(Dataset):
         # print(indices.shape)
         self.image_paths = np.delete(np.array(self.image_paths), indices).tolist()
         self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
+        assert len(self.image_paths) == len(self.image_classes)
         index = 0
         min_label_samples = min([len(self.class_indices[i]) for i in labelSubset])
         self.class_indices = {}
@@ -208,7 +209,8 @@ class ADE20K(Dataset):
             index +=1 
         if(normalizeWeights):
             self.image_paths = new_impaths
-            self.clas_labels = new_labels
+            self.image_classes = new_labels
+        assert len(self.image_paths) == len(self.image_classes), "impath length %d and imclass length %d " % (len(self.image_paths), len(self.image_classes))
         print("Selected the following distribution: ", self.counter)
 
 class ImageDataset(Dataset):
