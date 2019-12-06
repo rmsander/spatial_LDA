@@ -27,12 +27,14 @@ data_root = os.path.join(os.path.dirname(__file__), '../data')
 NUM_KMEANS_CLUSTERS = 100
 
 YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data/images/training"
+BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
+
 PICKLE_SAVE_RUN = False
 IMAGE_MATRIX_PATH = os.path.join(data_root, "grayscale_img_matrix.pkl")
 
 
 
-grayscaleDataset = ADE20K(root=YAATEH_DATA_ROOT, transform=vae_transform, useStringLabels=True, randomSeed=49)
+grayscaleDataset = ADE20K(root=BOX_DATA_ROOT, transform=vae_transform, useStringLabels=True, randomSeed=49)
 
 #select most commoon label strings from tuples of (label, count)
 mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
