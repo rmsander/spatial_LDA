@@ -189,7 +189,6 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                 if num_files % 100 == 0:
                     print(str(num_files) + " files processed")
                 des = descriptor_list_dic[f]  # Get keypoints/descriptors from SIFT
-                print(des)
                 if des is None or des.shape[0] != n_keypoints:
                     print('hi')
                     continue
