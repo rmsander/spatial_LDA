@@ -90,4 +90,4 @@ def main_plot():
             color_index += 1
     """
 if __name__ == "__main__":
-    main_eval()
+    main_plot()
