@@ -82,28 +82,29 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
                 continue
             histogram_distance_dict[label] = 0
             # Now iterate through all the files for each ground truth label
-            for f1 in input_imgs:
-                for f2 in input_imgs:
-                    if f1 != f2:  # Don't need to compare the same file
-                        # Check if we've seen image before
-                        if seen.get((f1, f2)) is not None or \
-                                seen.get((f2, f1)) is not None:
-                            continue
-                        # Build both histograms
-                        hist1 = build_histogram(descriptor_list[f1], kmeans,
-                                                n_clusters)
-                        hist2 = build_histogram(descriptor_list[f2], kmeans,
-                                                n_clusters)
-                        # Add to label distribution dictionary with distance
-                        histogram_distance_dict[label] += float(
-                            get_difference_histograms(hist1, hist2,
-                                                      metric=metric))
+            if N > 0:
+                for f1 in input_imgs:
+                    for f2 in input_imgs:
+                        if f1 != f2:  # Don't need to compare the same file
+                            # Check if we've seen image before
+                            if seen.get((f1, f2)) is not None or \
+                                    seen.get((f2, f1)) is not None:
+                                continue
+                            # Build both histograms
+                            hist1 = build_histogram(descriptor_list[f1], kmeans,
+                                                    n_clusters)
+                            hist2 = build_histogram(descriptor_list[f2], kmeans,
+                                                    n_clusters)
+                            # Add to label distribution dictionary with distance
+                            histogram_distance_dict[label] += float(
+                                get_difference_histograms(hist1, hist2,
+                                                          metric=metric))
 
-                        # Now we've seen the pair of images
-                        seen[(f1, f2)] = 0
+                            # Now we've seen the pair of images
+                            seen[(f1, f2)] = 0
 
-            #  Take the mean by dividing by all combinations of images
-            histogram_distance_dict[label] /= (N ** 2 - N) / 2
+                #  Take the mean by dividing by all combinations of images
+                histogram_distance_dict[label] /= (N ** 2 - N) / 2
 
     return histogram_distance_dict
 
@@ -135,9 +136,9 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                       "/image_descriptors_dictionary_%s_keypoints.pkl" % \
                       n_keypoints
     print(descriptor_path)
-    with open(descriptor_path,"rb") as f:
-       descriptor_list_dic = pickle.load(f) 
-    # with open(descriptor_path,"rb") as f:
+    with open(descriptor_path, "rb") as f:
+        descriptor_list_dic = pickle.load(f)
+        # with open(descriptor_path,"rb") as f:
     #     print(descriptor_path)
     #     descriptor_list_dic = pickle.load(f)
     # descriptor_list_dic = {} #f: descriptor vectors
@@ -155,16 +156,20 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     #             num_files += 1
     #             if num_files %99==0:
     #                 print(str(num_files+1)+" files processed")
-    #             A = cv.imread(os.path.join(singular_label_path, f)) # read image
+    #             A = cv.imread(os.path.join(singular_label_path, f)) # read
+    #             image
     #             _, des = get_feature_vector(A)
     #             descriptor_list_dic[f]= des
     # with open(descriptor_path, "wb") as f:
     #     pickle.dump(descriptor_list_dic, f)
     # print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
-    vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if i is not None and i.shape[0] == n_keypoints])
+    vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if
+                        i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
     # kmeans.fit(vstack)
-    kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
+    kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_" \
+                  "%s_clusters_%s_keypoints.pkl" % (
+    n_clusters, n_keypoints)
     with open(kmeans_path, "rb") as f:
         # pickle.dump(kmeans, f)
         kmeans = pickle.load(f)
@@ -180,11 +185,12 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
             singular_label_path = os.path.join(label_path, label)
             images = os.listdir(singular_label_path)
             for f in images:  # Iterate over all image files
-                if f[-3:]!="jpg":
+                if f[-3:] != "jpg":
                     continue
                 if num_files % 100 == 0:
                     print(str(num_files) + " files processed")
-                des = descriptor_list_dic[f]  # Get keypoints/descriptors from SIFT
+                des = descriptor_list_dic[
+                    f]  # Get keypoints/descriptors from SIFT
                 if des is None or des.shape[0] != n_keypoints:
                     continue
                 histogram = build_histogram(des, kmeans, n_clusters)
@@ -266,6 +272,7 @@ def main():
     with open("/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix",
               "wb") as f:
         pickle.dump(CnnMatrix, f)
+
 
 if __name__ == "__main__":
     main()
