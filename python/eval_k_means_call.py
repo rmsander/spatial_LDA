@@ -62,8 +62,15 @@ def main_plot():
         with open(kmeans_file, "rb") as f:
             kmeans_aggregate_dict[(num_clusters, num_keypoints, metric)] = \
                 pickle.load(f)
-                f.close()
-    
+            f.close()
+
+    # Dump pickle file information
+    kmeans_aggregate_dict_file = \
+        "/home/yaatehr/programs/spatial_LDA/data/kmeans_aggregate_eval_dict.pkl"
+    with open(kmeans_aggregate_dict_file, "wb") as f:
+        pickle.dump(kmeans_aggregate_dict, f)
+        f.close()
+    """
     keys = list(kmeans_aggregate_dict.keys())
     color_index = 0
     for key in keys:
@@ -81,6 +88,6 @@ def main_plot():
     plt.xlabel()
 
             color_index += 1
-
+    """
 if __name__ == "__main__":
     main_eval()
