@@ -156,7 +156,6 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                 if num_files %99==0:
                     print(str(num_files+1)+" files processed")
                 A = cv.imread(os.path.join(singular_label_path, f)) # read
-                image
                 _, des = get_feature_vector(A)
                 descriptor_list_dic[f]= des
     with open(descriptor_path, "wb") as f:
