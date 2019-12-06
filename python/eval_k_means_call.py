@@ -1,6 +1,7 @@
 import argparse
 from feature_extraction import evaluate_kmeans
 import pickle
+import os
 
 
 def main_eval():
