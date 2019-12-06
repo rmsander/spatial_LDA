@@ -56,7 +56,7 @@ def main_plot():
     kmeans_aggregate_dict = {}
     print(kmeans_eval_files)
     for kmeans_file in kmeans_eval_files:
-        split_fname = kmeans.split("_")
+        split_fname = kmeans_file.split("_")
         num_clusters = split_fname[2]
         num_keypoints = split_fname[4]
         metric = split_fname[6]
