@@ -139,8 +139,8 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     with open(descriptor_path, "rb") as f:
         descriptor_list_dic = pickle.load(f)
         # with open(descriptor_path,"rb") as f:
-        print(descriptor_path)
-        descriptor_list_dic = pickle.load(f)
+        # print(descriptor_path)
+        # descriptor_list_dic = pickle.load(f)
     descriptor_list_dic = {} #f: descriptor vectors
     num_files = 0
     for l in img_files: 
