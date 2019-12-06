@@ -225,7 +225,7 @@ def evaluate_main():
 def main():
     #TODO: FILL IN feature_path
     dataset_path = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/"
-    # feature_extraction.make_dataset_directory(dataset_path)
+    feature_extraction.make_dataset_directory(dataset_path)
     sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
     M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
     with open(sift_feature_path, "wb") as f:
