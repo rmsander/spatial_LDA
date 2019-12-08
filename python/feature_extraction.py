@@ -262,14 +262,14 @@ def create_feature_matrix_cnn():
             # kmeans = pickle.load(f)
         print('dumped descriptor dict for %s, %d, %s' % (feature_model, cnn_num_layers_removed, n_keypoints))
 
-        try:
-            print("fitting generic kmeans")
-            kmeans.fit(vstack)
-        except Exception as e:
-            gc.collect()
-            print("falling back to minibatch")
-            kmeans = minibatchkmeans
-            usingMinibatch = True
+        # try:
+        #     print("fitting generic kmeans")
+        #     kmeans.fit(vstack)
+        # except Exception as e:
+        gc.collect()
+        print("falling back to minibatch")
+        kmeans = minibatchkmeans
+        usingMinibatch = True
 
         # DUMP KMEANS
         if not usingMinibatch:
