@@ -218,7 +218,7 @@ def create_feature_matrix_cnn():
     if not os.path.exists(kmeans_path) :
         kmeans_path = os.path.join(save_root, "batch_kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
-    if not os.path.exists(kmeans_path) and os.path.exists(descriptor_path):
+    if not (os.path.exists(kmeans_path) and os.path.exists(descriptor_path)):
         print("NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n %s_clusters_%s_keypoints" % (save_root, n_clusters, n_keypoints))
         minibatchkmeans = MiniBatchKMeans(n_clusters=n_clusters)
         kmeans = KMeans(n_clusters)
@@ -310,7 +310,7 @@ def create_feature_matrix_sift():
 
     kmeans_path = os.path.join(save_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
-    if not os.path.exists(kmeans_path) and os.path.exists(descriptor_path):
+    if not (os.path.exists(kmeans_path) and os.path.exists(descriptor_path)):
         print("NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n %s_clusters_%s_keypoints" % (save_root, n_clusters, n_keypoints))
         minibatchkmeans = MiniBatchKMeans(n_clusters=n_clusters)
         kmeans = KMeans(n_clusters)
