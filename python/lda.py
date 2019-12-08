@@ -60,8 +60,11 @@ class LDA2:
         # self.init_LDA()  # Call in constructor method
 
     def get_data_matrix(self):
-        with open(self.feature_path, 'rb') as f:
-            self.M = pickle.load(f)
+        if type(feature_path) == list:
+            self.M = feature_path #LAZY OVERRIDE sorry lol
+        else:
+            with open(self.feature_path, 'rb') as f:
+                self.M = pickle.load(f)
         self.m_documents = None
 
     def off_the_shelf_LDA(self):
@@ -498,7 +501,7 @@ def build_sift_predictions():
 
     hist_list, index_mask = feature_tup
 
-    lda = LDA2("", sift_feature_path, n_topics = n_topics)  # Make the class
+    lda = LDA2("", hist_list, n_topics = n_topics)  # Make the class
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     descriptor_path = os.path.join(save_root,
