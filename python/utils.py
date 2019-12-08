@@ -53,6 +53,7 @@ def build_tree_to_depth_n(root, n, f_rgb2classes=None):
         num_nodes_in_layer -= 1
 
         # Recurse to next depth if we aren't deep enough
+        print("NODE is {}".format(node['name'].split(" ")[0]))
         if(depth < n) and not node['name'].split(" ")[0] in \
                               list(rgb_class_dict.values()):
             label_map[node["name"]] = node["name"]
