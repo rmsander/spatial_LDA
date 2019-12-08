@@ -112,7 +112,7 @@ def main_plot():
         if metric == "l1":
             print(kmeans_eval_dict[key])
         if metric == "kl":
-            print(kmeans_eval_dict[key]
+            print(kmeans_eval_dict[key])
 
 if __name__ == "__main__":
     main_eval()
