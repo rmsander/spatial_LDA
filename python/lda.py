@@ -238,7 +238,6 @@ def evaluate_main(cnn_mode = False):
             print(singular_label_path)
             dic = crop_images.map_image_id_to_label(singular_label_path, label)
             actual_dic.update(dic)
-s
     num_in_each_cluster = {} #maps cluster to dictionary of label to count
     for cluster in clustered_images:
         #get number of labels in each cluster
