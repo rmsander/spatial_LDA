@@ -211,8 +211,8 @@ def create_feature_matrix_cnn():
     save_root =  getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
 
     #DUMP DESCRIPTOR LIST
-    descriptor_path = save_root + "image_descriptors_dictionary_%s_keypoints.pkl" % \
-                      (n_keypoints)
+    descriptor_path = os.path.join(save_root,  "image_descriptors_dictionary_%s_keypoints.pkl" % \
+                      (n_keypoints))
 
     kmeans_path = os.path.join(save_root + "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
     if not os.path.exists(kmeans_path) :
@@ -273,11 +273,11 @@ def create_feature_matrix_cnn():
 
         # DUMP KMEANS
         if not usingMinibatch:
-            kmeans_path = save_root + "kmeans_" \
-                        "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
+            kmeans_path = os.path.join(save_root, "kmeans_" \
+                        "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
         else:
-            kmeans_path = save_root + "batch_kmeans_" \
-                "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
+            kmeans_path = os.path.join(save_root, "batch_kmeans_" \
+                "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
         with open(kmeans_path, "wb") as f:
             pickle.dump(kmeans, f)
@@ -305,10 +305,10 @@ def create_feature_matrix_sift():
     save_root =  getDirPrefix(num_most_common_labels_used, "sift")
 
     #DUMP DESCRIPTOR LIST
-    descriptor_path = save_root + "image_descriptors_dictionary_%s_keypoints.pkl" % \
-                      (n_keypoints)
+    descriptor_path = os.path.join(save_root, "image_descriptors_dictionary_%s_keypoints.pkl" % \
+                      (n_keypoints))
 
-    kmeans_path = os.path.join(save_root + "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+    kmeans_path = os.path.join(save_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
     if not os.path.exists(kmeans_path) or os.path.exists(descriptor_path):
         print("NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n %s_clusters_%s_keypoints" % (save_root, n_clusters, n_keypoints))

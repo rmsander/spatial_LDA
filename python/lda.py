@@ -417,7 +417,7 @@ def build_cnn_predictions():
     """NOTE this is using the dataloader, not porting the directory structure over. 
     Hopefully this will be useful if we need to change the dataset parameters."""
     cnn_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
-    cnn_feature_path = cnn_root + "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
+    cnn_feature_path = os.path.join(cnn_root, "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters))
     if not os.path.exists(cnn_feature_path):
         hist_list, kmeans = feature_extraction.create_feature_matrix_cnn()
         with open(cnn_feature_path, "wb") as f:
@@ -431,18 +431,18 @@ def build_cnn_predictions():
     lda = LDA2("", cnn_feature_path, n_topics = n_topics)  # Make the class
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
-    descriptor_path = cnn_root + \
+    descriptor_path = os.path.join(cnn_root, \
                       "image_descriptors_dictionary_%s_keypoints.pkl" % \
-                      n_keypoints
+                      n_keypoints)
     with open (descriptor_path, "rb") as f:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {} #dictionary of imgid: cluster
     cluster_dic = {} #ictionary of cluster: [images in cluster]
     prob_distr_dic = {} #maps id: probability distribution over clusters
 
-    kmeans_path = os.path.join(cnn_root + "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+    kmeans_path = os.path.join(cnn_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
     if not os.path.exists(kmeans_path) :
-        kmeans_path = os.path.join(cnn_root + "batch_kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+        kmeans_path = os.path.join(cnn_root, "batch_kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
     with open(kmeans_path, "rb") as f:
         kmeans = pickle.load(f)
@@ -470,11 +470,11 @@ def build_cnn_predictions():
         else:
             cluster_dic[predicted_class] = [f]
         num_files += 1
-    with open (cnn_root + "predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+    with open (os.path.join(cnn_root, "predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(predicted_cluster, f)
-    with open(cnn_root + "clustered_images_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+    with open(os.path.join(cnn_root, "clustered_images_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(cluster_dic, f)
-    with open(cnn_root + "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+    with open(os.path.join(cnn_root, "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(prob_distr_dic, f)   
     # Now we can predict!
 
@@ -484,7 +484,7 @@ def build_sift_predictions():
     """NOTE this is using the dataloader, not porting the directory structure over. 
     Hopefully this will be useful if we need to change the dataset parameters."""
     save_root = getDirPrefix(num_most_common_labels_used, "sift", makedirs=True)
-    sift_feature_path = save_root + "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
+    sift_feature_path = os.path.join(save_root, "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters))
 
     if not os.path.exists(sift_feature_path):
         feature_tup, kmeans = feature_extraction.create_feature_matrix_sift()
@@ -501,16 +501,16 @@ def build_sift_predictions():
     lda = LDA2("", sift_feature_path, n_topics = n_topics)  # Make the class
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
-    descriptor_path = save_root + \
+    descriptor_path = os.path.join(save_root,
                       "image_descriptors_dictionary_%s_keypoints.pkl" % \
-                      n_keypoints
+                      n_keypoints)
     with open (descriptor_path, "rb") as f:
         descriptor_dic = pickle.load(f)
     predicted_cluster = {} #dictionary of imgid: cluster
     cluster_dic = {} #ictionary of cluster: [images in cluster]
     prob_distr_dic = {} #maps id: probability distribution over clusters
 
-    kmeans_path = os.path.join(save_root + "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+    kmeans_path = os.path.join(save_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
     with open(kmeans_path, "rb") as f:
         kmeans = pickle.load(f)
@@ -536,11 +536,11 @@ def build_sift_predictions():
         else:
             cluster_dic[predicted_class] = [f]
         num_files += 1
-    with open (save_root + "predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+    with open (os.path.join(save_root, "predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(predicted_cluster, f)
-    with open(save_root + "clustered_images_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+    with open(os.path.join(save_root, "clustered_images_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb")) as f:
         pickle.dump(cluster_dic, f)
-    with open(save_root + "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+    with open(os.path.join(save_root, "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(prob_distr_dic, f)   
     # Now we can predict!
 
