@@ -174,7 +174,7 @@ class ADE20K(Dataset):
                 image = self.transform(image)
             except:
                 print("Converting grayscale to RGB (failsafe)")
-                image = np.expand_dims(image, axis=0)(0)
+                image = np.expand_dims(image, axis=0)
                 image = image.repeat(3, 1, 1)
                 image = self.transform(image) # convert a grayscale to RGB format
         image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[
