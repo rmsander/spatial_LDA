@@ -72,6 +72,7 @@ def plot_histograms_for_labels(n_keypoints, n_clusters):
         labels = os.listdir(label_path)
         for label in labels:
             singular_label_path = os.path.join(label_path, label)
+            print(singular_label_path)
             plot_histograms_per_label(label_path, n_keypoints, kmeans, descriptor_list, 0.01)
 
 
