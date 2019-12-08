@@ -6,13 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from dataset import *
 
-<<<<<<< Updated upstream
-=======
-
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 def main_eval_cli():
     # Parse arguments
     parser = argparse.ArgumentParser()
@@ -63,7 +56,6 @@ def main_eval_cli():
     
     
 
-<<<<<<< Updated upstream
 def plot_histograms_for_labels(n_keypoints, n_clusters):
     label_path = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/"
     letters = os.listdir(label_path)
@@ -108,7 +100,6 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
     else:
         raise Exception("Trying to evaluate invalid model")
 
-<<<<<<< Updated upstream
 
     dataset = ADE20K(root=getDataRoot(), transform=transform, useStringLabels=True, randomSeed=49)
     mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
@@ -139,10 +130,6 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
         plt.title("Histogram distribution for label %s" %label)
         plt.savefig(os.paths.join(save_root, "plots/histogram_distribution_label_%s_%s_keypoints_%s_clusters.png"%(label, n_keypoints, n_clusters)))
 
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 def main_aggregate_pkl_files():
     print("HERE")
     kmeans_eval_dir = "/home/yaatehr/programs/spatial_LDA/data/"
