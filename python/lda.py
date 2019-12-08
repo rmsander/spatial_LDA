@@ -154,7 +154,6 @@ def compute_probability_distr_difference(dist1, dist2):
     return np.sum(np.square(dist1-dist2))
 
 def evaluate_main():
-    # labels = ["06c54", "011k07", "099ssp"] #labels in descriptors_test_1
     m_dir = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/" #labels
     data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
     actual_dic = {}
