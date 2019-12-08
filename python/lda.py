@@ -60,8 +60,8 @@ class LDA2:
         # self.init_LDA()  # Call in constructor method
 
     def get_data_matrix(self):
-        if type(feature_path) == list:
-            self.M = feature_path #LAZY OVERRIDE sorry lol
+        if type(self.feature_path) == list:
+            self.M = self.feature_path #LAZY OVERRIDE sorry lol
         else:
             with open(self.feature_path, 'rb') as f:
                 self.M = pickle.load(f)
