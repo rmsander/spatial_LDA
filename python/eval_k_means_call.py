@@ -9,6 +9,9 @@ from dataset import *
 <<<<<<< Updated upstream
 =======
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 def main_eval_cli():
     # Parse arguments
@@ -60,6 +63,7 @@ def main_eval_cli():
     
     
 
+<<<<<<< Updated upstream
 def plot_histograms_for_labels(n_keypoints, n_clusters):
     label_path = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/"
     letters = os.listdir(label_path)
@@ -135,6 +139,8 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
         plt.title("Histogram distribution for label %s" %label)
         plt.savefig(os.paths.join(save_root, "plots/histogram_distribution_label_%s_%s_keypoints_%s_clusters.png"%(label, n_keypoints, n_clusters)))
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 def main_aggregate_pkl_files():
@@ -221,5 +227,3 @@ if __name__ == "__main__":
     # main_eval()
     plot_histograms_for_dataset(500, 300, 25, "resnet34", percentage_plotted=.05, cnn_num_layers_removed=2)
     # plot_histograms_for_labels(150, 150)
-
-

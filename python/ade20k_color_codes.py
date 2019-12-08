@@ -23,6 +23,13 @@ def load_json(F_JSON):
         json_file.close()
     return tree
 
+def depth(x):
+    if type(x) is dict and x:
+        return 1 + max(depth(x[a]) for a in x)
+    if type(x) is list and x:
+        return 1 + max(depth(a) for a in x)
+    return 0
+
 # Debugging flag
 USE_BOX = True
 
@@ -31,7 +38,8 @@ def main():
         F_JSON = os.path.join("..", "..", "datasets", "seg_data", "tree.json")
     else:
         F_JSON = os.path.join("..", "..", "slda_outside_work", "tree.json")
-    DEPTH = 8
+    print("DEPTH OF JSON FILE IS: {}".format(depth(load_json(F_JSON))))
+    DEPTH = 10
     labelmap = make_inverted_labelmap(DEPTH,
                                                   path_to_hierarchy=F_JSON)
     print("Tree located at: {}".format(F_JSON))
