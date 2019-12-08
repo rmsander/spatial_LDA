@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib as plt
 from sklearn.cluster import KMeans
 from skimage.transform import rescale, resize
-from dataset import ADE20K, get_single_loader
+from dataset import ADE20K, get_single_loader, getDataRoot
 from itertools import zip_longest
 import os
 from torchvision import transforms
@@ -54,7 +54,7 @@ def resize_im(im, edge_len):
 
 def createFeatureVectors(max_edge_len):
     cnt = Counter()
-    grayscaleDataset = ADE20K(grayscale=True, root=YAATEH_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=49)#, numLabelsLoaded=10)
+    grayscaleDataset = ADE20K(grayscale=True, root=getDataRoot(), transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=49)#, numLabelsLoaded=10)
 
     #select most commoon label strings from tuples of (label, count)
     # mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))

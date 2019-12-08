@@ -5,6 +5,7 @@ from models.ResNet import *
 import matplotlib.pyplot as plt
 import numpy as np
 # from dataset import *
+from dataset import *
 from torchvision import transforms
 from skimage import io
 import gc
@@ -175,20 +176,27 @@ image_path = "/Users/yaatehr/Programs/spatial_LDA/data/ef741c8e8b81c793.jpg"
 
 def test():
     model = get_model()
+    dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
+    mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(25)))
+    dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
+    dataset.useOneHotLabels()
+
     batch_size = 50
     test_img = io.imread(image_path)
     inputs = segnet_transform(test_img)
     inputs = inputs.unsqueeze(0)
     print(inputs.shape)
-    # test_loader = get_single_loader(batch_size=batch_size)
+    test_loader = get_single_loader(dataset=dataset, batch_size=batch_size)
     # num_batches = len(test_loader)
     # errors = np.zeros(2)
     # numSamples = len(test_loader) * batch_size
     # print(inputs.shape[1:])
     # inputs = inputs.view(inputs.shape[1:]).to(device)
     # TODO: Should these be changed?
+    for b, (img,label) in enumerate(test_loader):
+        print("model output size is: ", model(img).shape)
     batchOutput = model(inputs).view(-1, 4, 128)
-    batchOutput = model(inputs).view(-1, 4 * 49, 128)
+    # batchOutput = model(inputs).view(-1, 4 * 49, 128)
 
     gc.collect()
     print(batchOutput.shape)
@@ -198,6 +206,7 @@ def get_model():
     model = torch.hub.load('pytorch/vision', 'resnet34', pretrained=True)
     # cut off the last layer of this classifier
     new_classifier = nn.Sequential(*list(model.children())[:-2])
+    # print(new_classifier)
     model = new_classifier
     return model
 
@@ -269,5 +278,5 @@ def trainCNN(modelName='resnet'):
 
 
 if __name__ == '__main__':
-    # test()
+    test()
     pass
