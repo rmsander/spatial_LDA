@@ -17,7 +17,8 @@ n_keypoints = 150
 def get_prediction_for_image(img, lda_model, kmeans_model):
     kp, des = get_feature_vector(img)
     feature = build_histogram(des, kmeans_model,kmeans_model.cluster_centers_.shape[0])
-    predictions = lda_model.transofmr(np.reshape(feature, (1, feature.size)))
+    predictions = lda_model.transform(np.reshape(feature, (1, feature.size)))
+    print(predictions)
     return predictions
 
 def make_directory_for_validation(dataset_path):
