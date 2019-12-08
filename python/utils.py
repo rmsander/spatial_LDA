@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import os
 from os import path
 import json
+import pickle
 
 def topNError(output, labels, ns, percent=True):
     sortedOutputs = output.topk(k = max(ns), dim=1, sorted=True)[1]
@@ -36,8 +37,8 @@ LABEL_HIERARCHY_PATH = "bbox_labels_600_hierarchy.json"
 def get_ade150_classes(f_rgb2classes=None):
     if f_rgb2classes is None:
         f_rgb2classes = os.path.join("..", "data", "rgb2class.pkl")
-    with open(f_rgb2classes, "rb") as f:
-        rgb_class_dict = pickle.load(f_rgb2classes)
+    with open(f_rgb2classes, "rb") as pkl_file:
+        rgb_class_dict = pickle.load(pkl_file)
     return rgb_class_dict
 
 def build_tree_to_depth_n(root, n, f_rgb2classes=None):

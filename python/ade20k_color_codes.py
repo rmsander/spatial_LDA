@@ -23,6 +23,9 @@ def load_json(F_JSON):
         json_file.close()
     return tree
 
+# Debugging flag
+USE_BOX = True
+
 def main():
     if USE_BOX:
         F_JSON = os.path.join("..", "..", "datasets", "seg_data", "tree.json")
