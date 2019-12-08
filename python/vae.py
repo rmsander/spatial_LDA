@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from torch.autograd import Variable
 import numpy as np
-from dataset import ADE20K, get_single_loader, vae_transform
+from dataset import *
 import os
 import pickle
 data_root = os.path.join(os.path.dirname(__file__), '../data')
