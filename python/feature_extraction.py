@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import argparse
 from dataset import get_single_loader, ADE20K
 
-n_keypoints = 350  # hyperparameter, need to tune
+n_keypoints = 400  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
 n_clusters = 300  # also need to tune this
 
