@@ -27,22 +27,29 @@ hierarchy_json_path = "/home/yaatehr/programs/spatial_LDA/data" \
 path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
               "-annotations-bbox.csv"
 path_to_classname_map_csv = os.path.join(data_root, 'class-descriptions.csv')
+
+#NOTE if you are using on a new box, you will want to add your data root directory here
 YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data/images/training"
 BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
+DSAIL_BOX_DATA_ROOT = "/home/ubuntu/hdd2/datasets/seg_data/images/training"
 
 
 def getDataRoot():
     if os.path.exists(YAATEH_DATA_ROOT):
         return YAATEH_DATA_ROOT
+    elif os.path.exists(DSAIL_BOX_DATA_ROOT):
+        return DSAIL_BOX_DATA_ROOT
     else:
         return BOX_DATA_ROOT
 
 def getDirPrefix(num_most_common_labels_used, feature_model, makedirs=False, cnn_num_layers_removed=None):
     data_root = os.path.join(os.path.dirname(__file__), '../data')
-    if cnn_num_layers_removed:
+    if cnn_num_layers_removed is not None:
+        # print("entered this thi")
         d = data_root + "/top%d_%s_layer%d/"% \
             (num_most_common_labels_used, feature_model, cnn_num_layers_removed)
     else:
+        # print(cnn_num_layers_removed)
         d = data_root + "/top%d_%s" % (num_most_common_labels_used, feature_model)
     
     if not os.path.exists(d):
@@ -264,7 +271,7 @@ class ADE20K(Dataset):
         self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
         assert len(self.image_paths) == len(self.image_classes)
         index = 0
-        min_label_samples = min([len(self.class_indices[i]) for i in labelSubset])
+        min_label_samples = min([len(self.class_indices[i]) for i in self.class_indices.keys()])
         self.class_indices = {}
         self.counter = Counter()
         new_impaths = []

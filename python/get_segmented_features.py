@@ -12,7 +12,7 @@ def unique_count_app(a):
     return colors[count.argmax()]
 
 def make_rgb_label_dict(rgb_dir):
-    rgb_to_class = {(0,0,0):"other"}
+    rgb_to_class = {}
     color_files = os.listdir(rgb_dir)
     # Filter out any non-jpg images
     color_files = [color_files[i] for i in range(len(color_files)) if \
@@ -24,7 +24,7 @@ def make_rgb_label_dict(rgb_dir):
         rgb_to_class[color] = class_name
 
     # Pickle results
-    f_out =  os.path.join("..", "data", "rgb2class.pkl")
+    f_out = os.path.join("..", "data", "rgb2class.pkl")
     with open(f_out, "wb") as f:
         pickle.dump(rgb_to_class, f)
         f.close()

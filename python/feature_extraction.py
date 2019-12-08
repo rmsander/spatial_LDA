@@ -208,7 +208,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
 
 def create_feature_matrix_cnn():
     # save_root = os.path.join(os.path.dirname(__file__), '../data')
-    save_root =  getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
+    save_root =  getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
 
     #DUMP DESCRIPTOR LIST
     descriptor_path = os.path.join(save_root,  "image_descriptors_dictionary_%s_keypoints.pkl" % \

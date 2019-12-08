@@ -60,8 +60,11 @@ class LDA2:
         # self.init_LDA()  # Call in constructor method
 
     def get_data_matrix(self):
-        with open(self.feature_path, 'rb') as f:
-            self.M = pickle.load(f)
+        if type(self.feature_path) == list:
+            self.M = self.feature_path #LAZY OVERRIDE sorry lol
+        else:
+            with open(self.feature_path, 'rb') as f:
+                self.M = pickle.load(f)
         self.m_documents = None
 
     def off_the_shelf_LDA(self):
@@ -155,7 +158,7 @@ def compute_probability_distr_difference(dist1, dist2):
     return np.sum(np.square(dist1-dist2))
 
 def evaluate_dataset_cnn():
-    data_dir = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
+    data_dir = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
     dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
     mostCommonLabels = list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
@@ -416,7 +419,7 @@ def main():
 def build_cnn_predictions():
     """NOTE this is using the dataloader, not porting the directory structure over. 
     Hopefully this will be useful if we need to change the dataset parameters."""
-    cnn_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
+    cnn_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
     cnn_feature_path = os.path.join(cnn_root, "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters))
     if not os.path.exists(cnn_feature_path):
         hist_list, kmeans = feature_extraction.create_feature_matrix_cnn()
@@ -498,7 +501,7 @@ def build_sift_predictions():
 
     hist_list, index_mask = feature_tup
 
-    lda = LDA2("", sift_feature_path, n_topics = n_topics)  # Make the class
+    lda = LDA2("", hist_list, n_topics = n_topics)  # Make the class
     lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
     predicted = {}
     descriptor_path = os.path.join(save_root,
