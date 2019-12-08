@@ -129,7 +129,7 @@ def main():
     letter_files = os.listdir(dataset_path)
     num_files = 0
     for letter in letter_files:
-        label_path = os.listdir(dataset_path, letter)
+        label_path = os.path.join(dataset_path, letter)
         labels = os.listdir(label_path)
         for label in labels:
             singular_label_path = os.path.join(label_path, label)
