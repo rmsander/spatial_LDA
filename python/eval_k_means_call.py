@@ -108,7 +108,7 @@ def main_plot():
         metric = key[2]
         print(metric)
         if metric == "l2":
-
+            pass
         if metric == "l1":
             print(kmeans_eval_dict[key])
         if metric == "kl":
