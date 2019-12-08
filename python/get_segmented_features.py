@@ -1,22 +1,27 @@
 # External package imports
 import numpy as np
 import cv2 as cv
+from PIL import Image
 
 # Native Python imports
 import os
 import pickle
 
-def make_rgb_label_dict(rgb_dir)
-    rgb_to_class = {}
+def unique_count_app(a):
+    colors, count = np.unique(a.reshape(-1,a.shape[-1]), axis=0, return_counts=True)
+    return colors[count.argmax()]
+
+def make_rgb_label_dict(rgb_dir):
+    rgb_to_class = {(0,0,0):"other"}
     color_files = os.listdir(rgb_dir)
     # Filter out any non-jpg images
     color_files = [color_files[i] for i in range(len(color_files)) if \
                    color_files[i].endswith("jpg")]
     for color_file in color_files:
         A = cv.imread(os.path.join(rgb_dir, color_file))
-        val = np.unique(A)
+        color = tuple(list(unique_count_app(A)))
         class_name = color_file.split(".")[0]
-        rgb_to_class[val] = class_name
+        rgb_to_class[color] = class_name
 
     # Pickle results
     f_out =  os.path.join("..", "data", "rgb2class.pkl")
@@ -32,7 +37,7 @@ def main():
                                  "images", "dataset1")
     dir_segmented = os.path.join("..", "..", "datasets", "seg_data",
                                  "images", "training")
-    dir_rgb_codes = os.path.join("..", "..", "datasets", "colors150")
+    dir_rgb_codes = os.path.join("..", "..", "datasets", "seg_data", "color150")
 
     # Get RGB --> CLASS LABEL
     rgb2class = make_rgb_label_dict(dir_rgb_codes)
@@ -48,6 +53,7 @@ def main():
         # Get files for specific label
         labels = os.listdir(os.path.join(dir_files, sub_folder))
         for label in labels:
+            print("LABEL IS: {}".format(label))
             segmented_files = os.listdir(os.path.join(dir_files, sub_folder,
                                                       label))
             for f_img in segmented_files:
@@ -58,11 +64,12 @@ def main():
                                             label, seg_name))
                 M, N, _ = A.shape
                 num_pixels = M * N
-                unique_vals, unique_counts = np.unique(A, return_counts=True, axis=2)
-                print("UNIQ", unique_vals.shape, "COUNTS", unique_counts.shape)
+                unique_vals, unique_counts = np.unique(A.reshape(-1,A.shape[-1]), axis=0, return_counts=True)
+                unique_vals, unique_counts = list(unique_vals), list(unique_counts)
+                print("UNIQ: {}".format(unique_vals))
                 segimg2class[f_img] = {
-                    rgb2class[unique_vals[i]]: unique_counts[i] / num_pixels
-                    for i in range(unique_counts.shape[0])}
+                    rgb2class[tuple(list(unique_vals[i]))]: unique_counts[i] / num_pixels
+                    for i in range(len(unique_counts))}
 
     # Pickle results
     output_fname = os.path.join("..", "data", "SEG_COUNTS.pkl")
