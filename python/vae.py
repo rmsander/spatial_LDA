@@ -25,13 +25,14 @@ IMAGE_MATRIX_PATH = os.path.join(data_root, "grayscale_img_matrix.pkl")
 
 
 
-grayscaleDataset = ADE20K(root=BOX_DATA_ROOT, transform=vae_transform, useStringLabels=True, randomSeed=49)
+grayscaleDataset = ADE20K(root=YAATEH_DATA_ROOT, transform=vae_transform, useStringLabels=True, randomSeed=49)
 
 #select most commoon label strings from tuples of (label, count)
 mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
 grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
 
 print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
+print(len(grayscaleDataset))
 
 _, im_x, im_y = grayscaleDataset.__getitem__(0)[0].shape
 grayscaleDataset.useOneHotLabels()
@@ -110,12 +111,15 @@ for it in range(100000):
     for batch_num, (X, Y) in enumerate(loader):
 
         X = Variable(torch.flatten(X, start_dim=1))
+        # print(X)
         # X = Variable(X.reshape(mb_size, 224*224))
 
         # Forward
         z_mu, z_var = Q(X)
         z = sample_z(z_mu, z_var)
         X_sample = P(z)
+        # print(X_sample)
+
 
         # Loss
         recon_loss = nn.binary_cross_entropy(X_sample, X, size_average=False) / mb_size

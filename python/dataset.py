@@ -224,6 +224,7 @@ class ADE20K(Dataset):
             self.image_classes = new_labels
         assert len(self.image_paths) == len(self.image_classes), "impath length %d and imclass length %d " % (len(self.image_paths), len(self.image_classes))
         print("Selected the following distribution: ", self.counter)
+        self.onehot_labelmap = self.init_one_hot_map(list(self.class_indices.keys()))
 
     def useStringLabels(self):
         self.useStringLabels = True
