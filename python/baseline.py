@@ -57,9 +57,9 @@ def createFeatureVectors(max_edge_len):
     grayscaleDataset = ADE20K(grayscale=True, root=YAATEH_DATA_ROOT, transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=49)#, numLabelsLoaded=10)
 
     #select most commoon label strings from tuples of (label, count)
-    mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
-    grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
-
+    # mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
+    # grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
+    print(len(grayscaleDataset.counter))
     dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
     print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
     print("dataset len is: ", len(grayscaleDataset.image_paths))
