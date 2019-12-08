@@ -7,13 +7,10 @@ from PIL import Image
 import os
 import pickle
 
-<<<<<<< Updated upstream
 def unique_count_app(a):
     colors, count = np.unique(a.reshape(-1,a.shape[-1]), axis=0, return_counts=True)
     return colors[count.argmax()]
 
-=======
->>>>>>> Stashed changes
 def make_rgb_label_dict(rgb_dir):
     rgb_to_class = {}
     color_files = os.listdir(rgb_dir)
