@@ -115,4 +115,4 @@ def main_plot():
             print(kmeans_eval_dict[key]
 
 if __name__ == "__main__":
-    main_plot()
+    main_eval()
