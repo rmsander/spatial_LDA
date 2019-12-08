@@ -18,9 +18,9 @@ import torch
 from tqdm import tqdm
 import gc
 
-n_keypoints = 400  # hyperparameter, need to tune
+n_keypoints = 600  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
-n_clusters = 300  # also need to tune this
+n_clusters = 400  # also need to tune this
 feature_model = "resnet34" # one of resnet34 TODO resnet 18, inception net
 cnn_num_layers_removed = 2 # TODO make modifications for other layers
 num_most_common_labels_used = 25
@@ -211,14 +211,14 @@ def create_feature_matrix_cnn():
     save_root =  getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
 
     #DUMP DESCRIPTOR LIST
-    descriptor_path = save_root + "image_descriptors_dictionary_%s_keypoints.pkl" % \
-                      (n_keypoints)
+    descriptor_path = os.path.join(save_root,  "image_descriptors_dictionary_%s_keypoints.pkl" % \
+                      (n_keypoints))
 
-    kmeans_path = os.path.join(save_root + "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+    kmeans_path = os.path.join(save_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
     if not os.path.exists(kmeans_path) :
-        kmeans_path = os.path.join(save_root + "batch_kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+        kmeans_path = os.path.join(save_root, "batch_kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
-    if not os.path.exists(kmeans_path) or os.path.exists(descriptor_path):
+    if not (os.path.exists(kmeans_path) and os.path.exists(descriptor_path)):
         print("NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n %s_clusters_%s_keypoints" % (save_root, n_clusters, n_keypoints))
         minibatchkmeans = MiniBatchKMeans(n_clusters=n_clusters)
         kmeans = KMeans(n_clusters)
@@ -262,22 +262,22 @@ def create_feature_matrix_cnn():
             # kmeans = pickle.load(f)
         print('dumped descriptor dict for %s, %d, %s' % (feature_model, cnn_num_layers_removed, n_keypoints))
 
-        try:
-            print("fitting generic kmeans")
-            kmeans.fit(vstack)
-        except Exception as e:
-            gc.collect()
-            print("falling back to minibatch")
-            kmeans = minibatchkmeans
-            usingMinibatch = True
+        # try:
+        #     print("fitting generic kmeans")
+        #     kmeans.fit(vstack)
+        # except Exception as e:
+        gc.collect()
+        print("falling back to minibatch")
+        kmeans = minibatchkmeans
+        usingMinibatch = True
 
         # DUMP KMEANS
         if not usingMinibatch:
-            kmeans_path = save_root + "kmeans_" \
-                        "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
+            kmeans_path = os.path.join(save_root, "kmeans_" \
+                        "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
         else:
-            kmeans_path = save_root + "batch_kmeans_" \
-                "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
+            kmeans_path = os.path.join(save_root, "batch_kmeans_" \
+                "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
         with open(kmeans_path, "wb") as f:
             pickle.dump(kmeans, f)
@@ -305,12 +305,12 @@ def create_feature_matrix_sift():
     save_root =  getDirPrefix(num_most_common_labels_used, "sift")
 
     #DUMP DESCRIPTOR LIST
-    descriptor_path = save_root + "image_descriptors_dictionary_%s_keypoints.pkl" % \
-                      (n_keypoints)
+    descriptor_path = os.path.join(save_root, "image_descriptors_dictionary_%s_keypoints.pkl" % \
+                      (n_keypoints))
 
-    kmeans_path = os.path.join(save_root + "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+    kmeans_path = os.path.join(save_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
-    if not os.path.exists(kmeans_path) or os.path.exists(descriptor_path):
+    if not (os.path.exists(kmeans_path) and os.path.exists(descriptor_path)):
         print("NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n %s_clusters_%s_keypoints" % (save_root, n_clusters, n_keypoints))
         minibatchkmeans = MiniBatchKMeans(n_clusters=n_clusters)
         kmeans = KMeans(n_clusters)
@@ -323,16 +323,17 @@ def create_feature_matrix_sift():
 
         for step, (img,label) in enumerate(dataset):
             _, des = get_feature_vector(img)
-            f = dataset.image_paths[i]
-            descriptor_list_dic[f]= des
-            bar.update(1)
+            f = dataset.image_paths[step]
+            descriptor_dict[f]= des
+            if step%50 == 0:
+                bar.update(50)
 
         bar.close()
 
         with open(descriptor_path, "wb") as f:
-            pickle.dump(descriptor_list_dic, f)
+            pickle.dump(descriptor_dict, f)
         print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
-        vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if
+        vstack = np.vstack([i for i in list(descriptor_dict.values()) if
                             i is not None and i.shape[0] == n_keypoints])
         print(vstack.shape)
         kmeans.fit(vstack)
@@ -342,13 +343,19 @@ def create_feature_matrix_sift():
         print('dumped kmeans model')
 
         hist_list = []
+        index_mask = []
         print("building historgram")
-        for path in descriptor_dict.keys():
+        for i, path in enumerate(dataset.image_paths):
             des = descriptor_dict[path]
+
+            if des is None or des.shape[0] != n_keypoints:
+                index_mask.append(False)
+                continue
             histogram = build_histogram(des, kmeans, n_clusters)
             hist_list.append(histogram)
+            index_mask.append(True)
 
-    return hist_list, kmeans
+    return (hist_list, index_mask), kmeans
 
 
 
