@@ -81,6 +81,24 @@ def main_aggregate_pkl_files():
 
 
 def main_plot():
+
+    # Helper function
+    def compute_weighted_average():
+        seg_data_path = "/home/yaatehr/programs/datasets/seg_data/images/training/"
+        weight_dict = {}
+        subfolders = os.listdir(seg_data_path)
+        for subfolder in subfolders:
+            label_classes = os.listdir(os.path.join(seg_data_path, subfolder))
+            for label in label_classes:
+                files = os.listdir(os.path.join(seg_data_path, subfolder, label))
+                weight_dict[label] = len([file for file in files if
+                                          file.endswith(".jpg")])
+        return weight_dict
+
+    def compute_average_dist(kmeans_eval):
+        weight_dict = compute_weighted_average()
+        N = np.sum(list(weight_dict.values()))
+        
     kmeans_eval_file = "/home/yaatehr/programs/spatial_LDA/data/kmeans_aggregate_eval_dict.pkl"
     with open(kmeans_eval_file, "rb") as f:
         kmeans_eval_dict = pickle.load(f)
@@ -90,12 +108,11 @@ def main_plot():
         metric = key[2]
         print(metric)
         if metric == "l2":
-            print(kmeans_eval_dict[key])
+            pass
         if metric == "l1":
             print(kmeans_eval_dict[key])
         if metric == "kl":
             print(kmeans_eval_dict[key])
 
-
 if __name__ == "__main__":
-    main_plot()
+    main_eval()

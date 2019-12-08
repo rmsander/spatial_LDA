@@ -64,7 +64,7 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
     """
 
     # Get files and directory
-    label_dir = "/home/yaatehr/programs/datasets/seg_data/images/training/"
+    label_dir = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/"
     label_letters = os.listdir(label_dir)  # E.g. directories given by "a/"
     histogram_distance_dict = {}
     # Iterate over each letter label
@@ -142,11 +142,11 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                       "/image_descriptors_dictionary_%s_keypoints.pkl" % \
                       n_keypoints
     print(descriptor_path)
+    #uncomment for pickled descriptor_list_dic
     # with open(descriptor_path, "rb") as f:
         # descriptor_list_dic = pickle.load(f)
-        # with open(descriptor_path,"rb") as f:
-        # print(descriptor_path)
-        # descriptor_list_dic = pickle.load(f)
+
+    #uncomment to create descriptor_list_dic
     descriptor_list_dic = {} #f: descriptor vectors
     num_files = 0
     for l in img_files: 
@@ -168,6 +168,8 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     with open(descriptor_path, "wb") as f:
         pickle.dump(descriptor_list_dic, f)
     print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
+    
+    
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if
                         i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
