@@ -255,6 +255,41 @@ class ADE20K(Dataset):
         print("Selected the following distribution: ", self.counter)
         self.onehot_labelmap = self.init_one_hot_map(list(self.class_indices.keys()))
 
+
+    def applyMask(self, maskList, normalizeWeights =False):
+        indices = np.argwhere(maskList == False)
+        assert len(maskList) == len(self.image_paths), "mask must match the size of the dataset and be true false"
+
+        self.image_paths = np.delete(np.array(self.image_paths), indices).tolist()
+        self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
+        assert len(self.image_paths) == len(self.image_classes)
+        index = 0
+        min_label_samples = min([len(self.class_indices[i]) for i in labelSubset])
+        self.class_indices = {}
+        self.counter = Counter()
+        new_impaths = []
+        new_labels = []
+        for i, path in enumerate(self.image_paths):
+            label = os.path.basename(os.path.dirname(path)).split("/")[-1]
+            if(normalizeWeights):
+                if self.counter[label] == min_label_samples:
+                    continue
+                new_impaths.append(path)
+                new_labels.append(self.image_classes[i])
+            self.counter[label] +=1
+            if label in self.class_indices.keys():
+                self.class_indices[label].append(index)
+            else:
+                self.class_indices[label] = [index]
+            index +=1 
+        if(normalizeWeights):
+            self.image_paths = new_impaths
+            self.image_classes = new_labels
+        assert len(self.image_paths) == len(self.image_classes), "impath length %d and imclass length %d " % (len(self.image_paths), len(self.image_classes))
+        print("Selected the following distribution: ", self.counter)
+        self.onehot_labelmap = self.init_one_hot_map(list(self.class_indices.keys()))
+
+
     def useStringLabels(self):
         self.useStringLabels = True
     def useOneHotLabels(self):

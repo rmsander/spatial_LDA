@@ -323,16 +323,17 @@ def create_feature_matrix_sift():
 
         for step, (img,label) in enumerate(dataset):
             _, des = get_feature_vector(img)
-            f = dataset.image_paths[i]
-            descriptor_list_dic[f]= des
-            bar.update(1)
+            f = dataset.image_paths[step]
+            descriptor_dict[f]= des
+            if step%50 == 0:
+                bar.update(50)
 
         bar.close()
 
         with open(descriptor_path, "wb") as f:
-            pickle.dump(descriptor_list_dic, f)
+            pickle.dump(descriptor_dict, f)
         print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
-        vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if
+        vstack = np.vstack([i for i in list(descriptor_dict.values()) if
                             i is not None and i.shape[0] == n_keypoints])
         print(vstack.shape)
         kmeans.fit(vstack)
@@ -342,13 +343,19 @@ def create_feature_matrix_sift():
         print('dumped kmeans model')
 
         hist_list = []
+        index_mask = []
         print("building historgram")
-        for path in descriptor_dict.keys():
+        for i, path in enumerate(dataset.image_paths):
             des = descriptor_dict[path]
+
+            if des is None or des.shape[0] != n_keypoints:
+                index_mask.append(False)
+                continue
             histogram = build_histogram(des, kmeans, n_clusters)
             hist_list.append(histogram)
+            index_mask.append(True)
 
-    return hist_list, kmeans
+    return (hist_list, index_mask), kmeans
 
 
 
