@@ -26,7 +26,7 @@ from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters
 
 #n_keypoints = 100
 # n_keypoints=49*4
-n_topics = 20
+n_topics = 25
 
 
 class LDA2:
@@ -228,11 +228,11 @@ def main():
     sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
     
     #uncomment to create M
-    M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
-    with open(sift_feature_path, "wb") as f:
-        print(sift_feature_path)
-        pickle.dump(M, f)
-    print("dumped feature matrix")
+    # M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
+    # with open(sift_feature_path, "wb") as f:
+        # print(sift_feature_path)
+        # pickle.dump(M, f)
+    # print("dumped feature matrix")
 
     with open(sift_feature_path, "rb") as f:
         M = pickle.load(f)
