@@ -17,12 +17,13 @@ import cv2 as cv
 from sklearn.decomposition import LatentDirichletAllocation as LDA
 from sklearn.cluster import KMeans
 from scipy.special import kl_div
-
+from dataset import *
 # Custom module imports
 #import dataset
 import feature_extraction
 import crop_images
-from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters
+from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters,\
+ feature_model, cnn_num_layers_removed, num_most_common_labels_used
 
 #n_keypoints = 100
 # n_keypoints=49*4
@@ -153,10 +154,74 @@ def compute_probability_distr_difference(dist1, dist2):
     """computes l2 distance between two probabilty distributions"""
     return np.sum(np.square(dist1-dist2))
 
-def evaluate_main():
+def evaluate_dataset(cnn_mode =True):
+    data_dir = os.path.join(os.path.dirname(__file__), '../data')
+    if cnn_mode:
+        data_dir = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
+
+    dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
+    mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
+    dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
+    batch_size = 50
+    loader = get_single_loader(dataset=dataset, batch_size=batch_size)
+    assert len(hist_list) == len(dataset)
+
+    actual_dic = {}
+    with open(os.path.join(data_dir, "predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
+        predicted = pickle.load(f)
+    with open(os.path.join(data_dir, "clustered_images_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), 'rb') as f:
+        clustered_images = pickle.load(f)
+    with open(os.path.join(data_dir, "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
+        prob_distrs = pickle.load(f)
+    actual_dic = dataset.getImpathToLabelDict()
+    num_in_each_cluster = {} #maps cluster to dictionary of label to count
+    for cluster in clustered_images:
+        #get number of labels in each cluster
+        dic = compute_num_labels_in_cluster(clustered_images[cluster], actual_dic)
+        num_in_each_cluster[cluster] = dic
+    with open(os.path.join(data_dir, "num_in_each_cluster_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
+        pickle.dump(num_in_each_cluster, f)   
+    #get average l2 distance between pairs of each cluster
+    avg_dist = {}  #maps cluster to average l2 distance
+    avg_kl = {}  #maps cluster to average kl distance
+
+    for label in dataset.class_indices.keys():
+        labelIndices = dataset.class_indices[label]
+        dist_count = 0
+        kl_count = 0
+        counter =  0
+        for i in labelIndices:
+            j = dataset.image_paths[i]
+            if j not in prob_distrs:
+                continue
+            for w in labelIndices:
+                k = dataset.image_paths[w]
+                if j==k:
+                    continue
+                if k not in prob_distrs:
+                    continue
+                probj = prob_distrs[j]
+                probk = prob_distrs[k]
+                kl = compute_symmetric_KL(probj, probk)
+                kl_count += kl
+                dist = compute_probability_distr_difference(probj, probk)
+                dist_count += dist
+                counter += 1
+        avg_dist[label] = dist_count/counter if counter!=0 else None
+        avg_kl[label] = kl_count/counter if counter!=0 else None
+
+    with open(os.path.join(data_dir, "avg_dist_in_label_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
+        pickle.dump(avg_dist, f)
+    with open(os.path.join(data_dir, "avg_kl_in_label_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
+        pickle.dump(avg_kl, f)
+
+
+def evaluate_main(cnn_mode = False):
     # labels = ["06c54", "011k07", "099ssp"] #labels in descriptors_test_1
     m_dir = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/" #labels
     data_dir = '/home/yaatehr/programs/spatial_LDA/data/'
+    if cnn_mode:
+        data_dir = getDirPrefix()
     actual_dic = {}
     with open(os.path.join(data_dir, "predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "rb") as f:
         predicted = pickle.load(f)
@@ -291,6 +356,75 @@ def main():
         pickle.dump(prob_distr_dic, f)   
     # Now we can predict!
 
+def build_cnn_predictions():
+    """NOTE this is using the dataloader, not porting the directory structure over. 
+    Hopefully this will be useful if we need to change the dataset parameters."""
+
+    hist_list, kmeans = feature_extraction.create_feature_matrix_cnn()
+    cnn_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
+    cnn_feature_path = cnn_root + "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
+
+    with open(cnn_feature_path, "wb") as f:
+        print(cnn_feature_path)
+        pickle.dump(hist_list, f)
+    print("dumped feature matrix")
+
+    with open(cnn_feature_path, "rb") as f:
+        hist_list = pickle.load(f)
+
+    lda = LDA2("", cnn_feature_path, n_topics = n_topics)  # Make the class
+    lda_model = lda.off_the_shelf_LDA()  # Fit the sklearn LDA model
+    predicted = {}
+    descriptor_path = cnn_root + \
+                      "image_descriptors_dictionary_%s_keypoints.pkl" % \
+                      n_keypoints
+    with open (descriptor_path, "rb") as f:
+        descriptor_dic = pickle.load(f)
+    predicted_cluster = {} #dictionary of imgid: cluster
+    cluster_dic = {} #ictionary of cluster: [images in cluster]
+    prob_distr_dic = {} #maps id: probability distribution over clusters
+
+    kmeans_path = os.path.join(cnn_root + "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+    if not os.path.exists(kmeans_path) :
+        kmeans_path = os.path.join(cnn_root + "batch_kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+
+
+
+    with open(kmeans_path, "rb") as f:
+        kmeans = pickle.load(f)
+
+    dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
+    mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
+    dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
+    batch_size = 50
+    loader = get_single_loader(dataset=dataset, batch_size=batch_size)
+    assert len(hist_list) == len(dataset)
+
+    num_files = 0
+    for i in range(len(hist_list)): 
+        if num_files % 100 == 0:
+            print(num_files)
+
+        f= dataset.image_paths[i]
+        feature = hist_list[i]
+        predictions = lda_model.transform(np.reshape(feature, (1, feature.size)))
+        prob_distr_dic[f] = predictions
+        predicted_class = np.argmax(predictions, axis=1)[0]
+        predicted_cluster[f] = predicted_class
+        if predicted_class in cluster_dic:
+            cluster_dic[predicted_class].append(f)
+        else:
+            cluster_dic[predicted_class] = [f]
+        num_files += 1
+    with open (cnn_root + "predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+        pickle.dump(predicted_cluster, f)
+    with open(cnn_root + "clustered_images_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+        pickle.dump(cluster_dic, f)
+    with open(cnn_root + "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb") as f:
+        pickle.dump(prob_distr_dic, f)   
+    # Now we can predict!
+
+
 def ryan_test():
     dataset_path = "/home/rmsander/Documents/6.867/test_dir/WelshCorgi.jpeg"
     img = cv.imread(dataset_path)
@@ -298,5 +432,6 @@ def ryan_test():
     print(M)
 
 if __name__ == "__main__":
-    main()
-    evaluate_main()
+    # main()
+    build_cnn_predictions()
+    evaluate_dataset()

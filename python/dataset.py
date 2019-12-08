@@ -27,8 +27,30 @@ hierarchy_json_path = "/home/yaatehr/programs/spatial_LDA/data" \
 path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
               "-annotations-bbox.csv"
 path_to_classname_map_csv = os.path.join(data_root, 'class-descriptions.csv')
+YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data/images/training"
+BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
 
 
+def getDataRoot():
+    if os.path.exists(YAATEH_DATA_ROOT):
+        return YAATEH_DATA_ROOT
+    else:
+        return BOX_DATA_ROOT
+
+def getDirPrefix(num_most_common_labels_used, feature_model, makedirs=False, cnn_num_layers_removed=None):
+    data_root = os.path.join(os.path.dirname(__file__), '../data')
+    if cnn_num_layers_removed:
+        d = data_root + "/top%d_%s_layer%d/"% \
+            (num_most_common_labels_used, feature_model, cnn_num_layers_removed)
+    else:
+        d = data_root + "/top%d_%s" % (num_most_common_labels_used, feature_model)
+    
+    if not os.path.exists(d):
+        if makedirs:
+            os.makedirs(d)
+        else:
+            raise Exception("INVALID DIR PATH FOR CNN FEATURES: %s" % d)
+    return d
 
 def create_classname_map(path_to_csv):
     output = {}
@@ -146,8 +168,15 @@ class ADE20K(Dataset):
             image = io.imread(impath, as_gray=self.grayscale)
         else:
             image = Image.open(impath)
+        
         if self.transform:
-            image = self.transform(image)
+            try:
+                image = self.transform(image)
+            except:
+                print("Converting grayscale to RGB (failsafe)")
+                image = np.expand_dims(image, axis=0)(0)
+                image = image.repeat(3, 1, 1)
+                image = self.transform(image) # convert a grayscale to RGB format
         image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[
             -1]
 
@@ -230,6 +259,9 @@ class ADE20K(Dataset):
         self.useStringLabels = True
     def useOneHotLabels(self):
         self.useStringLabels = False
+    def getImpathToLabelDict(self):
+        out = {self.image_paths[i]: self.image_classes[i] for i in range(len(self.image_paths))}
+        return out
 
 class ImageDataset(Dataset):
 
