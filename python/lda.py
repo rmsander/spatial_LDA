@@ -158,7 +158,7 @@ def compute_probability_distr_difference(dist1, dist2):
     return np.sum(np.square(dist1-dist2))
 
 def evaluate_dataset_cnn():
-    data_dir = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
+    data_dir = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
     dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
     mostCommonLabels = list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
@@ -419,7 +419,7 @@ def main():
 def build_cnn_predictions():
     """NOTE this is using the dataloader, not porting the directory structure over. 
     Hopefully this will be useful if we need to change the dataset parameters."""
-    cnn_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
+    cnn_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
     cnn_feature_path = os.path.join(cnn_root, "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters))
     if not os.path.exists(cnn_feature_path):
         hist_list, kmeans = feature_extraction.create_feature_matrix_cnn()
