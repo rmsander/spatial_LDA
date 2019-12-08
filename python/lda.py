@@ -227,11 +227,11 @@ def main():
     dataset_path = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/"
     # feature_extraction.make_dataset_directory(dataset_path)
     sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
-    M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
-    with open(sift_feature_path, "wb") as f:
-        print(sift_feature_path)
-        pickle.dump(M, f)
-    print("dumped feature matrix")
+    # M, kmeans = feature_extraction.create_feature_matrix(dataset_path)
+    # with open(sift_feature_path, "wb") as f:
+        # print(sift_feature_path)
+        # pickle.dump(M, f)
+    # print("dumped feature matrix")
 
     with open(sift_feature_path, "rb") as f:
         M = pickle.load(f)
