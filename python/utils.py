@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
+import os
 from os import path
 import json
 
@@ -32,7 +33,15 @@ def saveErrorGraph(trainErrors, valErrors, outfile):
 
 LABEL_HIERARCHY_PATH = "bbox_labels_600_hierarchy.json"
 
-def build_tree_to_depth_n(root, n):
+def get_ade150_classes(f_rgb2classes=None):
+    if f_rgb2classes is None:
+        f_rgb2classes = os.path.join("..", "data", "rgb2class.pkl")
+    with open(f_rgb2classes, "rb") as f:
+        rgb_class_dict = pickle.load(f_rgb2classes)
+    return rgb_class_dict
+
+def build_tree_to_depth_n(root, n, f_rgb2classes=None):
+    rgb_class_dict = get_ade150_classes(f_rgb2classes=f_rgb2classes)
     queue = [root]
     output = dict()
     label_map = dict()
@@ -42,13 +51,18 @@ def build_tree_to_depth_n(root, n):
     while len(queue) > 0:
         node = queue.pop(0)
         num_nodes_in_layer -= 1
-        if(depth < n):
-            label_map[node["LabelName"]] = node["LabelName"]
+
+        # Recurse to next depth if we aren't deep enough
+        if(depth < n) and not node['name'].split(" ")[0] in \
+                              list(rgb_class_dict.values()):
+            label_map[node["name"]] = node["name"]
+
+        # If we reach the root level at the depth we want to be at
         else:
-            label_map[node["LabelName"]] = get_all_sublabels(node)
+            label_map[node["name"]] = get_all_sublabels(node)
         try:
-            childList = node["Subcategory"]
-            for child in childList:
+            childList = node["children"]
+            for child in childList:  # Add new children to queue
                 queue.append(child)
         except:
             pass
@@ -75,9 +89,9 @@ def get_all_sublabels(node):
     queue = [node]
     while len(queue) > 0:
         n = queue.pop()
-        sublabels.append(n["LabelName"])
+        sublabels.append(n["name"])
         try:
-            childList = n["Subcategory"]
+            childList = n["children"]
             for child in childList:
                 queue.append(child)
         except:
