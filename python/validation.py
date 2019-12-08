@@ -9,9 +9,9 @@ import cv2 as cv
 import crop_images
 from lda import compute_num_labels_in_cluster, compute_symmetric_KL,compute_probability_distr_difference
 
-n_clusters = 100
+n_clusters = 150
 n_topics = 20
-n_keypoints = 10
+n_keypoints = 150
 
 
 def get_prediction_for_image(img, lda_model, kmeans_model):
@@ -113,7 +113,7 @@ def evaluate_main():
 
 def main():
     dataset_path = "/home/yaatehr/programs/datasets/seg_data/images/dataset1_val/"
-    make_directory_for_validation(dataset_path)
+    # make_directory_for_validation(dataset_path)
     sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/sift_feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
     kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
     validation_img_path = ""
