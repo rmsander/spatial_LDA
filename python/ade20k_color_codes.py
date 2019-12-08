@@ -12,7 +12,14 @@ def main():
         data = json.load(json_file)
         json_file.close()
 
-    print("JSON KEYS: {}".format(json_file))
+    print("JSON KEYS: {}".format(list(data.keys())))
+
+
+    stage_1 = data['children']
+    print(stage_1)
+
+
+   # print(type(data['children']))
 
 if __name__=="__main__":
     main()
