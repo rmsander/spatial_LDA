@@ -22,7 +22,7 @@ def main():
             segmented_files = os.listdir(os.path.join(dir_files, sub_folder,
                                                       label))
             for f_img in segmented_files:
-                fnmame_split = f_img.split(".")
+                fname_split = f_img.split(".")
                 seg_name = fname_split[0]+"_seg.png"
                 print("FILE NAME IS: {}".format(seg_name))
                 A = cv.imread(os.path.join(dir_segmented, sub_folder,
