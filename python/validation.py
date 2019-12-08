@@ -140,7 +140,7 @@ def main():
                     continue
                 if num_files%100 == 0:
                     print(num_files)
-                img = cv.imread(f)
+                img = cv.imread(os.path.join(singular_label_path,f))
                 prediction = get_prediction_for_image(img, lda_model, kmeans_model)
                 prob_distrs_validation[f] = prediction
                 predicted_class = np.argmax(prediction, axis=1)[0]
