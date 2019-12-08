@@ -56,7 +56,7 @@ def main_eval():
     
 
 def plot_histograms_for_labels(n_keypoints, n_clusters):
-    label_path = "/home/yaatehr/programs/seg_data/images/dataset1/"
+    label_path = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/"
     letters = os.listdir(label_path)
     f_kmeans = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters_" \
                "%s_keypoints.pkl" % (n_clusters, n_keypoints)
