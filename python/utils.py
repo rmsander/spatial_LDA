@@ -43,6 +43,7 @@ def get_ade150_classes(f_rgb2classes=None):
 
 def build_tree_to_depth_n(root, n, f_rgb2classes=None):
     rgb_class_dict = get_ade150_classes(f_rgb2classes=f_rgb2classes)
+    print("DICT VALUES: \n {}".format(list(rgb_class_dict.values())))
     queue = [root]
     output = dict()
     label_map = dict()
