@@ -156,4 +156,5 @@ def main_plot():
 
 
 if __name__ == "__main__":
-    main_eval()
+    # main_eval()
+    plot_histograms_for_labels(150, 150)
