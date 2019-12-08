@@ -18,7 +18,6 @@ def get_prediction_for_image(img, lda_model, kmeans_model):
     kp, des = get_feature_vector(img)
     feature = build_histogram(des, kmeans_model,kmeans_model.cluster_centers_.shape[0])
     predictions = lda_model.transform(np.reshape(feature, (1, feature.size)))
-    print(predictions)
     return predictions
 
 def make_directory_for_validation(dataset_path):
@@ -137,7 +136,7 @@ def main():
             print("creating predictions for : ", singular_label_path)
             images = os.listdir(singular_label_path) 
             for f in images:
-                if f[-3:] == 'jpg':
+                if f[-3:] != 'jpg':
                     continue
                 if num_files%100 == 0:
                     print(num_files)
