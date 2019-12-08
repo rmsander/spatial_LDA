@@ -302,7 +302,7 @@ def create_feature_matrix_cnn():
 
 def create_feature_matrix_sift():
     # save_root = os.path.join(os.path.dirname(__file__), '../data')
-    save_root =  getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed)
+    save_root =  getDirPrefix(num_most_common_labels_used, "sift")
 
     #DUMP DESCRIPTOR LIST
     descriptor_path = save_root + "image_descriptors_dictionary_%s_keypoints.pkl" % \
