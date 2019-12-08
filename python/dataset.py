@@ -39,10 +39,12 @@ def getDataRoot():
 
 def getDirPrefix(num_most_common_labels_used, feature_model, makedirs=False, cnn_num_layers_removed=None):
     data_root = os.path.join(os.path.dirname(__file__), '../data')
-    if cnn_num_layers_removed:
+    if cnn_num_layers_removed is not None:
+        # print("entered this thi")
         d = data_root + "/top%d_%s_layer%d/"% \
             (num_most_common_labels_used, feature_model, cnn_num_layers_removed)
     else:
+        # print(cnn_num_layers_removed)
         d = data_root + "/top%d_%s" % (num_most_common_labels_used, feature_model)
     
     if not os.path.exists(d):
