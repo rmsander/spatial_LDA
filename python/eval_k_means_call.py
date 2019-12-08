@@ -68,12 +68,12 @@ def plot_histograms_for_labels(n_keypoints, n_clusters):
     with open(f_descriptor, 'rb') as f:
         descriptor_list = pickle.load(f)
     for l in letters:
-        label_path = os.path.join(label_path, l)
-        labels = os.listdir(label_path)
+        labels_path = os.path.join(label_path, l)
+        labels = os.listdir(labels_path)
         for label in labels:
-            singular_label_path = os.path.join(label_path, label)
+            singular_label_path = os.path.join(labels_path, label)
             print(singular_label_path)
-            plot_histograms_per_label(label_path, n_keypoints, kmeans, descriptor_list, 0.01)
+            plot_histograms_per_label(singular_label_path, n_keypoints, kmeans, descriptor_list, 0.01)
 
 
 def main_aggregate_pkl_files():
