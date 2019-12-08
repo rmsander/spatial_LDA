@@ -62,6 +62,7 @@ def main():
                 print("FILE NAME IS: {}".format(seg_name))
                 A = cv.imread(os.path.join(dir_segmented, sub_folder,
                                             label, seg_name))
+
                 M, N, _ = A.shape
                 num_pixels = M * N
                 unique_vals, unique_counts = np.unique(A.reshape(-1,A.shape[-1]), axis=0, return_counts=True)
