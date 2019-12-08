@@ -4,9 +4,14 @@ import os
 from utils import make_inverted_labelmap
 
 
+# Debugging flag
+USE_BOX = True
+
 def main():
-    #F_JSON = os.path.join("..", "..", "datasets", "seg_data", "tree.json")
-    F_JSON = os.path.join("..", "..", "slda_outside_work", "tree.json")
+    if USE_BOX:
+        F_JSON = os.path.join("..", "..", "datasets", "seg_data", "tree.json")
+    else:
+        F_JSON = os.path.join("..", "..", "slda_outside_work", "tree.json")
     DEPTH = 8
     print("Tree located at: {}".format(F_JSON))
 
