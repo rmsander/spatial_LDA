@@ -133,6 +133,7 @@ def main():
         labels = os.listdir(label_path)
         for label in labels:
             singular_label_path = os.path.join(label_path, label)
+            print("creating predictions for : ", singular_label_path)
             images = os.listdir(singular_label_path) 
             for f in images:
                 if f[-3:] == 'jpg':
