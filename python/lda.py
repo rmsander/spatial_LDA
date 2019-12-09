@@ -523,6 +523,8 @@ def build_sift_predictions():
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     dataset.applyMask(index_mask)
 
+    assert sum(index_mask) == len(dataset), "index_mask len %d and dataset len %d with hist_list  %d" % (sum(index_ma$
+
     num_files = 0
     for i in range(len(dataset)): 
         if num_files % 100 == 0:
