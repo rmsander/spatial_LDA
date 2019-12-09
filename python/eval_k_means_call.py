@@ -90,15 +90,14 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
     with open(feature_path, "rb") as f:
         feature_tup = pickle.load(f)
     
-    if model == "resnet34":
-        transform = resnet_transform
+
+    if model=="sift":
+        hist_list, index_mask = feature_tup
+    else:
         hist_list = feature_tup
         index_mask = None
-    elif model=="sift":
-        hist_list, index_mask = feature_tup
-        transform = None
-    else:
-        raise Exception("Trying to evaluate invalid model")
+    
+    transform= get_model_transform(model)
 
 
     dataset = ADE20K(root=getDataRoot(), transform=transform, useStringLabels=True, randomSeed=49)

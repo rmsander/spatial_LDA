@@ -79,6 +79,8 @@ def get_model_transform(model):
     elif model == 'alexnet':
         print("using googlenet transform")
         return googlenet_transform
+    else:
+        raise Exception("please add a transform for your net")
 
 try:
     classname_map = create_classname_map(path_to_classname_map_csv)
