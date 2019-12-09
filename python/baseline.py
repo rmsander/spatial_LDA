@@ -108,8 +108,8 @@ for i in range(20, 400, 20):
 
 
 
-# def evaluate_predictions(eval_tup_path):
-#     with open(eval_tup_path, "rb") as f:
-#         prediction, label_list, kmeans = pickle.load(f)
+def evaluate_predictions(eval_tup_path):
+    with open(eval_tup_path, "rb") as f:
+        prediction, label_list, kmeans, vstackshape= pickle.load(f)
 
-#     for pred_label in prediction
+    for pred_label in prediction
