@@ -150,7 +150,7 @@ def createFeatureVectors(max_edge_len):
             f = grayscaleDataset.image_paths[i]
             if np.random.random() < percentage_plotted:
                 #Plot image histogram
-                desc = U[i,:]
+                desc = U[i,:].reshape(1, -1)
                 prediction = kmeans.predict(desc)
                 if prediction in histogram.keys():
                     histogram[prediction] += 1.0/n_clust
