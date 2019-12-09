@@ -15,7 +15,7 @@ def unique_count_app(a):
     #return colors[count.argmax()]
 
 def make_rgb_label_dict(rgb_dir):
-    rgb_to_class = {(0, 0, 0) = "NA"}
+    rgb_to_class = {(0, 0, 0):"NA"}
     color_files = os.listdir(rgb_dir)
     # Filter out any non-jpg images
     color_files = [color_files[i] for i in range(len(color_files)) if \
@@ -72,6 +72,7 @@ def main():
                 unique_vals, unique_counts = np.unique(A.reshape(-1,A.shape[-1]), axis=0, return_counts=True)
                 unique_vals, unique_counts = list(unique_vals), list(unique_counts)
                 print("UNIQ: {}".format(unique_vals))
+                print("UNIQUE KEYS: \n {}".format(list(rgb2class.keys())))
                 segimg2class[f_img] = {
                     rgb2class[tuple(list(unique_vals[i]))]: unique_counts[i] / num_pixels
                     for i in range(len(unique_counts))}
