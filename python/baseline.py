@@ -145,18 +145,15 @@ def createFeatureVectors(max_edge_len):
     label_to_predictions = {}
     for label in label_subset:
         labelIndices = grayscaleDataset.class_indices[label]
-        histogram = {}
-
+        histogram = np.zeros(n_clust)
         for i in labelIndices:
             f = grayscaleDataset.image_paths[i]
             if np.random.random() < percentage_plotted:
                 #Plot image histogram
                 desc = U[i,:].reshape(1, -1)
                 prediction = kmeans.predict(desc).item()
-                if prediction in histogram.keys():
-                    histogram[prediction] += 1.0/n_clust
-                else:
-                    histogram[prediction] = [1.0/n_clust]
+                histogram[prediction] += 1.0
+
         label_to_predictions[label] = histogram
         plt.plot(histogram)
         plt.xlabel("Classes")
