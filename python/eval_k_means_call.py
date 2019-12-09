@@ -115,7 +115,7 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
         kmeans = pickle.load(f)
     with open(f_descriptor, 'rb') as f:
         descriptor_list = pickle.load(f)
-
+    plot_prefix = "plots_%s_keypoints_%s_clusters/" % (n_keypoints, n_clusters)
     for label in dataset.class_indices.keys():
         labelIndices = dataset.class_indices[label]
         for i in labelIndices:
@@ -127,10 +127,11 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
                 plt.plot(histogram)
         plt.xlabel("features bag of words")
         plt.title("Histogram distribution for label %s" %label)
-        plot_folder = os.path.join(save_root, "plots/")
+
+        plot_folder = os.path.join(save_root, plot_prefix)
         if not os.path.exists(plot_folder):
-            os.makedirs(os.path.join(save_root, "plots/"))
-        plt.savefig(os.path.join(save_root, "plots/histogram_distribution_label_%s_%s_keypoints_%s_clusters.png"%(label, n_keypoints, n_clusters)))
+            os.makedirs(plot_folder)
+        plt.savefig(os.path.join(plot_folder, "histogram_distribution_label_%s.png"%(label, )))
 
 def main_aggregate_pkl_files():
     print("HERE")
