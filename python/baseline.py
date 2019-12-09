@@ -66,7 +66,7 @@ def createFeatureVectors(max_edge_len):
     dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
     print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
     # print("dataset len is: ", len(grayscaleDataset.image_paths))
-    bar = tqdm(total= num_images)
+    bar = tqdm(total= len(grayscaleDataset))
 
     flattened_image_list = []
     label_list = []
