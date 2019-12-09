@@ -107,6 +107,7 @@ def createFeatureVectors(max_edge_len):
     #     vstack = np.vstack((vstack, img))
     
     # print(vstack)
+    print(stacked_images.shape)
     prediction = kmeans.predict(stacked_images)
     print(prediction)
     path = os.path.join(data_root, "baseline_run_incremental_%d.pkl" % max_edge_len)
