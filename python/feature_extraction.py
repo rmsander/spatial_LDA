@@ -10,7 +10,7 @@ from scipy.special import kl_div as KL
 import pickle
 from torchvision import transforms
 from skimage import io
-from train_cnn import get_model, resnet_transform
+from train_cnn import get_model
 import matplotlib.pyplot as plt
 import argparse
 from dataset import *
@@ -25,6 +25,13 @@ feature_model = "resnet34" # one of resnet34 TODO resnet 18, inception net
 cnn_num_layers_removed = 1 # TODO make modifications for other layers
 num_most_common_labels_used = 25
 
+def get_model():
+    model = torch.hub.load('pytorch/vision', feature_model, pretrained=True)
+    # cut off the last layer of this classifier
+    new_classifier = nn.Sequential(*list(model.children())[:-cnn_num_layers_removed])
+    # print(new_classifier)
+    model = new_classifier
+    return model
 
 def get_feature_vector(img):
     # Get keypoints and feature descriptors

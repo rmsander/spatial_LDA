@@ -27,8 +27,8 @@ from models.SegNet import *
 from utils import topNError, saveErrorGraph
 import copy
 
-from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters,\
- feature_model, cnn_num_layers_removed, num_most_common_labels_used
+# from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters,\
+#  feature_model, cnn_num_layers_removed, num_most_common_labels_used
 
 cnnModelPath = os.path.join('models', 'bestCNNmodel')
 multiGPU = torch.cuda.device_count() > 1
@@ -206,13 +206,7 @@ def test():
     print(batchOutput.shape)
 
 
-def get_model():
-    model = torch.hub.load('pytorch/vision', feature_model, pretrained=True)
-    # cut off the last layer of this classifier
-    new_classifier = nn.Sequential(*list(model.children())[:-cnn_num_layers_removed])
-    # print(new_classifier)
-    model = new_classifier
-    return model
+
 
 
 def cnnEpoch(model, loader, device, criterion, output_period, epoch,
