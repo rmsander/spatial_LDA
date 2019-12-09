@@ -10,9 +10,10 @@ from torch.autograd import Variable
 import numpy as np
 from dataset import *
 import os
+import gc
 import pickle
 data_root = os.path.join(os.path.dirname(__file__), '../data')
-
+from tqdm import tqdm
 
 
 NUM_KMEANS_CLUSTERS = 100
@@ -25,7 +26,7 @@ IMAGE_MATRIX_PATH = os.path.join(data_root, "grayscale_img_matrix.pkl")
 grayscaleDataset = ADE20K(root=getDataRoot(), transform=vae_transform, useStringLabels=True, randomSeed=49)
 
 #select most commoon label strings from tuples of (label, count)
-mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
+mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(10)))
 grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
 
 print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
@@ -37,7 +38,7 @@ grayscaleDataset.useOneHotLabels()
 label_dim = grayscaleDataset.__getitem__(0)[1].shape
 
 
-mb_size = 25
+mb_size = 20
 Z_dim = 100
 X_dim = 224*224
 y_dim = label_dim #TODO change the numebr of one hot vectors after you chcnge this t a subse
@@ -102,8 +103,9 @@ solver = optim.Adam(params, lr=lr)
 
 # loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True)
 
-for it in range(100000):
-    loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True, random_seed=it)
+for epoch in range(10):
+    loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True, random_seed=epoch)
+    bar = tqdm(total= len(grayscaleDataset), desc="epoch num: %d" % epoch)
 
     for batch_num, (X, Y) in enumerate(loader):
 
@@ -135,28 +137,32 @@ for it in range(100000):
             if p.grad is not None:
                 data = p.grad.data
                 p.grad = Variable(data.new().resize_as_(data).zero_())
+        # Print and plot every now and then
+        if batch_num % 10 == 0:
+            print('Iter-{}; Loss: {:.4}'.format(batch_num, loss.item()))
 
-    # Print and plot every now and then
-    if it % 1000 == 0:
-        print('Iter-{}; Loss: {:.4}'.format(batch_num, loss.item()))
+            samples = P(z).data.numpy()[:16]
 
-        samples = P(z).data.numpy()[:16]
+            fig = plt.figure(figsize=(4, 4))
+            gs = gridspec.GridSpec(4, 4)
+            gs.update(wspace=0.05, hspace=0.05)
 
-        fig = plt.figure(figsize=(4, 4))
-        gs = gridspec.GridSpec(4, 4)
-        gs.update(wspace=0.05, hspace=0.05)
+            for i, sample in enumerate(samples):
+                ax = plt.subplot(gs[i])
+                plt.axis('off')
+                ax.set_xticklabels([])
+                ax.set_yticklabels([])
+                ax.set_aspect('equal')
+                plt.imshow(sample.reshape(224, 224), cmap='Greys_r')
 
-        for i, sample in enumerate(samples):
-            ax = plt.subplot(gs[i])
-            plt.axis('off')
-            ax.set_xticklabels([])
-            ax.set_yticklabels([])
-            ax.set_aspect('equal')
-            plt.imshow(sample.reshape(224, 224), cmap='Greys_r')
+            if not os.path.exists('out/'):
+                os.makedirs('out/')
 
-        if not os.path.exists('out/'):
-            os.makedirs('out/')
+            plt.savefig('out/{}.png'.format(str(c).zfill(3)), bbox_inches='tight')
+            c += 1
+            plt.close(fig)
 
-        plt.savefig('out/{}.png'.format(str(c).zfill(3)), bbox_inches='tight')
-        c += 1
-        plt.close(fig)
+        bar.update(mb_size)
+    gc.collect()
+    bar.close()
+
