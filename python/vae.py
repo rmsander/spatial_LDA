@@ -164,4 +164,5 @@ for epoch in range(10):
 
         bar.update(mb_size)
     gc.collect()
+    bar.close()
 
