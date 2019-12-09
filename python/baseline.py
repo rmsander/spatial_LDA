@@ -24,16 +24,31 @@ def get_matrix_path(edge_len):
     return os.path.join(data_root, "grayscale_img_matrix_%d.pkl" % edge_len)
 
 
-def stack_images_rows_with_pad(list_of_images,edge_len):
+def stack_images_rows_with_pad(dataset,edge_len):
     """
     If/when we use a transform this won't be necessary
     """
     path = get_matrix_path(edge_len)
 
+
     if not os.path.exists(path):
+        list_of_images = []
+        label_list = []
+
+        dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
+        bar = tqdm(total= len(dataset))
+
+        for step, (img, label) in enumerate(dataset):
+            # if step > 100 or step > len(dataset) - 1:
+            #     break
+            list_of_images.append(img.flatten())
+            label_list.append(label)
+            if step % 50 == 0:
+                bar.update(50)
         maxlen = max([len(x) for x in list_of_images])
         out = np.vstack([np.concatenate([b, np.zeros(maxlen-len(b))]) for b in list_of_images])
         print(out.shape)
+        out = (out, label_list)
         with open(path, 'wb') as f:
             pickle.dump(out, f)
         return out
@@ -67,27 +82,11 @@ def createFeatureVectors(max_edge_len):
     mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
     grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     print(len(grayscaleDataset.counter))
-    dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
     print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
     # print("dataset len is: ", len(grayscaleDataset.image_paths))
     print("stacking and flattening images")
-    bar = tqdm(total= len(grayscaleDataset))
 
-    flattened_image_list = []
-    label_list = []
-    print("dataloader len: ", len(dataset))
-    for step, (img, label) in enumerate(dataset):
-        # if step > 100 or step > len(dataset) - 1:
-        #     break
-        flattened_image_list.append(img.flatten())
-        cnt[label] +=1
-        label_list.append(label)
-        if step % 50 == 0:
-            bar.update(50)
-
-    print(cnt)
-    print(len(cnt))
-    stacked_images = stack_images_rows_with_pad(flattened_image_list, max_edge_len)
+    stacked_images, label_list = stack_images_rows_with_pad(grayscaleDataset, max_edge_len)
     # normalized_images = featureNormalize(stacked_images)[0]
     transformer = IncrementalPCA(batch_size=300)
     U = transformer.fit_transform(stacked_images)
