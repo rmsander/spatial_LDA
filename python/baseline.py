@@ -151,7 +151,7 @@ def createFeatureVectors(max_edge_len):
             if np.random.random() < percentage_plotted:
                 #Plot image histogram
                 desc = U[i,:].reshape(1, -1)
-                prediction = kmeans.predict(desc)
+                prediction = kmeans.predict(desc).item()
                 if prediction in histogram.keys():
                     histogram[prediction] += 1.0/n_clust
                 else:
