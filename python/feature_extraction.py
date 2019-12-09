@@ -10,7 +10,6 @@ from scipy.special import kl_div as KL
 import pickle
 from torchvision import transforms
 from skimage import io
-from train_cnn import get_model
 import matplotlib.pyplot as plt
 import argparse
 from dataset import *
