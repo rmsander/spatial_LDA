@@ -87,7 +87,7 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
     with open(feature_path, "rb") as f:
         feature_tup = pickle.load(f)
     
-    if model == "resnet":
+    if model == "resnet34":
         transform = resnet_transform
         hist_list = feature_tup
         index_mask = None
