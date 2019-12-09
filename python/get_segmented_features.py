@@ -15,7 +15,7 @@ def unique_count_app(a):
     #return colors[count.argmax()]
 
 def make_rgb_label_dict(rgb_dir):
-    rgb_to_class = {}
+    rgb_to_class = {(0, 0, 0) = "NA"}
     color_files = os.listdir(rgb_dir)
     # Filter out any non-jpg images
     color_files = [color_files[i] for i in range(len(color_files)) if \
@@ -23,9 +23,9 @@ def make_rgb_label_dict(rgb_dir):
     for color_file in color_files:
         A = cv.imread(os.path.join(rgb_dir, color_file))
         colors = unique_count_app(A)
-        print("COLORS_0",colors[0])
-        class_name = color_file.split(".")[0]
-        rgb_to_class[color] = class_name
+        for color in colors:
+            class_name = color_file.split(".")[0]
+            rgb_to_class[color] = class_name
 
     # Pickle results
     f_out = os.path.join("..", "data", "rgb2class.pkl")
