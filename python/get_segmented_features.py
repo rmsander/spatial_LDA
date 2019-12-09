@@ -10,9 +10,7 @@ import pickle
 def unique_count_app(a):
     colors, count = np.unique(a.reshape(-1,a.shape[-1]), axis=0, return_counts=True)
     colors_tuple = [tuple(colors[i]) for i in range(colors.shape[0])]
-    #print("COLOR TUPLE: {}".format(colors_tuple))
-    return colors_tuple
-    #return colors[count.argmax()]
+    return colors_tuple, list(count)
 
 def make_rgb_label_dict(rgb_dir):
     rgb_to_class = {(0, 0, 0):"NA"}
@@ -22,7 +20,7 @@ def make_rgb_label_dict(rgb_dir):
                    color_files[i].endswith("jpg")]
     for color_file in color_files:
         A = cv.imread(os.path.join(rgb_dir, color_file))
-        colors = unique_count_app(A)
+        colors, _ = unique_count_app(A)
         for color in colors:
             class_name = color_file.split(".")[0]
             rgb_to_class[color] = class_name
@@ -69,13 +67,18 @@ def main():
 
                 M, N, _ = A.shape
                 num_pixels = M * N
-                unique_vals, unique_counts = np.unique(A.reshape(-1,A.shape[-1]), axis=0, return_counts=True)
-                unique_vals, unique_counts = list(unique_vals), list(unique_counts)
-                print("UNIQ: {}".format(unique_vals))
-                print("UNIQUE KEYS: \n {}".format(list(rgb2class.keys())))
-                segimg2class[f_img] = {
-                    rgb2class[tuple(list(unique_vals[i]))]: unique_counts[i] / num_pixels
-                    for i in range(len(unique_counts))}
+                unique_vals, unique_counts = unique_count_app(A)
+                print("UNIQUE KEYS: \n {}".format(len(list(rgb2class.keys(
+                )))))
+                segimg2class[f_img] = {}
+                for i in range(len(unique_vals)):
+                    key_of_key = tuple(list(unique_vals[i]))
+                    print("KEY OF KEY: {}".format(key_of_key))
+                    key = rgb2class[key_of_key]:
+                    value = unique_counts[i] / num_pixels
+                    segimg2class[key] = value
+
+
 
     # Pickle results
     output_fname = os.path.join("..", "data", "SEG_COUNTS.pkl")
