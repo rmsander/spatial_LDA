@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib as plt
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, MiniBatchKMeans
 from skimage.transform import rescale, resize
 from dataset import ADE20K, get_single_loader, getDataRoot
 from itertools import zip_longest
@@ -10,6 +10,9 @@ import pickle
 from pca import pca, featureNormalize
 from collections import Counter
 data_root = os.path.join(os.path.dirname(__file__), '../data')
+
+from sklearn.decomposition import IncrementalPCA
+from scipy import sparse
 
 
 NUM_KMEANS_CLUSTERS = 100
@@ -57,8 +60,8 @@ def createFeatureVectors(max_edge_len):
     grayscaleDataset = ADE20K(grayscale=True, root=getDataRoot(), transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=49)#, numLabelsLoaded=10)
 
     #select most commoon label strings from tuples of (label, count)
-    # mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
-    # grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
+    mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
+    grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     print(len(grayscaleDataset.counter))
     dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
     print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
@@ -77,9 +80,13 @@ def createFeatureVectors(max_edge_len):
     print(cnt)
     print(len(cnt))
     stacked_images = stack_images_rows_with_pad(flattened_image_list, max_edge_len)
-    normalized_images = featureNormalize(stacked_images)[0]
-    U = pca(normalized_images)[0]
-    kmeans = KMeans(n_clusters=len(cnt))
+    # normalized_images = featureNormalize(stacked_images)[0]
+    transformer = IncrementalPCA(batch_size=300)
+    X_sparse = sparse.csr_matrix(stacked_images)
+    U = transformer.fit_transform(X_sparse)
+
+    # U = pca(normalized_images)[0]
+    kmeans = MiniBatchKMeans(n_clusters=len(cnt))
     print('fitting KMEANS')
 
     kmeans.fit(U)
@@ -96,7 +103,7 @@ def createFeatureVectors(max_edge_len):
     # print(vstack)
     prediction = kmeans.predict(vstack)
     print(prediction)
-    path = os.path.join(data_root, "baseline_run_%d.pkl" % max_edge_len)
+    path = os.path.join(data_root, "baseline_run_incremental_%d.pkl" % max_edge_len)
     with open(path, "wb") as f:
         eval_tup = (prediction, label_list, kmeans, vstack.shape)
         pickle.dump(eval_tup, f)
@@ -108,8 +115,8 @@ for i in range(20, 400, 20):
 
 
 
-def evaluate_predictions(eval_tup_path):
-    with open(eval_tup_path, "rb") as f:
-        prediction, label_list, kmeans, vstackshape= pickle.load(f)
+# def evaluate_predictions(eval_tup_path):
+#     with open(eval_tup_path, "rb") as f:
+#         prediction, label_list, kmeans, vstackshape= pickle.load(f)
 
-    for pred_label in prediction
+#     for pred_label in prediction
