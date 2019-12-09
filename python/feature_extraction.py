@@ -18,9 +18,9 @@ import torch
 from tqdm import tqdm
 import gc
 
-n_keypoints = 400  # hyperparameter, need to tune
+n_keypoints = 500  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
-n_clusters = 300  # also need to tune this
+n_clusters = 400  # also need to tune this
 feature_model = "resnet34" # one of resnet34 TODO resnet 18, inception net
 cnn_num_layers_removed = 2 # TODO make modifications for other layers
 num_most_common_labels_used = 25
