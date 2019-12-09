@@ -9,8 +9,9 @@ import pickle
 
 def unique_count_app(a):
     colors, count = np.unique(a.reshape(-1,a.shape[-1]), axis=0, return_counts=True)
-    print(colors)
-    return colors
+    colors_tuple = [tuple(colors[i]) for i in range(colors.shape[0])]
+    #print("COLOR TUPLE: {}".format(colors_tuple))
+    return colors_tuple
     #return colors[count.argmax()]
 
 def make_rgb_label_dict(rgb_dir):
@@ -21,7 +22,8 @@ def make_rgb_label_dict(rgb_dir):
                    color_files[i].endswith("jpg")]
     for color_file in color_files:
         A = cv.imread(os.path.join(rgb_dir, color_file))
-        color = tuple(list(unique_count_app(A)))
+        colors = unique_count_app(A)
+        print("COLORS_0",colors[0])
         class_name = color_file.split(".")[0]
         rgb_to_class[color] = class_name
 
