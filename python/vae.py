@@ -37,7 +37,7 @@ grayscaleDataset.useOneHotLabels()
 label_dim = grayscaleDataset.__getitem__(0)[1].shape
 
 
-mb_size = 5
+mb_size = 25
 Z_dim = 100
 X_dim = 224*224
 y_dim = label_dim #TODO change the numebr of one hot vectors after you chcnge this t a subse
