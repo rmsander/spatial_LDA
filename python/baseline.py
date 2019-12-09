@@ -165,8 +165,6 @@ def createFeatureVectors(max_edge_len):
         plt.savefig(os.path.join(plot_folder, "pca_kmeans_label%s.png"%(label, )))
 
 
-    p
-
 
 
 for i in range(20, 400, 20):
