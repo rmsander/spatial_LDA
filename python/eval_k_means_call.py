@@ -212,5 +212,5 @@ def main_plot():
 
 if __name__ == "__main__":
     # main_eval()
-    plot_histograms_for_dataset(500, 300, 25, "resnet34", percentage_plotted=.05, cnn_num_layers_removed=2)
+    plot_histograms_for_dataset(500, 300, 25, "dift", percentage_plotted=.05)
     # plot_histograms_for_labels(150, 150)
