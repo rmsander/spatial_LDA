@@ -244,7 +244,7 @@ def create_feature_matrix_cnn():
             descriptors = dict(zip(dataset.image_paths[offset:offset+batch_size], unrolled_outputs.tolist()))
             descriptor_dict.update(descriptors)
             batch_outputs_for_kmeans = unrolled_outputs.reshape(-1,unrolled_outputs.shape[-1])
-            minibatchkmeans.partial_fit(batch_outputs_for_kmeans)
+            # minibatchkmeans.partial_fit(batch_outputs_for_kmeans)
 
             #build kmeans  fit input
             if step == 0:
@@ -268,7 +268,7 @@ def create_feature_matrix_cnn():
         # except Exception as e:
         gc.collect()
         print("falling back to minibatch")
-        kmeans = minibatchkmeans
+        kmeans = minibatchkmeans.fit(vstack)
         usingMinibatch = True
 
         # DUMP KMEANS
