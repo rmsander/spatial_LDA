@@ -419,7 +419,7 @@ def main():
 def build_cnn_predictions():
     """NOTE this is using the dataloader, not porting the directory structure over. 
     Hopefully this will be useful if we need to change the dataset parameters."""
-    cnn_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
+    cnn_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed, makedirs=True)
     cnn_feature_path = os.path.join(cnn_root, "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters))
     if not os.path.exists(cnn_feature_path):
         hist_list, kmeans = feature_extraction.create_feature_matrix_cnn()
