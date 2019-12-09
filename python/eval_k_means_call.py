@@ -62,9 +62,9 @@ def main_eval_cli():
 def plot_histograms_for_labels(n_keypoints, n_clusters):
     label_path = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/"
     letters = os.listdir(label_path)
-    f_kmeans = "/home/yaatehr/programs/spatial_LDA/data/kmeans_%s_clusters_" \
+    f_kmeans = "/home/yaatehr/programs/spatial_LDA/data/top25_sift/kmeans_%s_clusters_" \
                "%s_keypoints.pkl" % (n_clusters, n_keypoints)
-    f_descriptor = "/home/yaatehr/programs/spatial_LDA/data" \
+    f_descriptor = "/home/yaatehr/programs/spatial_LDA/data/top25_sift" \
                    "/image_descriptors_dictionary_%s_keypoints.pkl" % \
                    n_keypoints
     with open(f_kmeans, 'rb') as f:
@@ -196,7 +196,7 @@ def main_plot():
         weight_dict = compute_weighted_average()
         N = np.sum(list(weight_dict.values()))
         
-    kmeans_eval_file = "/home/yaatehr/programs/spatial_LDA/data/kmeans_aggregate_eval_dict.pkl"
+    kmeans_eval_file = "/home/yaatehr/programs/spatial_LDA/data/top25_sift/kmeans_aggregate_eval_dict.pkl"
     with open(kmeans_eval_file, "rb") as f:
         kmeans_eval_dict = pickle.load(f)
         f.close()
