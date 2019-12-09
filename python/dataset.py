@@ -264,6 +264,8 @@ class ADE20K(Dataset):
 
 
     def applyMask(self, maskList, normalizeWeights =False):
+        if type(maskList) == list:
+            maskList = np.array(maskList)
         indices = np.argwhere(maskList == False).flatten()
         assert len(maskList) == len(self.image_paths), "mask must match the size of the dataset and be true false"
 
