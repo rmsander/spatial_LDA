@@ -110,14 +110,14 @@ for epoch in range(500):
     for batch_num, (X, Y) in enumerate(loader):
 
         X = Variable(torch.flatten(X, start_dim=1))
-        print(X.shape)
+        # print(X.shape)
         # X = Variable(X.reshape(mb_size, 224*224))
 
         # Forward
         z_mu, z_var = Q(X)
         z = sample_z(z_mu, z_var)
         X_sample = P(z)
-        print(X_sample.shape)
+        # print(X_sample.shape)
 
 
         # Loss
