@@ -156,7 +156,7 @@ def main_aggregate_pkl_files():
         pickle.dump(kmeans_eval_aggregate_dict, f)
         f.close()
 
-def plot_histograms_per_label(label_path,n_keypoints, kmeans, descriptor_list, percentage_plotted = 0.01):
+def plot_histograms_per_label(label_path,n_keypoints, kmeans, descriptor_list, percentage_plotted = 0.05):
     img_files = os.listdir(label_path)
     fig, ax = plt.subplots(1, 1)
     label = label_path.split("/")[-1]
@@ -171,7 +171,7 @@ def plot_histograms_per_label(label_path,n_keypoints, kmeans, descriptor_list, p
             histogram = build_histogram(des, kmeans, kmeans.cluster_centers_.shape[0])
             plt.plot(histogram)
     plt.xlabel("features bag of words")
-    plt.title("Histogram distribution for label %s" %label)
+    plt.title("Histogram distribution for label %s for %s keypoints and %s clusters" %(label, n_keypoints, n_clusters))
     plt.savefig("plots/histogram_distribution_label_%s_%s_keypoints_%s_clusters.png"%(label, n_keypoints, n_clusters))
 
 def main_plot():
