@@ -88,15 +88,33 @@ def createFeatureVectors(max_edge_len):
 
     stacked_images, label_list = stack_images_rows_with_pad(grayscaleDataset, max_edge_len)
     # normalized_images = featureNormalize(stacked_images)[0]
-    transformer = IncrementalPCA(batch_size=79)
-    U = transformer.fit_transform(stacked_images)
-    # U = transformer.predict(stacked_images)
+    pca = IncrementalPCA(batch_size=79)
+    U = pca.fit_transform(stacked_images)
+    # U = pca.predict(stacked_images)
 
     # U = pca(normalized_images)[0]
-    kmeans = MiniBatchKMeans(n_clusters=len(grayscaleDataset.class_indices.keys()))
-    print('fitting KMEANS')
 
-    # kmeans.fit(U.shape[1])
+
+    print('fitting KMEANS')
+    n_clust = len(grayscaleDataset.class_indices.keys())
+
+    print("U shape: ", U.shape)
+
+    kmeans_path = os.path.join(data_root, "kmeans_%d_clust_%d_edgelen.pkl" % (n_clust, max_edge_len))
+    print("for path:\n", kmeans_path)
+    if os.path.exists(kmeans_path):
+        kmeans = pickle.load(open(kmeans_path, "rb"))
+        print("Successfully loaded kmeans")
+    else:
+        kmeans = MiniBatchKMeans(n_clusters=n_clust).fit(U)
+        pickle.dump(kmeans, open(kmeans_path, "wb"))
+        print("DUMPED Kmeans Model with")
+
+
+
+
+
+
 
     # print('stacking vectors KMEANS')
 
@@ -108,13 +126,12 @@ def createFeatureVectors(max_edge_len):
     # #     vstack = np.vstack((vstack, img))
     
     # # print(vstack)
-    # print(stacked_images.shape)
-    # prediction = kmeans.predict(stacked_images)
-    # print(prediction)
-    # path = os.path.join(data_root, "baseline_run_incremental_%d.pkl" % max_edge_len)
-    # with open(path, "wb") as f:
-    #     eval_tup = (prediction, label_list, kmeans, stacked_images.shape)
-    #     pickle.dump(eval_tup, f)
+    prediction = kmeans.predict(U)
+    print(prediction)
+    path = os.path.join(data_root, "baseline_run_incremental_%d.pkl" % max_edge_len)
+    with open(path, "wb") as f:
+        eval_tup = (prediction, label_list, kmeans, stacked_images.shape)
+        pickle.dump(eval_tup, f)
 
 # createFeatureVectors()
 

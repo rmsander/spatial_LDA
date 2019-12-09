@@ -26,7 +26,7 @@ IMAGE_MATRIX_PATH = os.path.join(data_root, "grayscale_img_matrix.pkl")
 grayscaleDataset = ADE20K(root=getDataRoot(), transform=vae_transform, useStringLabels=True, randomSeed=49)
 
 #select most commoon label strings from tuples of (label, count)
-mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(10)))
+mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(5)))
 grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
 
 print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
