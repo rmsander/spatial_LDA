@@ -13,6 +13,7 @@ data_root = os.path.join(os.path.dirname(__file__), '../data')
 from tqdm import tqdm
 from sklearn.decomposition import IncrementalPCA
 from scipy import sparse
+import matplotlib.pyplot as plt
 
 
 NUM_KMEANS_CLUSTERS = 100
