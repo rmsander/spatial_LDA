@@ -38,7 +38,7 @@ grayscaleDataset.useOneHotLabels()
 label_dim = grayscaleDataset.__getitem__(0)[1].shape
 
 
-mb_size = 20
+mb_size = 55
 Z_dim = 250
 X_dim = 224*224
 y_dim = label_dim #TODO change the numebr of one hot vectors after you chcnge this t a subse
@@ -103,7 +103,7 @@ solver = optim.Adam(params, lr=lr)
 
 # loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True)
 
-for epoch in range(100):
+for epoch in range(500):
     loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True, random_seed=epoch)
     bar = tqdm(total= len(grayscaleDataset), desc="epoch num: %d" % epoch)
 
@@ -138,7 +138,7 @@ for epoch in range(100):
                 data = p.grad.data
                 p.grad = Variable(data.new().resize_as_(data).zero_())
         # Print and plot every now and then
-        if batch_num % 10 == 0:
+        if batch_num % 20 == 0:
             print('Iter-{}; Loss: {:.4}'.format(batch_num, loss.item()))
 
             samples = P(z).data.numpy()[:16]
@@ -165,4 +165,5 @@ for epoch in range(100):
         bar.update(mb_size)
     gc.collect()
     bar.close()
+    pickle.dump(params, open("out/vaeparams.pkl", "wb"))
 
