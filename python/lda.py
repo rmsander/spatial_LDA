@@ -557,9 +557,9 @@ def ryan_test():
 
 if __name__ == "__main__":
     # main()
-    build_cnn_predictions()
+    # build_cnn_predictions()
     build_sift_predictions()
     evaluate_dataset_sift()
-    evaluate_dataset_cnn()
+    # evaluate_dataset_cnn()
     # main()
     # evaluate_main()
