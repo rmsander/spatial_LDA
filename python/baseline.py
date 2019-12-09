@@ -90,8 +90,7 @@ def createFeatureVectors(max_edge_len):
     stacked_images = stack_images_rows_with_pad(flattened_image_list, max_edge_len)
     # normalized_images = featureNormalize(stacked_images)[0]
     transformer = IncrementalPCA(batch_size=300)
-    X_sparse = sparse.csr_matrix(stacked_images)
-    U = transformer.fit_transform(X_sparse)
+    U = transformer.fit_transform(stacked_images)
 
     # U = pca(normalized_images)[0]
     kmeans = MiniBatchKMeans(n_clusters=len(cnt))
