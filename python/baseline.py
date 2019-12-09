@@ -21,15 +21,15 @@ NUM_KMEANS_CLUSTERS = 100
 YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data/images/training"
 BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
 PICKLE_SAVE_RUN = True
-def get_matrix_path(edge_len):
-    return os.path.join(data_root, "grayscale_img_matrix_%d.pkl" % edge_len)
+def get_matrix_path(edge_len, nlabels):
+    return os.path.join(data_root, "grayscale_img_matrix_%d_%d.pkl" % (edge_len, nlabels))
 
 
-def stack_images_rows_with_pad(dataset,edge_len):
+def stack_images_rows_with_pad(dataset,edge_len, nlabels):
     """
     If/when we use a transform this won't be necessary
     """
-    path = get_matrix_path(edge_len)
+    path = get_matrix_path(edge_len, nlabels)
 
     print("checking baseline path: \n" , path)
     if not os.path.exists(path):
@@ -80,14 +80,15 @@ def createFeatureVectors(max_edge_len):
     grayscaleDataset = ADE20K(grayscale=True, root=getDataRoot(), transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=49)#, numLabelsLoaded=10)
 
     #select most commoon label strings from tuples of (label, count)
-    mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(5)))
+    n_labels = 5
+    mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(n_labels)))
     grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     print(len(grayscaleDataset.counter))
     print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
     # print("dataset len is: ", len(grayscaleDataset.image_paths))
     print("stacking and flattening images")
 
-    stacked_images, label_list = stack_images_rows_with_pad(grayscaleDataset, max_edge_len)
+    stacked_images, label_list = stack_images_rows_with_pad(grayscaleDataset, max_edge_len, n_labels)
     # normalized_images = featureNormalize(stacked_images)[0]
     print("stacked im len: " ,len(stacked_images))
     pca = IncrementalPCA(batch_size=79)
