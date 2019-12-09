@@ -96,7 +96,7 @@ def createFeatureVectors(max_edge_len):
     kmeans = MiniBatchKMeans(n_clusters=len(grayscaleDataset.class_indices.keys()))
     print('fitting KMEANS')
 
-    kmeans.fit(U)
+    kmeans.fit(U.shape[1])
 
     print('stacking vectors KMEANS')
 
