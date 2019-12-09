@@ -30,12 +30,12 @@ def stack_images_rows_with_pad(dataset,edge_len):
     """
     path = get_matrix_path(edge_len)
 
-
+    print("checking baseline path: \n" , path)
     if not os.path.exists(path):
         list_of_images = []
         label_list = []
 
-        dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
+        dataset = get_single_loader(dataset, batch_size=1, shuffle_dataset=True)
         bar = tqdm(total= len(dataset))
 
         for step, (img, label) in enumerate(dataset):
