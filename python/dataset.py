@@ -272,9 +272,6 @@ class ADE20K(Dataset):
         self.image_paths = np.delete(np.array(self.image_paths), indices).tolist()
         self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
         assert len(self.image_paths) == len(self.image_classes)
-        print(len(self.image_paths))
-        print(sum(maskList))
-        print(indices)
         index = 0
         min_label_samples = min([len(self.class_indices[i]) for i in self.class_indices.keys()])
         self.class_indices = {}
