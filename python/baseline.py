@@ -139,14 +139,14 @@ def createFeatureVectors(max_edge_len):
     #     prediction, label_list, kmeans, vstackshape= pickle.load(f)
 
     plot_prefix =  "baseline_%d_clust_%d_edgelen" % (n_clust, max_edge_len)
-    label_subset = dataset.class_indices.keys()
+    label_subset = grayscaleDataset.class_indices.keys()
     label_to_predictions = {}
     for label in label_subset:
-        labelIndices = dataset.class_indices[label]
+        labelIndices = grayscaleDataset.class_indices[label]
         histogram = {}
 
         for i in labelIndices:
-            f = dataset.image_paths[i]
+            f = grayscaleDataset.image_paths[i]
             if np.random.random() < percentage_plotted:
                 #Plot image histogram
                 desc = U[i,:]
