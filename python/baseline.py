@@ -10,7 +10,7 @@ import pickle
 from pca import pca, featureNormalize
 from collections import Counter
 data_root = os.path.join(os.path.dirname(__file__), '../data')
-
+from tqdm import tqdm
 from sklearn.decomposition import IncrementalPCA
 from scipy import sparse
 
@@ -65,7 +65,8 @@ def createFeatureVectors(max_edge_len):
     print(len(grayscaleDataset.counter))
     dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
     print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
-    print("dataset len is: ", len(grayscaleDataset.image_paths))
+    # print("dataset len is: ", len(grayscaleDataset.image_paths))
+    bar = tqdm(total= num_images)
 
     flattened_image_list = []
     label_list = []
@@ -76,7 +77,9 @@ def createFeatureVectors(max_edge_len):
         flattened_image_list.append(img.flatten())
         cnt[label] +=1
         label_list.append(label)
-    
+        if step % 50 == 0:
+            bar.update(50)
+
     print(cnt)
     print(len(cnt))
     stacked_images = stack_images_rows_with_pad(flattened_image_list, max_edge_len)
