@@ -36,7 +36,7 @@ _, im_x, im_y = grayscaleDataset.__getitem__(0)[0].shape
 grayscaleDataset.useOneHotLabels()
 
 label_dim = grayscaleDataset.__getitem__(0)[1].shape
-
+print(label_dim)
 
 mb_size = 55
 Z_dim = 250
