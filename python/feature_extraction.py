@@ -27,7 +27,7 @@ num_most_common_labels_used = 25
 def get_model():
     model = torch.hub.load('pytorch/vision', feature_model, pretrained=True)
     # cut off the last layer of this classifier
-    new_classifier = nn.Sequential(*list(model.children())[:-cnn_num_layers_removed])
+    new_classifier = torch.nn.Sequential(*list(model.children())[:-cnn_num_layers_removed])
     # print(new_classifier)
     model = new_classifier
     return model
