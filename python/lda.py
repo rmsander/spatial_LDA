@@ -159,7 +159,9 @@ def compute_probability_distr_difference(dist1, dist2):
 
 def evaluate_dataset_cnn():
     data_dir = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
-    dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
+    transform = get_model_transform(feature_model)
+
+    dataset = ADE20K(root=getDataRoot(), transform=transform, useStringLabels=True, randomSeed=49)
     mostCommonLabels = list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     batch_size = 50
@@ -217,7 +219,7 @@ def evaluate_dataset_cnn():
 
 def evaluate_dataset_sift():
     data_dir = getDirPrefix(num_most_common_labels_used, "sift")
-    dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
+    dataset = ADE20K(root=getDataRoot(), transform=None, useStringLabels=True, randomSeed=49)
     mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     sift_feature_path = os.path.join(data_dir,"feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters))
@@ -449,8 +451,8 @@ def build_cnn_predictions():
 
     with open(kmeans_path, "rb") as f:
         kmeans = pickle.load(f)
-
-    dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
+    transform = get_model_transform(feature_model)
+    dataset = ADE20K(root=getDataRoot(), transform=transform, useStringLabels=True, randomSeed=49)
     mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     batch_size = 50
@@ -558,8 +560,8 @@ def ryan_test():
 if __name__ == "__main__":
     # main()
     build_cnn_predictions()
-    build_sift_predictions()
-    evaluate_dataset_sift()
+    # build_sift_predictions()
+    # evaluate_dataset_sift()
     evaluate_dataset_cnn()
     # main()
     # evaluate_main()

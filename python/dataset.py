@@ -69,6 +69,18 @@ def create_classname_map(path_to_csv):
             line = file.readline()
     return output
 
+def get_model_transform(model):
+    if model == 'sift':
+        return None
+    elif 'resnet' in model:
+        return resnet_transform
+    elif model in ['googlenet', 'inception_v3']:
+        return googlenet_transform
+    elif model == 'alexnet':
+        print("using googlenet transform")
+        return googlenet_transform
+    else:
+        raise Exception("please add a transform for your net")
 
 try:
     classname_map = create_classname_map(path_to_classname_map_csv)
@@ -104,6 +116,19 @@ vae_transform = transforms.Compose([
     transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding_mode='constant'),
     transforms.Grayscale(),
     transforms.ToTensor(),
+])
+googlenet_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.RandomCrop(256, pad_if_needed=True, fill=0, padding_mode='constant'),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+alexnet_transform = transforms.Compose([
+    transforms.ToPILImage(),
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
 

@@ -10,7 +10,6 @@ from scipy.special import kl_div as KL
 import pickle
 from torchvision import transforms
 from skimage import io
-from train_cnn import get_model, resnet_transform
 import matplotlib.pyplot as plt
 import argparse
 from dataset import *
@@ -18,13 +17,20 @@ import torch
 from tqdm import tqdm
 import gc
 
-n_keypoints = 400  # hyperparameter, need to tune
+n_keypoints = 500  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
-n_clusters = 350  # also need to tune this
-feature_model = "resnet34" # one of resnet34 TODO resnet 18, inception net
-cnn_num_layers_removed = 2 # TODO make modifications for other layers
+n_clusters = 300  # also need to tune this
+feature_model = "googlenet" # see temp.txt for possible list of models
+cnn_num_layers_removed = 1 # NOTE set to None for sift
 num_most_common_labels_used = 25
 
+def get_model():
+    model = torch.hub.load('pytorch/vision', feature_model, pretrained=True)
+    # cut off the last layer of this classifier
+    new_classifier = torch.nn.Sequential(*list(model.children())[:-cnn_num_layers_removed])
+    # print(new_classifier)
+    model = new_classifier
+    return model
 
 def get_feature_vector(img):
     # Get keypoints and feature descriptors
@@ -208,7 +214,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
 
 def create_feature_matrix_cnn():
     # save_root = os.path.join(os.path.dirname(__file__), '../data')
-    save_root =  getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
+    save_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
 
     #DUMP DESCRIPTOR LIST
     descriptor_path = os.path.join(save_root,  "image_descriptors_dictionary_%s_keypoints.pkl" % \
@@ -224,7 +230,8 @@ def create_feature_matrix_cnn():
         kmeans = KMeans(n_clusters)
         usingMinibatch = False
         model = get_model()
-        dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
+        transform = get_model_transform(feature_model)
+        dataset = ADE20K(root=getDataRoot(), transform=transform, useStringLabels=True, randomSeed=49)
         mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
         dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
         dataset.useOneHotLabels()
