@@ -80,7 +80,7 @@ def createFeatureVectors(max_edge_len):
     grayscaleDataset = ADE20K(grayscale=True, root=getDataRoot(), transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=49)#, numLabelsLoaded=10)
 
     #select most commoon label strings from tuples of (label, count)
-    mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
+    mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(5)))
     grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     print(len(grayscaleDataset.counter))
     print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
@@ -153,11 +153,18 @@ def createFeatureVectors(max_edge_len):
             desc = U[i,:].reshape(1, -1)
             prediction = kmeans.predict(desc).item()
             histogram[prediction] += 1.0
+        histogram /= len(labelIndices)
 
         label_to_predictions[label] = histogram
+
+
         plt.plot(histogram)
-        plt.xlabel("Classes")
+        plt.xlabel("unlabeled classes")
+        plt.ylabel("predictions %")
         plt.title("PCA Kmeans prediction distribution for label %s" %label)
+        axes = plt.gca()
+        axes.set_xlim([0,n_clust])
+        axes.set_ylim([0,1.0])
 
         plot_folder = os.path.join(data_root, plot_prefix)
         if not os.path.exists(plot_folder):
