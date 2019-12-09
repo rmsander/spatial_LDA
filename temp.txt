@@ -1,0 +1,1 @@
+scp -r -i ~/.ssh/mit-yt.pem ubuntu@ec2-34-226-233-169.compute-1.amazonaws.com:~/hdd2/programs/spatial_LDA/data/top25_sift/plots/ ~/Programs/spatial_LDA/data/top25_sift/
