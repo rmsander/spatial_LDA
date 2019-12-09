@@ -543,7 +543,7 @@ def build_sift_predictions():
         num_files += 1
     with open (os.path.join(save_root, "predicted_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(predicted_cluster, f)
-    with open(os.path.join(save_root, "clustered_images_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters), "wb")) as f:
+    with open(os.path.join(save_root, "clustered_images_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(cluster_dic, f)
     with open(os.path.join(save_root, "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(prob_distr_dic, f)   
