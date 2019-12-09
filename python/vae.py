@@ -105,7 +105,7 @@ solver = optim.Adam(params, lr=lr)
 
 for epoch in range(10):
     loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True, random_seed=epoch)
-    bar = tqdm(total= len(dataset), desc="epoch num: %d" % epoch)
+    bar = tqdm(total= len(grayscaleDataset), desc="epoch num: %d" % epoch)
 
     for batch_num, (X, Y) in enumerate(loader):
 
