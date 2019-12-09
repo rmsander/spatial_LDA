@@ -220,7 +220,7 @@ def evaluate_dataset_sift():
     dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
     mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
-    sift_feature_path = data_dir + "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
+    sift_feature_path = os.path.join(data_dir,"feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters))
 
     with open(sift_feature_path, "rb") as f:
         feature_tup = pickle.load(f)
