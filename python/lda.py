@@ -220,7 +220,7 @@ def evaluate_dataset_sift():
     dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
     mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
-    sift_feature_path = save_root + "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
+    sift_feature_path = data_dir + "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
 
     with open(sift_feature_path, "rb") as f:
         feature_tup = pickle.load(f)
@@ -557,9 +557,9 @@ def ryan_test():
 
 if __name__ == "__main__":
     # main()
-    build_cnn_predictions()
-    build_sift_predictions()
+    # build_cnn_predictions()
+    # build_sift_predictions()
     evaluate_dataset_sift()
-    evaluate_dataset_cnn()
+    # evaluate_dataset_cnn()
     # main()
     # evaluate_main()
