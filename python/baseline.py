@@ -88,7 +88,7 @@ def createFeatureVectors(max_edge_len):
 
     stacked_images, label_list = stack_images_rows_with_pad(grayscaleDataset, max_edge_len)
     # normalized_images = featureNormalize(stacked_images)[0]
-    transformer = IncrementalPCA(batch_size=300)
+    transformer = IncrementalPCA(batch_size=79)
     U = transformer.fit_transform(stacked_images)
 
     # U = pca(normalized_images)[0]
