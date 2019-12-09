@@ -136,7 +136,7 @@ def createFeatureVectors(max_edge_len):
         eval_tup = (prediction, label_list, kmeans, stacked_images.shape)
         pickle.dump(eval_tup, f)
 
-    percentage_plotted=.05
+    # percentage_plotted=.05
     # with open(path, "rb") as f:
     #     prediction, label_list, kmeans, vstackshape= pickle.load(f)
 
@@ -148,11 +148,11 @@ def createFeatureVectors(max_edge_len):
         histogram = np.zeros(n_clust)
         for i in labelIndices:
             f = grayscaleDataset.image_paths[i]
-            if np.random.random() < percentage_plotted:
+            # if np.random.random() < percentage_plotted:
                 #Plot image histogram
-                desc = U[i,:].reshape(1, -1)
-                prediction = kmeans.predict(desc).item()
-                histogram[prediction] += 1.0
+            desc = U[i,:].reshape(1, -1)
+            prediction = kmeans.predict(desc).item()
+            histogram[prediction] += 1.0
 
         label_to_predictions[label] = histogram
         plt.plot(histogram)
@@ -164,6 +164,7 @@ def createFeatureVectors(max_edge_len):
             os.makedirs(plot_folder)
         plt.savefig(os.path.join(plot_folder, "pca_kmeans_label%s.png"%(label, )))
         plt.close()
+    pickle.dump(label_to_predictions, open(os.path.join(plot_folder, "label_to_pred.pkl"), "wb"))
 
 
 
