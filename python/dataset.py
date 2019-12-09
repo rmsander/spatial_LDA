@@ -77,8 +77,8 @@ def get_model_transform(model):
     elif model in ['googlenet', 'inception_v3']:
         return googlenet_transform
     elif model == 'alexnet':
-        print("using googlenet transform")
-        return googlenet_transform
+        # print("using googlenet transform")
+        return alexnet_transform
 
 try:
     classname_map = create_classname_map(path_to_classname_map_csv)
