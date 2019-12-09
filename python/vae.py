@@ -39,7 +39,7 @@ label_dim = grayscaleDataset.__getitem__(0)[1].shape
 
 
 mb_size = 20
-Z_dim = 100
+Z_dim = 250
 X_dim = 224*224
 y_dim = label_dim #TODO change the numebr of one hot vectors after you chcnge this t a subse
 h_dim = 128
