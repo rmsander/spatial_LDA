@@ -74,7 +74,7 @@ def main():
                 for i in range(len(unique_vals)):
                     key_of_key = tuple(list(unique_vals[i]))
                     print("KEY OF KEY: {}".format(key_of_key))
-                    key = rgb2class[key_of_key]:
+                    key = rgb2class[key_of_key]
                     value = unique_counts[i] / num_pixels
                     segimg2class[key] = value
 
