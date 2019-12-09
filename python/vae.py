@@ -38,7 +38,7 @@ grayscaleDataset.useOneHotLabels()
 label_dim = grayscaleDataset.__getitem__(0)[1].shape
 
 
-mb_size = 25
+mb_size = 5
 Z_dim = 100
 X_dim = 224*224
 y_dim = label_dim #TODO change the numebr of one hot vectors after you chcnge this t a subse
@@ -102,6 +102,7 @@ solver = optim.Adam(params, lr=lr)
 
 
 # loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True)
+bar = tqdm(total= len(dataset))
 
 for it in range(100000):
     loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True, random_seed=it)
