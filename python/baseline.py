@@ -28,14 +28,18 @@ def stack_images_rows_with_pad(list_of_images,edge_len):
     """
     If/when we use a transform this won't be necessary
     """
-    maxlen = max([len(x) for x in list_of_images])
-    out = np.vstack([np.concatenate([b, np.zeros(maxlen-len(b))]) for b in list_of_images])
-    print(out.shape)
-    if PICKLE_SAVE_RUN:
-        path = get_matrix_path(edge_len)
+    path = get_matrix_path(edge_len)
+
+    if not os.path.exists(path):
+        maxlen = max([len(x) for x in list_of_images])
+        out = np.vstack([np.concatenate([b, np.zeros(maxlen-len(b))]) for b in list_of_images])
+        print(out.shape)
         with open(path, 'wb') as f:
             pickle.dump(out, f)
-    return out
+        return out
+    else:
+        with open(path, 'rb') as f:
+            return pickle.load(f)
 
 
 def resize_im_shape(img_shape, maxEdgeLen = 50):
@@ -66,6 +70,7 @@ def createFeatureVectors(max_edge_len):
     dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=True)
     print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
     # print("dataset len is: ", len(grayscaleDataset.image_paths))
+    print("stacking and flattening images")
     bar = tqdm(total= len(grayscaleDataset))
 
     flattened_image_list = []
