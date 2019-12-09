@@ -102,7 +102,7 @@ solver = optim.Adam(params, lr=lr)
 
 
 # loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True)
-bar = tqdm(total= len(dataset))
+# bar = tqdm(total= len(dataset))
 
 for it in range(100000):
     loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True, random_seed=it)
