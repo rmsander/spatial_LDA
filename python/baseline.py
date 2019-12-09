@@ -96,25 +96,25 @@ def createFeatureVectors(max_edge_len):
     kmeans = MiniBatchKMeans(n_clusters=len(grayscaleDataset.class_indices.keys()))
     print('fitting KMEANS')
 
-    kmeans.fit(U.shape[1])
+    # kmeans.fit(U.shape[1])
 
-    print('stacking vectors KMEANS')
+    # print('stacking vectors KMEANS')
 
 
-    # for step, img in enumerate(stacked_images):
-    #     if step == 0:
-    #         vstack = img
-    #         continue
-    #     vstack = np.vstack((vstack, img))
+    # # for step, img in enumerate(stacked_images):
+    # #     if step == 0:
+    # #         vstack = img
+    # #         continue
+    # #     vstack = np.vstack((vstack, img))
     
-    # print(vstack)
-    print(stacked_images.shape)
-    prediction = kmeans.predict(stacked_images)
-    print(prediction)
-    path = os.path.join(data_root, "baseline_run_incremental_%d.pkl" % max_edge_len)
-    with open(path, "wb") as f:
-        eval_tup = (prediction, label_list, kmeans, stacked_images.shape)
-        pickle.dump(eval_tup, f)
+    # # print(vstack)
+    # print(stacked_images.shape)
+    # prediction = kmeans.predict(stacked_images)
+    # print(prediction)
+    # path = os.path.join(data_root, "baseline_run_incremental_%d.pkl" % max_edge_len)
+    # with open(path, "wb") as f:
+    #     eval_tup = (prediction, label_list, kmeans, stacked_images.shape)
+    #     pickle.dump(eval_tup, f)
 
 # createFeatureVectors()
 
