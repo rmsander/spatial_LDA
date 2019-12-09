@@ -100,18 +100,18 @@ def createFeatureVectors(max_edge_len):
     print('stacking vectors KMEANS')
 
 
-    for step, img in enumerate(normalized_images):
-        if step == 0:
-            vstack = img
-            continue
-        vstack = np.vstack((vstack, img))
+    # for step, img in enumerate(stacked_images):
+    #     if step == 0:
+    #         vstack = img
+    #         continue
+    #     vstack = np.vstack((vstack, img))
     
     # print(vstack)
-    prediction = kmeans.predict(vstack)
+    prediction = kmeans.predict(stacked_images)
     print(prediction)
     path = os.path.join(data_root, "baseline_run_incremental_%d.pkl" % max_edge_len)
     with open(path, "wb") as f:
-        eval_tup = (prediction, label_list, kmeans, vstack.shape)
+        eval_tup = (prediction, label_list, kmeans, stacked_images.shape)
         pickle.dump(eval_tup, f)
 
 # createFeatureVectors()
