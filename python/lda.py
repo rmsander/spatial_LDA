@@ -523,6 +523,8 @@ def build_sift_predictions():
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     dataset.applyMask(index_mask)
 
+    assert sum(index_mask) == len(dataset), "index_mask len %d and dataset len %d with hist_list  %d" % (sum(index_mask), len(dataset), len(hist_list))
+
     num_files = 0
     for i in range(len(dataset)): 
         if num_files % 100 == 0:
@@ -556,8 +558,8 @@ def ryan_test():
 if __name__ == "__main__":
     # main()
     # build_cnn_predictions()
-    # build_sift_predictions()
-    # evaluate_dataset_sift()
+    build_sift_predictions()
+    evaluate_dataset_sift()
     # evaluate_dataset_cnn()
-    main()
-    evaluate_main()
+    # main()
+    # evaluate_main()
