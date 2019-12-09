@@ -1,5 +1,8 @@
 import argparse
-from feature_extraction import evaluate_kmeans, build_histogram
+from feature_extraction import evaluate_kmeans, build_histogram,\
+     n_keypoints, n_cnn_keypoints, n_clusters,\
+ feature_model, cnn_num_layers_removed, num_most_common_labels_used
+
 import pickle
 import os
 import numpy as np
@@ -212,5 +215,5 @@ def main_plot():
 
 if __name__ == "__main__":
     # main_eval()
-    plot_histograms_for_dataset(500, 300, 25, "sift", percentage_plotted=.05)
+    plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_used, feature_model, percentage_plotted=.05, cnn_num_layers_removed=cnn_num_layers_removed)
     # plot_histograms_for_labels(150, 150)
