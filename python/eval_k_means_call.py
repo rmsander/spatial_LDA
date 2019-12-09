@@ -1,5 +1,8 @@
 import argparse
-from feature_extraction import evaluate_kmeans, build_histogram
+from feature_extraction import evaluate_kmeans, build_histogram,\
+     n_keypoints, n_cnn_keypoints, n_clusters,\
+ feature_model, cnn_num_layers_removed, num_most_common_labels_used
+
 import pickle
 import os
 import numpy as np
@@ -80,7 +83,7 @@ def plot_histograms_for_labels(n_keypoints, n_clusters):
 def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_used, model, percentage_plotted=.01, cnn_num_layers_removed=None):
     save_root = getDirPrefix(num_most_common_labels_used, model, cnn_num_layers_removed=cnn_num_layers_removed)
     feature_path = os.path.join(save_root, "feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters))
-
+    print("eval for root: \n", save_root)
     if not os.path.exists(feature_path):
         raise Exception("Must be an existing param tuple\n path non-existant: %s" % feature_path)
 
@@ -212,5 +215,5 @@ def main_plot():
 
 if __name__ == "__main__":
     # main_eval()
-    plot_histograms_for_dataset(500, 300, 25, "sift", percentage_plotted=.05)
+    plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_used, feature_model, percentage_plotted=.05, cnn_num_layers_removed=cnn_num_layers_removed)
     # plot_histograms_for_labels(150, 150)
