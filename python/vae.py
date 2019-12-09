@@ -10,6 +10,7 @@ from torch.autograd import Variable
 import numpy as np
 from dataset import *
 import os
+import gc
 import pickle
 data_root = os.path.join(os.path.dirname(__file__), '../data')
 
@@ -25,7 +26,7 @@ IMAGE_MATRIX_PATH = os.path.join(data_root, "grayscale_img_matrix.pkl")
 grayscaleDataset = ADE20K(root=getDataRoot(), transform=vae_transform, useStringLabels=True, randomSeed=49)
 
 #select most commoon label strings from tuples of (label, count)
-mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
+mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(10)))
 grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
 
 print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
@@ -135,7 +136,7 @@ for it in range(100000):
             if p.grad is not None:
                 data = p.grad.data
                 p.grad = Variable(data.new().resize_as_(data).zero_())
-
+        gc.collect()
     # Print and plot every now and then
     if it % 1000 == 0:
         print('Iter-{}; Loss: {:.4}'.format(batch_num, loss.item()))
