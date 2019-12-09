@@ -107,9 +107,8 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
     if not os.path.exists(kmeans_path) :
         kmeans_path = os.path.join(save_root, "batch_kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
-    f_descriptor = os.path.join(save_root,\
-                   "/image_descriptors_dictionary_%s_keypoints.pkl" % \
-                   n_keypoints)
+    f_descriptor = os.path.join(save_root, "image_descriptors_dictionary_%s_keypoints.pkl" % n_keypoints)
+        
     with open(kmeans_path, 'rb') as f:
         kmeans = pickle.load(f)
     with open(f_descriptor, 'rb') as f:
