@@ -127,21 +127,49 @@ def createFeatureVectors(max_edge_len):
     
     # # print(vstack)
     prediction = kmeans.predict(U)
-    print(prediction)
+    # print(prediction)
     path = os.path.join(data_root, "baseline_run_incremental_%d.pkl" % max_edge_len)
+
     with open(path, "wb") as f:
         eval_tup = (prediction, label_list, kmeans, stacked_images.shape)
         pickle.dump(eval_tup, f)
 
-# createFeatureVectors()
+    percentage_plotted=.05
+    # with open(path, "rb") as f:
+    #     prediction, label_list, kmeans, vstackshape= pickle.load(f)
+
+    plot_prefix =  "baseline_%d_clust_%d_edgelen" % (n_clust, max_edge_len)
+    label_subset = dataset.class_indices.keys()
+    label_to_predictions = {}
+    for label in label_subset:
+        labelIndices = dataset.class_indices[label]
+        histogram = {}
+
+        for i in labelIndices:
+            f = dataset.image_paths[i]
+            if np.random.random() < percentage_plotted:
+                #Plot image histogram
+                desc = U[i,:]
+                prediction = kmeans.predict(desc)
+                if prediction in histogram.keys():
+                    histogram[prediction] += 1.0/n_clust
+                else:
+                    histogram[prediction] = [1.0/n_clust]
+        label_to_predictions[label] = histogram
+        plt.plot(histogram)
+        plt.xlabel("Classes")
+        plt.title("PCA Kmeans prediction distribution for label %s" %label)
+
+        plot_folder = os.path.join(data_root, plot_prefix)
+        if not os.path.exists(plot_folder):
+            os.makedirs(plot_folder)
+        plt.savefig(os.path.join(plot_folder, "pca_kmeans_label%s.png"%(label, )))
+
+
+    p
+
+
 
 for i in range(20, 400, 20):
     createFeatureVectors(i)
 
-
-
-# def evaluate_predictions(eval_tup_path):
-#     with open(eval_tup_path, "rb") as f:
-#         prediction, label_list, kmeans, vstackshape= pickle.load(f)
-
-#     for pred_label in prediction
