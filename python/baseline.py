@@ -92,7 +92,7 @@ def createFeatureVectors(max_edge_len):
     U = transformer.fit_transform(stacked_images)
 
     # U = pca(normalized_images)[0]
-    kmeans = MiniBatchKMeans(n_clusters=len(cnt))
+    kmeans = MiniBatchKMeans(n_clusters=len(grayscaleDataset.class_indices.keys()))
     print('fitting KMEANS')
 
     kmeans.fit(U)
