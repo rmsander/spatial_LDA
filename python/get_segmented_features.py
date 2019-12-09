@@ -9,7 +9,9 @@ import pickle
 
 def unique_count_app(a):
     colors, count = np.unique(a.reshape(-1,a.shape[-1]), axis=0, return_counts=True)
-    return colors[count.argmax()]
+    print(colors)
+    return colors
+    #return colors[count.argmax()]
 
 def make_rgb_label_dict(rgb_dir):
     rgb_to_class = {}

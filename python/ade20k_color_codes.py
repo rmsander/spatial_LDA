@@ -5,17 +5,19 @@ from utils import make_inverted_labelmap
 
 USE_BOX = True
 
-def get_all_sublabels(node, i=0):
-    # Base case
-    print(node.keys())
-    if "children" not in node:
-        return node
-    # Recurse and iterate through children
-    else:
-        for child in node['children']:
-            return get_all_sublabels(child, i=i+1)
-    if i > 0:
-        return node
+def get_all_sublabels(node):
+    sublabels = []
+    queue = [node]
+    while len(queue) > 0:
+        n = queue.pop()
+        sublabels.append(n["name"])
+        try:
+            childList = n["children"]
+            for child in childList:
+                queue.append(child)
+        except:
+            pass
+    return sublabels
 
 def load_json(F_JSON):
     with open(F_JSON, "rb") as json_file:
@@ -29,6 +31,10 @@ def depth(x):
     if type(x) is list and x:
         return 1 + max(depth(a) for a in x)
     return 0
+
+def find_ade150_nodes(tree, rgb_dict):
+    queue = [root]
+    while len(queue) > 0:
 
 # Debugging flag
 USE_BOX = True
