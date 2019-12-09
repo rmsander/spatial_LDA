@@ -86,16 +86,13 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
 
     with open(feature_path, "rb") as f:
         feature_tup = pickle.load(f)
-
-    if type((feature_tup) == tuple):
-        hist_list, index_mask = feature_tup
-    else:
+    
+    if model == "resnet34":
+        transform = resnet_transform
         hist_list = feature_tup
         index_mask = None
-    
-    if model == "resnet":
-        transform = resnet_transform
     elif model=="sift":
+        hist_list, index_mask = feature_tup
         transform = None
     else:
         raise Exception("Trying to evaluate invalid model")
@@ -106,13 +103,13 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     if index_mask is not None:
         dataset.applyMask(index_mask)
+    kmeans_path = os.path.join(save_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+    if not os.path.exists(kmeans_path) :
+        kmeans_path = os.path.join(save_root, "batch_kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
 
-    f_kmeans = os.path.join(save_root, "kmeans_%s_clusters_" \
-               "%s_keypoints.pkl" % (n_clusters, n_keypoints))
-    f_descriptor = os.path.join(save_root,\
-                   "/image_descriptors_dictionary_%s_keypoints.pkl" % \
-                   n_keypoints)
-    with open(f_kmeans, 'rb') as f:
+    f_descriptor = os.path.join(save_root, "image_descriptors_dictionary_%s_keypoints.pkl" % n_keypoints)
+        
+    with open(kmeans_path, 'rb') as f:
         kmeans = pickle.load(f)
     with open(f_descriptor, 'rb') as f:
         descriptor_list = pickle.load(f)
@@ -128,7 +125,10 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
                 plt.plot(histogram)
         plt.xlabel("features bag of words")
         plt.title("Histogram distribution for label %s" %label)
-        plt.savefig(os.paths.join(save_root, "plots/histogram_distribution_label_%s_%s_keypoints_%s_clusters.png"%(label, n_keypoints, n_clusters)))
+        plot_folder = os.path.join(save_root, "plots/")
+        if not os.path.exists(plot_folder):
+            os.makedirs(os.path.join(save_root, "plots/"))
+        plt.savefig(os.path.join(save_root, "plots/histogram_distribution_label_%s_%s_keypoints_%s_clusters.png"%(label, n_keypoints, n_clusters)))
 
 def main_aggregate_pkl_files():
     print("HERE")
@@ -212,5 +212,5 @@ def main_plot():
 
 if __name__ == "__main__":
     # main_eval()
-    plot_histograms_for_dataset(500, 300, 25, "resnet34", percentage_plotted=.05, cnn_num_layers_removed=2)
+    plot_histograms_for_dataset(500, 300, 25, "sift", percentage_plotted=.05)
     # plot_histograms_for_labels(150, 150)
