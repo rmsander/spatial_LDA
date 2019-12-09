@@ -22,7 +22,7 @@ n_keypoints = 400  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
 n_clusters = 350  # also need to tune this
 feature_model = "resnet34" # one of resnet34 TODO resnet 18, inception net
-cnn_num_layers_removed = 2 # TODO make modifications for other layers
+cnn_num_layers_removed = 1 # TODO make modifications for other layers
 num_most_common_labels_used = 25
 
 
@@ -208,7 +208,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
 
 def create_feature_matrix_cnn():
     # save_root = os.path.join(os.path.dirname(__file__), '../data')
-    save_root =  getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
+    save_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
 
     #DUMP DESCRIPTOR LIST
     descriptor_path = os.path.join(save_root,  "image_descriptors_dictionary_%s_keypoints.pkl" % \
@@ -224,7 +224,8 @@ def create_feature_matrix_cnn():
         kmeans = KMeans(n_clusters)
         usingMinibatch = False
         model = get_model()
-        dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
+        transform = get_model_transform(feature_model)
+        dataset = ADE20K(root=getDataRoot(), transform=transform, useStringLabels=True, randomSeed=49)
         mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
         dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
         dataset.useOneHotLabels()

@@ -27,6 +27,9 @@ from models.SegNet import *
 from utils import topNError, saveErrorGraph
 import copy
 
+from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters,\
+ feature_model, cnn_num_layers_removed, num_most_common_labels_used
+
 cnnModelPath = os.path.join('models', 'bestCNNmodel')
 multiGPU = torch.cuda.device_count() > 1
 cnnLr, cnnDropout = 1e-3, 0.5
@@ -176,8 +179,9 @@ image_path = "/Users/yaatehr/Programs/spatial_LDA/data/ef741c8e8b81c793.jpg"
 
 def test():
     model = get_model()
-    dataset = ADE20K(root=getDataRoot(), transform=resnet_transform, useStringLabels=True, randomSeed=49)
-    mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(25)))
+    transform = get_model_transform(feature_model)
+    dataset = ADE20K(root=getDataRoot(), transform=transform, useStringLabels=True, randomSeed=49)
+    mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
     dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     dataset.useOneHotLabels()
 
@@ -203,9 +207,9 @@ def test():
 
 
 def get_model():
-    model = torch.hub.load('pytorch/vision', 'resnet34', pretrained=True)
+    model = torch.hub.load('pytorch/vision', feature_model, pretrained=True)
     # cut off the last layer of this classifier
-    new_classifier = nn.Sequential(*list(model.children())[:-2])
+    new_classifier = nn.Sequential(*list(model.children())[:-cnn_num_layers_removed])
     # print(new_classifier)
     model = new_classifier
     return model
