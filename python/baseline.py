@@ -163,6 +163,7 @@ def createFeatureVectors(max_edge_len):
         if not os.path.exists(plot_folder):
             os.makedirs(plot_folder)
         plt.savefig(os.path.join(plot_folder, "pca_kmeans_label%s.png"%(label, )))
+        plt.close()
 
 
 
