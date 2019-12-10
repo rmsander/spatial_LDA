@@ -114,7 +114,7 @@ def evaluate_main():
 def main():
     dataset_path = "/home/yaatehr/programs/datasets/seg_data/images/dataset1_val/"
     # make_directory_for_validation(dataset_path)
-    sift_feature_path = "/home/yaatehr/programs/spatial_LDA/top25_sift/data/sift_feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
+    sift_feature_path = "/home/yaatehr/programs/spatial_LDA/data/top25_sift/sift_feature_matrix_%s_keypoints_%s_clusters" %(n_keypoints, n_clusters)
     kmeans_path = "/home/yaatehr/programs/spatial_LDA/data/top25_sift/kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints)
     validation_img_path = ""
     with open(sift_feature_path, 'rb') as f:
