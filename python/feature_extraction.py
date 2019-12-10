@@ -375,7 +375,7 @@ def create_feature_matrix_sift():
         index_mask = []
         print("building historgram")
         for i, path in enumerate(dataset.image_paths):
-            des = descriptor_dict[path]
+            des = descriptor_dic[path]
 
             if des is None or des.shape[0] != n_keypoints:
                 index_mask.append(False)
