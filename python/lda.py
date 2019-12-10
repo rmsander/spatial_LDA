@@ -279,6 +279,25 @@ def evaluate_dataset_sift():
     with open(os.path.join(data_dir, "avg_kl_in_label_%s_topics_%s_keypoints_%s_clusters.pkl" %(n_topics, n_keypoints, n_clusters)), "wb") as f:
         pickle.dump(avg_kl, f)
 
+def find_baseline_kl(n_keypoints, n_clusters, n_topics):
+    data_dir = "/home/yaatehr/programs/spatial_LDA/data/top25_sift/"
+    path = os.path.join(data_dir, "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl"%(n_topics, n_keypoints, n_clusters))
+    with open(path, 'rb') as f:
+        prob_distrs = pickle.load(f)
+    total_kl = 0
+    count = 0
+    for i in prob_distrs:
+        for j in prob_distrs:
+            if i == j:
+                continue
+            probi = prob_distrs[i]
+            probj = prob_distrs[j]
+            kl = compute_symmetric_KL(probi, probj)
+            count +=1
+            total_kl += kl
+    return total_kl/count
+
+
 def evaluate_main(cnn_mode = False):
     # labels = ["06c54", "011k07", "099ssp"] #labels in descriptors_test_1
     m_dir = "/home/yaatehr/programs/datasets/seg_data/images/dataset1/" #labels
