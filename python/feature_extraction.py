@@ -16,6 +16,7 @@ from dataset import *
 import torch
 from tqdm import tqdm
 import gc
+from pca import featureNormalize
 
 n_keypoints = 500  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
@@ -244,6 +245,7 @@ def create_feature_matrix_cnn():
         for step, (img,label) in enumerate(loader):
             outputs = model(img)
             unrolled_outputs = torch.flatten(outputs, start_dim=2).detach().numpy()
+            unrolled_outputs = featureNormalize(unrolled_outputs)
 
             #build the descriptor map
             offset = step*batch_size
