@@ -42,7 +42,7 @@ def main():
     dir_rgb_codes = os.path.join("..", "..", "datasets", "seg_data", "color150")
 
     # Get RGB --> CLASS LABEL
-    rgb2class = make_rgb_label_dict(dir_rgb_codes)
+    rgb2class = {}
     print("RGB To Classes: \n {}".format(rgb2class))
 
     # Find folders to recursively iterate through
@@ -58,6 +58,7 @@ def main():
             print("LABEL IS: {}".format(label))
             segmented_files = os.listdir(os.path.join(dir_files, sub_folder,
                                                       label))
+            segimg2class[sub_folder] = {}
             for f_img in segmented_files:
                 fname_split = f_img.split(".")
                 seg_name = fname_split[0]+"_seg.png"
@@ -68,22 +69,20 @@ def main():
                 M, N, _ = A.shape
                 num_pixels = M * N
                 unique_vals, unique_counts = unique_count_app(A)
-                print("UNIQUE KEYS: \n {}".format(len(list(rgb2class.keys(
-                )))))
-                segimg2class[f_img] = {}
+                segimg2class[sub_folder][f_img] = {}
                 for i in range(len(unique_vals)):
-                    key_of_key = tuple(list(unique_vals[i]))
-                    print("KEY OF KEY: {}".format(key_of_key))
-                    key = rgb2class[key_of_key]
+                    key = tuple(list(unique_vals[i]))
                     value = unique_counts[i] / num_pixels
-                    segimg2class[key] = value
-
+                    if key not in segimg2class[sub_folder][f_img]:
+                        segimg2class[sub_folder][f_img][key] = value
+                    else:
+                        segimg2class[sub_folder][f_img][key] += value
 
 
     # Pickle results
     output_fname = os.path.join("..", "data", "SEG_COUNTS.pkl")
     with open(output_fname, "wb") as f:
-        pickle.dump(segimg2class, output_fname)
+        pickle.dump(segimg2class, f)
         f.close()
     print("Seg Img Dictionary pickled to {}".format(output_fname))
     return segimg2class
