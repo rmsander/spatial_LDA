@@ -132,7 +132,8 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
         if not os.path.exists(plot_folder):
             os.makedirs(plot_folder)
         plt.savefig(os.path.join(plot_folder, "histogram_distribution_label_%s.png"%(label, )))
-
+        plt.close()
+        
 def main_aggregate_pkl_files():
     print("HERE")
     kmeans_eval_dir = "/home/yaatehr/programs/spatial_LDA/data/"
