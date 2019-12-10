@@ -318,7 +318,7 @@ def create_feature_matrix_sift():
                       (n_keypoints))
 
     kmeans_path = os.path.join(save_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
-
+    hist_list = []
     if not (os.path.exists(kmeans_path) and os.path.exists(descriptor_path)):
         print("NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n %s_clusters_%s_keypoints" % (save_root, n_clusters, n_keypoints))
         minibatchkmeans = MiniBatchKMeans(n_clusters=n_clusters)
