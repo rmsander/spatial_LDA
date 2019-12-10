@@ -318,7 +318,7 @@ def create_feature_matrix_sift():
                       (n_keypoints))
 
     kmeans_path = os.path.join(save_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
-    hist_list = []
+
     if not (os.path.exists(kmeans_path) and os.path.exists(descriptor_path)):
         print("NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n %s_clusters_%s_keypoints" % (save_root, n_clusters, n_keypoints))
         minibatchkmeans = MiniBatchKMeans(n_clusters=n_clusters)
@@ -363,6 +363,26 @@ def create_feature_matrix_sift():
             histogram = build_histogram(des, kmeans, n_clusters)
             hist_list.append(histogram)
             index_mask.append(True)
+    else:
+        with open(kmeans_path, 'rb') as f:
+            kmeans = pickle.load(f)
+        with open(descriptor_path, 'rb') as f:
+            descriptor_dic = pickle.load(f)
+        dataset = ADE20K(root=getDataRoot(), transform=None, useStringLabels=True, randomSeed=49)
+        mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
+        dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
+        hist_list = []
+        index_mask = []
+        print("building historgram")
+        for i, path in enumerate(dataset.image_paths):
+            des = descriptor_dict[path]
+
+            if des is None or des.shape[0] != n_keypoints:
+                index_mask.append(False)
+                continue
+            histogram = build_histogram(des, kmeans, n_clusters)
+            hist_list.append(histogram)
+            index_mask.append(True)      
 
     return (hist_list, index_mask), kmeans
 
