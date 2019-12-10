@@ -92,9 +92,18 @@ def createFeatureVectors(max_edge_len, n_keypoints):
     stacked_images, label_list = stack_images_rows_with_pad(grayscaleDataset, max_edge_len, n_labels)
     # normalized_images = featureNormalize(stacked_images)[0]
     print("stacked im shape: " , stacked_images.shape)
-    pca = IncrementalPCA(batch_size=79, n_components=n_keypoints)
-    U = pca.fit_transform(stacked_images)
     # U = pca.predict(stacked_images)
+    pca_path = os.path.join(data_root, "pca_%d_clust_%d_edgelen_%d_keypoints.pkl" % (n_clust, max_edge_len, n_keypoints))
+    print("for path:\n", pca_path)
+
+    if os.path.exists(pca_path):
+        U = pickle.load(open(pca_path, "rb"))
+        print("Successfully loaded pca features")
+    else:
+        pca = IncrementalPCA(batch_size=79, n_components=n_keypoints)
+        U = pca.fit_transform(stacked_images)
+        pickle.dump(U, open(pca_path, "wb"))
+        print("DUMPED PCA features")
 
     # U = pca(normalized_images)[0]
 
@@ -142,7 +151,7 @@ def createFeatureVectors(max_edge_len, n_keypoints):
     # with open(path, "rb") as f:
     #     prediction, label_list, kmeans, vstackshape= pickle.load(f)
 # "/Users/yaatehr/Programs/spatial_LDA/data/baselines top 5/baseline_5_clust_20_edgelen"
-    plot_prefix =  "baseline_%d_clust_%d_edgelen_%d_kp" % (n_clust, max_edge_len)
+    plot_prefix =  "baseline_%d_clust_%d_edgelen_%d_kp" % (n_clust, max_edge_len, n_keypoints)
     label_subset = grayscaleDataset.class_indices.keys()
     label_to_predictions = {}
     for label in label_subset:
