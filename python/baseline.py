@@ -13,7 +13,8 @@ from tqdm import tqdm
 from sklearn.decomposition import IncrementalPCA
 from scipy import sparse
 import matplotlib.pyplot as plt
-
+# from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters,\
+#  feature_model, cnn_num_layers_removed, num_most_common_labels_used
 
 NUM_KMEANS_CLUSTERS = 100
 data_root = os.path.join(os.path.dirname(__file__), '../data')
@@ -75,7 +76,7 @@ def resize_im(im, edge_len):
     return resize(im, resize_im_shape(im.shape, maxEdgeLen=edge_len), anti_aliasing=False)
     
 
-def createFeatureVectors(max_edge_len):
+def createFeatureVectors(max_edge_len, n_keypoints):
     cnt = Counter()
     grayscaleDataset = ADE20K(grayscale=True, root=getDataRoot(), transform=lambda x: resize_im(x, max_edge_len), useStringLabels=True, randomSeed=49)#, numLabelsLoaded=10)
 
@@ -90,8 +91,8 @@ def createFeatureVectors(max_edge_len):
 
     stacked_images, label_list = stack_images_rows_with_pad(grayscaleDataset, max_edge_len, n_labels)
     # normalized_images = featureNormalize(stacked_images)[0]
-    print("stacked im len: " ,len(stacked_images))
-    pca = IncrementalPCA(batch_size=79)
+    print("stacked im shape: " , stacked_images.shape)
+    pca = IncrementalPCA(batch_size=79, n_components=n_keypoints)
     U = pca.fit_transform(stacked_images)
     # U = pca.predict(stacked_images)
 
@@ -103,7 +104,7 @@ def createFeatureVectors(max_edge_len):
 
     print("U shape: ", U.shape)
 
-    kmeans_path = os.path.join(data_root, "kmeans_%d_clust_%d_edgelen.pkl" % (n_clust, max_edge_len))
+    kmeans_path = os.path.join(data_root, "kmeans_%d_clust_%d_edgelen_%d_keypoints.pkl" % (n_clust, max_edge_len, n_keypoints))
     print("for path:\n", kmeans_path)
     if os.path.exists(kmeans_path):
         kmeans = pickle.load(open(kmeans_path, "rb"))
@@ -131,7 +132,7 @@ def createFeatureVectors(max_edge_len):
     # # print(vstack)
     prediction = kmeans.predict(U)
     # print(prediction)
-    path = os.path.join(data_root, "baseline_run_incremental_%d.pkl" % max_edge_len)
+    path = os.path.join(data_root, "baseline_run_incremental_%d_%d.pkl" % max_edge_len, n_keypoints)
 
     with open(path, "wb") as f:
         eval_tup = (prediction, label_list, kmeans, stacked_images.shape)
@@ -141,7 +142,7 @@ def createFeatureVectors(max_edge_len):
     # with open(path, "rb") as f:
     #     prediction, label_list, kmeans, vstackshape= pickle.load(f)
 # "/Users/yaatehr/Programs/spatial_LDA/data/baselines top 5/baseline_5_clust_20_edgelen"
-    plot_prefix =  "baseline_%d_clust_%d_edgelen" % (n_clust, max_edge_len)
+    plot_prefix =  "baseline_%d_clust_%d_edgelen_%d_kp" % (n_clust, max_edge_len)
     label_subset = grayscaleDataset.class_indices.keys()
     label_to_predictions = {}
     for label in label_subset:
@@ -175,8 +176,8 @@ def createFeatureVectors(max_edge_len):
     pickle.dump(label_to_predictions, open(os.path.join(plot_folder, "label_to_pred.pkl"), "wb"))
 
 
-def create_latex_table(n_labels, max_edge_len):
-    plot_prefix =  "baseline_%d_clust_%d_edgelen" % (n_labels, max_edge_len)
+def create_latex_table(n_labels, max_edge_len, n_keypoints):
+    plot_prefix =  "baseline_%d_clust_%d_edgelen_%d_kp" % (n_labels, max_edge_len, n_keypoints)
     plot_folder = os.path.join(data_root + "/baselines top 5/", plot_prefix)
     print(plot_folder)
     label_to_predictions = pickle.load(open(os.path.join(plot_folder, "label_to_pred.pkl"), "rb"))
@@ -208,8 +209,9 @@ def create_latex_table(n_labels, max_edge_len):
 
 
 for i in range(300, 500, 20):
-    # createFeatureVectors(i)
-    create_latex_table(5, i)
+    for j in range(5, 105, 10):
+        createFeatureVectors(i, j)
+        # create_latex_table(5, i, j)
 
 
 
