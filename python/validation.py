@@ -11,7 +11,7 @@ from lda import compute_num_labels_in_cluster, compute_symmetric_KL,compute_prob
 
 n_clusters = 300
 n_topics = 20
-n_keypoints = 300
+n_keypoints = 400
 
 
 def get_prediction_for_image(img, lda_model, kmeans_model):
