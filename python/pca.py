@@ -50,4 +50,4 @@ def featureNormalize(X):
     
     X_norm = centeredX/sigma[:, None]
     
-    return X_norm, mu , sigma
+    return X_norm
