@@ -132,7 +132,7 @@ def createFeatureVectors(max_edge_len, n_keypoints):
     # # print(vstack)
     prediction = kmeans.predict(U)
     # print(prediction)
-    path = os.path.join(data_root, "baseline_run_incremental_%d_%d.pkl" % max_edge_len, n_keypoints)
+    path = os.path.join(data_root, "baseline_run_incremental_%d_%d.pkl" % (max_edge_len, n_keypoints))
 
     with open(path, "wb") as f:
         eval_tup = (prediction, label_list, kmeans, stacked_images.shape)
