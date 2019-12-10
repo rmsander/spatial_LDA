@@ -20,12 +20,12 @@ import gc
 n_keypoints = 500  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
 n_clusters = 300  # also need to tune this
-feature_model = "googlenet" # see temp.txt for possible list of models
+feature_model = "googlenetg" # see temp.txt for possible list of models
 cnn_num_layers_removed = 3 # NOTE set to None for sift
 num_most_common_labels_used = 25
 
 def get_model():
-    model = torch.hub.load('pytorch/vision', feature_model, pretrained=True)
+    model = torch.hub.load('pytorch/vision', feature_model[:-1], pretrained=True)
     # cut off the last layer of this classifier
     new_classifier = torch.nn.Sequential(*list(model.children())[:-cnn_num_layers_removed])
     # print(new_classifier)

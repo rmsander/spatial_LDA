@@ -9,7 +9,6 @@ from torchvision import transforms
 import pickle
 from pca import pca, featureNormalize
 from collections import Counter
-data_root = os.path.join(os.path.dirname(__file__), '../data')
 from tqdm import tqdm
 from sklearn.decomposition import IncrementalPCA
 from scipy import sparse
@@ -17,6 +16,7 @@ import matplotlib.pyplot as plt
 
 
 NUM_KMEANS_CLUSTERS = 100
+data_root = os.path.join(os.path.dirname(__file__), '../data')
 
 YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data/images/training"
 BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
@@ -140,7 +140,7 @@ def createFeatureVectors(max_edge_len):
     # percentage_plotted=.05
     # with open(path, "rb") as f:
     #     prediction, label_list, kmeans, vstackshape= pickle.load(f)
-
+# "/Users/yaatehr/Programs/spatial_LDA/data/baselines top 5/baseline_5_clust_20_edgelen"
     plot_prefix =  "baseline_%d_clust_%d_edgelen" % (n_clust, max_edge_len)
     label_subset = grayscaleDataset.class_indices.keys()
     label_to_predictions = {}
@@ -164,7 +164,7 @@ def createFeatureVectors(max_edge_len):
         plt.ylabel("predictions %")
         plt.title("PCA Kmeans prediction distribution for label %s" %label)
         axes = plt.gca()
-        axes.set_xlim([0,n_clust])
+        axes.set_xlim([0,n_clust-1])
         axes.set_ylim([0,1.0])
 
         plot_folder = os.path.join(data_root, plot_prefix)
@@ -175,8 +175,41 @@ def createFeatureVectors(max_edge_len):
     pickle.dump(label_to_predictions, open(os.path.join(plot_folder, "label_to_pred.pkl"), "wb"))
 
 
+def create_latex_table(n_labels, max_edge_len):
+    plot_prefix =  "baseline_%d_clust_%d_edgelen" % (n_labels, max_edge_len)
+    plot_folder = os.path.join(data_root + "/baselines top 5/", plot_prefix)
+    print(plot_folder)
+    label_to_predictions = pickle.load(open(os.path.join(plot_folder, "label_to_pred.pkl"), "rb"))
+
+    latex_template = """
+    \\begin{table}[H]
+    \\begin{tabular}{%s}
+    %s \\\\
+    %s \\\\
+    %s \\\\
+    %s \\\\
+    %s \\\\
+    %s
+    \\end{tabular}
+    \\caption{Distribution over label predictions for PCA Kmeans clustering with %d clusters resized to a mix dimension of (%d,%d)}
+    \\label{Tab:baseline%dclust%dlen}
+    \\end{table}
+    """ % (
+        "l"*(n_labels+1),
+        " & Clust. ".join(["Label"] + [str(i) for i in range(n_labels)]),
+        *[" & ".join([label] + np.around(label_to_predictions[label], decimals=3).astype(str).tolist()) for label in label_to_predictions ],
+        n_labels,
+        max_edge_len,
+        max_edge_len,
+        n_labels,
+        max_edge_len,
+    )
+    print(latex_template)
 
 
-for i in range(400, 500, 20):
-    createFeatureVectors(i)
+for i in range(300, 500, 20):
+    # createFeatureVectors(i)
+    create_latex_table(5, i)
+
+
 
