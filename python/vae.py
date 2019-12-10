@@ -26,7 +26,7 @@ IMAGE_MATRIX_PATH = os.path.join(data_root, "grayscale_img_matrix.pkl")
 grayscaleDataset = ADE20K(root=getDataRoot(), transform=vae_transform, useStringLabels=True, randomSeed=49)
 
 #select most commoon label strings from tuples of (label, count)
-mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(10)))
+mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(5)))
 grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
 
 print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
@@ -36,10 +36,10 @@ _, im_x, im_y = grayscaleDataset.__getitem__(0)[0].shape
 grayscaleDataset.useOneHotLabels()
 
 label_dim = grayscaleDataset.__getitem__(0)[1].shape
+print(label_dim)
 
-
-mb_size = 20
-Z_dim = 100
+mb_size = 55
+Z_dim = 250
 X_dim = 224*224
 y_dim = label_dim #TODO change the numebr of one hot vectors after you chcnge this t a subse
 h_dim = 128
@@ -103,21 +103,21 @@ solver = optim.Adam(params, lr=lr)
 
 # loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True)
 
-for epoch in range(10):
+for epoch in range(500):
     loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True, random_seed=epoch)
     bar = tqdm(total= len(grayscaleDataset), desc="epoch num: %d" % epoch)
 
     for batch_num, (X, Y) in enumerate(loader):
 
         X = Variable(torch.flatten(X, start_dim=1))
-        # print(X)
+        # print(X.shape)
         # X = Variable(X.reshape(mb_size, 224*224))
 
         # Forward
         z_mu, z_var = Q(X)
         z = sample_z(z_mu, z_var)
         X_sample = P(z)
-        # print(X_sample)
+        # print(X_sample.shape)
 
 
         # Loss
@@ -138,7 +138,7 @@ for epoch in range(10):
                 data = p.grad.data
                 p.grad = Variable(data.new().resize_as_(data).zero_())
         # Print and plot every now and then
-        if batch_num % 10 == 0:
+        if batch_num % 20 == 0:
             print('Iter-{}; Loss: {:.4}'.format(batch_num, loss.item()))
 
             samples = P(z).data.numpy()[:16]
@@ -165,4 +165,5 @@ for epoch in range(10):
         bar.update(mb_size)
     gc.collect()
     bar.close()
+    pickle.dump(params, open("out/vaeparams.pkl", "wb"))
 

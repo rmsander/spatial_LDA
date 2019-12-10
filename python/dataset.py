@@ -70,6 +70,7 @@ def create_classname_map(path_to_csv):
     return output
 
 def get_model_transform(model):
+    model = model[:-1]
     if model == 'sift':
         return None
     elif 'resnet' in model:
@@ -134,7 +135,7 @@ alexnet_transform = transforms.Compose([
 
 class ADE20K(Dataset):
 
-    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False, numLabelsLoaded=0, labelSubset=None, useStringLabels=True, randomSeed=33, normalizeWeights=False, usePIL=False):
+    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False, numLabelsLoaded=0, labelSubset=None, useStringLabels=True, randomSeed=33, normalizeWeights=False, usePIL=False, grayscaleRGB=False):
         """
         Args:
             root_dir (string): Directory with all the images organized into
@@ -161,6 +162,7 @@ class ADE20K(Dataset):
         self.randomSeed = randomSeed
         self.counter = Counter()
         self.usePIL = usePIL
+        self.grayscaleRGB = grayscaleRGB
         index = 0
         label_letters = os.listdir(self.root)  # E.g. directories given by "a/"
         # Iterate over each letter label
@@ -197,12 +199,14 @@ class ADE20K(Dataset):
     def __getitem__(self, idx):
         impath = self.image_paths[idx]
         if not self.usePIL:
-            image = io.imread(impath, as_gray=self.grayscale)
+            image = io.imread(impath, as_gray=(self.grayscale or self.grayscaleRGB))
         else:
             image = Image.open(impath)
         
         if self.transform:
             try:
+                if self.grayscaleRGB:
+                    image = np.stack((image,)*3, axis=-1)
                 image = self.transform(image)
             except:
                 print("Converting grayscale to RGB (failsafe)")

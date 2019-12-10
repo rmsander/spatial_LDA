@@ -132,7 +132,8 @@ def plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_
         if not os.path.exists(plot_folder):
             os.makedirs(plot_folder)
         plt.savefig(os.path.join(plot_folder, "histogram_distribution_label_%s.png"%(label, )))
-
+        plt.close()
+        
 def main_aggregate_pkl_files():
     print("HERE")
     kmeans_eval_dir = "/home/yaatehr/programs/spatial_LDA/data/"
@@ -176,6 +177,7 @@ def plot_histograms_per_label(label_path,n_keypoints, kmeans, descriptor_list, p
     plt.xlabel("features bag of words")
     plt.title("Histogram distribution for label %s for %s keypoints and %s clusters" %(label, n_keypoints, n_clusters))
     plt.savefig("plots/histogram_distribution_label_%s_%s_keypoints_%s_clusters.png"%(label, n_keypoints, n_clusters))
+    plt.close()
 
 def main_plot():
 
@@ -211,9 +213,29 @@ def main_plot():
         if metric == "kl":
             print(kmeans_eval_dict[key])
 
+def eval_dataset():
+    dataset = ADE20K(root=getDataRoot(), useStringLabels=True, randomSeed=49)
+    histogram = np.zeros(len(dataset.class_indices.keys()))
+
+    for i, label in enumerate(dataset.class_indices.keys()):
+        indices = dataset.class_indices[label]
+        histogram[i] = len(indices)
+    
+    # normalize?
+    histogram
+    save_root = os.path.dirname(__file__)
+
+    plt.plot(histogram)
+    plt.xlabel("Label No.")
+    plt.ylabel("Num Samples")
+    plt.title("Dataset Distribution")
+    plt.savefig(os.path.join(save_root, "dataset_distribution.png" ))
+
 
 
 if __name__ == "__main__":
     # main_eval()
     # plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_used, feature_model, percentage_plotted=.05, cnn_num_layers_removed=cnn_num_layers_removed)
+    # plot_histograms_for_labels(150, 150)
+    # eval_dataset()
     plot_histograms_for_labels(300, 300)

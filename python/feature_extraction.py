@@ -16,16 +16,17 @@ from dataset import *
 import torch
 from tqdm import tqdm
 import gc
+from pca import featureNormalize
 
 n_keypoints = 500  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
 n_clusters = 300  # also need to tune this
-feature_model = "googlenet" # see temp.txt for possible list of models
-cnn_num_layers_removed = 1 # NOTE set to None for sift
+feature_model = "googlenetg" # see temp.txt for possible list of models
+cnn_num_layers_removed = 3 # NOTE set to None for sift
 num_most_common_labels_used = 25
 
 def get_model():
-    model = torch.hub.load('pytorch/vision', feature_model, pretrained=True)
+    model = torch.hub.load('pytorch/vision', feature_model[:-1], pretrained=True)
     # cut off the last layer of this classifier
     new_classifier = torch.nn.Sequential(*list(model.children())[:-cnn_num_layers_removed])
     # print(new_classifier)
@@ -244,6 +245,7 @@ def create_feature_matrix_cnn():
         for step, (img,label) in enumerate(loader):
             outputs = model(img)
             unrolled_outputs = torch.flatten(outputs, start_dim=2).detach().numpy()
+            unrolled_outputs = np.apply_along_axis(featureNormalize, 1, unrolled_outputs)
 
             #build the descriptor map
             offset = step*batch_size
