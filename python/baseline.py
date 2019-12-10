@@ -219,7 +219,7 @@ def create_latex_table(n_labels, max_edge_len, n_keypoints):
 
 
 for i in range(300, 500, 20):
-    for j in range(5, 105, 10):
+    for j in range(5, 79, 10):
         createFeatureVectors(i, j)
         # create_latex_table(5, i, j)
 
