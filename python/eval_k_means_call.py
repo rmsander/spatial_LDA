@@ -177,6 +177,7 @@ def plot_histograms_per_label(label_path,n_keypoints, kmeans, descriptor_list, p
     plt.xlabel("features bag of words")
     plt.title("Histogram distribution for label %s for %s keypoints and %s clusters" %(label, n_keypoints, n_clusters))
     plt.savefig("plots/histogram_distribution_label_%s_%s_keypoints_%s_clusters.png"%(label, n_keypoints, n_clusters))
+    plt.close()
 
 def main_plot():
 
@@ -234,7 +235,7 @@ def eval_dataset():
 
 if __name__ == "__main__":
     # main_eval()
-    plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_used, feature_model, percentage_plotted=.05, cnn_num_layers_removed=cnn_num_layers_removed)
+    # plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_used, feature_model, percentage_plotted=.05, cnn_num_layers_removed=cnn_num_layers_removed)
     # plot_histograms_for_labels(150, 150)
     # eval_dataset()
-    #plot_histograms_for_labels(300, 300)
+    plot_histograms_for_labels(300, 300)
