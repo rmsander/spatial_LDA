@@ -235,7 +235,7 @@ def eval_dataset():
 
 if __name__ == "__main__":
     # main_eval()
-    plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_used, feature_model, percentage_plotted=.05, cnn_num_layers_removed=cnn_num_layers_removed)
+    # plot_histograms_for_dataset(n_keypoints, n_clusters, num_most_common_labels_used, feature_model, percentage_plotted=.05, cnn_num_layers_removed=cnn_num_layers_removed)
     # plot_histograms_for_labels(150, 150)
     # eval_dataset()
-    #plot_histograms_for_labels(300, 300)
+    plot_histograms_for_labels(300, 300)
