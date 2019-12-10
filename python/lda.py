@@ -10,6 +10,7 @@ import copy
 import numpy as np
 import cv2 as cv
 import pickle
+import sys
 
 # External package imports
 import numpy as np
@@ -295,7 +296,9 @@ def find_baseline_kl(n_keypoints, n_clusters, n_topics):
             kl = compute_symmetric_KL(probi, probj)
             count +=1
             total_kl += kl
-    return total_kl/count
+    avg_kl = total_kl/count
+    print(avg_kl)
+    return avg_kl
 
 
 def evaluate_main(cnn_mode = False):
@@ -579,8 +582,9 @@ def ryan_test():
 if __name__ == "__main__":
     # main()
     # build_cnn_predictions()
-    build_sift_predictions()
-    evaluate_dataset_sift()
+    # build_sift_predictions()
+    # evaluate_dataset_sift()
     # evaluate_dataset_cnn()
     # main()
     # evaluate_main()
+    find_baseline_kl(*sys.argv[1:])
