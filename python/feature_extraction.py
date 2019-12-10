@@ -245,7 +245,7 @@ def create_feature_matrix_cnn():
         for step, (img,label) in enumerate(loader):
             outputs = model(img)
             unrolled_outputs = torch.flatten(outputs, start_dim=2).detach().numpy()
-            unrolled_outputs = np.apply_along_axis(featureNormalize, 1, unrolled_outputs)
+            # unrolled_outputs = np.apply_along_axis(featureNormalize, 1, unrolled_outputs)
 
             #build the descriptor map
             offset = step*batch_size
