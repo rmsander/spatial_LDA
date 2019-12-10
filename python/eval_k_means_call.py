@@ -177,6 +177,7 @@ def plot_histograms_per_label(label_path,n_keypoints, kmeans, descriptor_list, p
     plt.xlabel("features bag of words")
     plt.title("Histogram distribution for label %s for %s keypoints and %s clusters" %(label, n_keypoints, n_clusters))
     plt.savefig("plots/histogram_distribution_label_%s_%s_keypoints_%s_clusters.png"%(label, n_keypoints, n_clusters))
+    plt.close()
 
 def main_plot():
 
