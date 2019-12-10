@@ -92,6 +92,8 @@ def createFeatureVectors(max_edge_len, n_keypoints):
     stacked_images, label_list = stack_images_rows_with_pad(grayscaleDataset, max_edge_len, n_labels)
     # normalized_images = featureNormalize(stacked_images)[0]
     print("stacked im shape: " , stacked_images.shape)
+    n_clust = len(grayscaleDataset.class_indices.keys())
+
     # U = pca.predict(stacked_images)
     pca_path = os.path.join(data_root, "pca_%d_clust_%d_edgelen_%d_keypoints.pkl" % (n_clust, max_edge_len, n_keypoints))
     print("for path:\n", pca_path)
@@ -109,7 +111,6 @@ def createFeatureVectors(max_edge_len, n_keypoints):
 
 
     print('fitting KMEANS')
-    n_clust = len(grayscaleDataset.class_indices.keys())
 
     print("U shape: ", U.shape)
 
