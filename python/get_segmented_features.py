@@ -42,7 +42,7 @@ def main():
     dir_rgb_codes = os.path.join("..", "..", "datasets", "seg_data", "color150")
 
     # Get RGB --> CLASS LABEL
-    rgb2class = make_rgb_label_dict(dir_rgb_codes)
+    #rgb2class = make_rgb_label_dict(dir_rgb_codes)
     print("RGB To Classes: \n {}".format(rgb2class))
 
     # Find folders to recursively iterate through
@@ -72,12 +72,13 @@ def main():
                 )))))
                 segimg2class[f_img] = {}
                 for i in range(len(unique_vals)):
-                    key_of_key = tuple(list(unique_vals[i]))
-                    print("KEY OF KEY: {}".format(key_of_key))
-                    key = rgb2class[key_of_key]:
+                    key = tuple(list(unique_vals[i]))
                     value = unique_counts[i] / num_pixels
-                    segimg2class[key] = value
-
+                    if not segimg2class.has_key(key):
+                        segimg2class[key] = value
+                    else:
+                        segimg2class[key] += value
+            print(len(list(segimg2class.keys())))
 
 
     # Pickle results
