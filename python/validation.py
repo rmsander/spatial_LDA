@@ -10,7 +10,7 @@ import crop_images
 from lda import compute_num_labels_in_cluster, compute_symmetric_KL,compute_probability_distr_difference
 
 n_clusters = 200
-n_topics = 20
+n_topics = 30
 n_keypoints = 200
 
 

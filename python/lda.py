@@ -27,7 +27,7 @@ from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters,\
 
 #n_keypoints = 100
 # n_keypoints=49*4
-n_topics = 20
+n_topics = 30
 
 
 class LDA2:
@@ -559,9 +559,9 @@ def ryan_test():
 
 if __name__ == "__main__":
     # main()
-    build_cnn_predictions()
-    # build_sift_predictions()
-    # evaluate_dataset_sift()
-    evaluate_dataset_cnn()
+    # build_cnn_predictions()
+    build_sift_predictions()
+    evaluate_dataset_sift()
+    # evaluate_dataset_cnn()
     # main()
     # evaluate_main()
