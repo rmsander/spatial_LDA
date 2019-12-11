@@ -16,6 +16,7 @@ from dataset import *
 import torch
 from tqdm import tqdm
 import gc
+import copy
 from pca import featureNormalize
 
 n_keypoints = 300  # hyperparameter, need to tune
@@ -121,6 +122,107 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
 
     return histogram_distance_dict
 
+# Helper functions for segmentation code
+def make_ID_mapping():
+    segmented_counts_path = os.path.join("..", "data", "SEG_COUNTS.pkl")
+
+    # Read pickle file of counts for each segmented image
+    with open(segmented_counts_path, "rb") as f:
+        segmentation_counts = pickle.load(f)
+        f.close()
+
+    # Get list of all unique IDs
+    colorIDs = set()
+
+    # Now get the number of classes for segmentation counts
+    letters = list(segmentation_counts.keys())
+    for letter in letters:
+        for file in list(segmentation_counts[letter].keys()):
+            unique_colors = list(segmentation_counts[letter][file])
+            for color in unique_colors:
+                colorIDs.add(color)
+
+    # Create mapping
+    color_copies = list(copy.deepcopy(colorIDs))
+    print(
+        "THERE ARE {} different color IDs in ADE 20k".format(len(color_copies)))
+    colorID_map = {color_copies[i]: i for i in range(len(color_copies))}
+    #print(colorID_map)
+
+    # Now pickle IDs and mapping
+    fname_IDS = os.path.join("..", "data", "color_IDs.pkl")
+    fname_mapping = os.path.join("..", "data", "color_ID_Mapping.pkl")
+
+    with open(fname_IDS, "wb") as ID_file:
+        pickle.dump(colorIDs, ID_file)
+        ID_file.close()
+
+    with open(fname_mapping, "wb") as map_file:
+        pickle.dump(colorID_map, map_file)
+        map_file.close()
+
+def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
+                              n_clusters=300):
+
+    # Now we want to compute the distribution of ground truth labels for each
+    # latent topic
+    with open(os.path.join("..", "data", "top25_sift",
+                           "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(
+                                   n_topics, n_keypoints, n_clusters)),
+              "rb") as f:
+        probability_distribution_dict = pickle.load(f)
+        f.close()
+
+    # Load segmentation pickle file
+    fname_IDS = os.path.join("..", "data", "color_IDs.pkl")
+    fname_mapping = os.path.join("..", "data", "color_ID_Mapping.pkl")
+    fname_seg_counts = os.path.join("..", "data", "SEG_COUNTS.pkl")
+
+    with open(fname_seg_counts, "rb") as f:
+        seg_counts = pickle.load(f)
+        f.close()
+
+    with open(fname_IDS, "rb") as f:
+        IDs = pickle.load(f)
+        f.close()
+
+    with open(fname_mapping, "rb") as f:
+        mapping = pickle.load(f)
+        f.close()
+
+    print("TYPE: {}".format(mapping))
+    prob_tensor = np.zeros((n_topics, len(IDs)))
+    letters = list(seg_counts.keys())
+    for letter in letters:
+        for file in list(seg_counts[letter].keys()):
+            key = seg_counts[letter][file]
+            print("KEY IS: {}".format(key))
+            color_map = np.zeros((len(IDs)))
+            key_indices_unmapped = list(key.keys())
+            key_indices_mapped = [mapping[key_indices_unmapped[i]] for i in range(len(key_indices_unmapped))]
+            for i in range(len(key_indices_mapped)):
+                color_map[key_indices_mapped[i]] = seg_counts[letter][file][key_indices_unmapped[i]]
+            color_map = np.array(color_map).reshape((1,len(IDs)))
+            print("COLOR MAP IS: {}".format(color_map))
+            print(list(probability_distribution_dict.keys()))
+            topic_dist = np.array(probability_distribution_dict[
+                file]).reshape((n_topics,1))
+            prob_tensor += topic_dist@color_map
+
+    # Now pickle probability tensor/matrix
+    fname_out =  os.path.join("..", "data", "topic_GT_label_dist_{"
+                                            "}_topics_{}_keypoints_{"
+                                            "}_clusters.pkl".format(n_topics,
+                                                                    n_keypoints, n_clusters))
+
+    with open(fname_out, "wb") as f:
+        pickle.dump(prob_tensor, f)
+        f.close()
+
+    print("FINISHED PICKLING")
+
+
+
 
 def plot_eval_results(ks, distances, out_file_path="", metric="L2 Norm"):
     """Function for plotting average histogram distance between images with
@@ -156,7 +258,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     #uncomment to create descriptor_list_dic
     descriptor_list_dic = {} #f: descriptor vectors
     num_files = 0
-    for l in img_files: 
+    for l in img_files:
         label_path = os.path.join(img_path, l) #a/
         labels = os.listdir(label_path) #a/amusement_park
         for label in labels:
@@ -175,8 +277,8 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     with open(descriptor_path, "wb") as f:
         pickle.dump(descriptor_list_dic, f)
     print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
-    
-    
+
+
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if
                         i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
@@ -382,7 +484,7 @@ def create_feature_matrix_sift():
                 continue
             histogram = build_histogram(des, kmeans, n_clusters)
             hist_list.append(histogram)
-            index_mask.append(True)      
+            index_mask.append(True)
 
     return (hist_list, index_mask), kmeans
 
@@ -423,7 +525,18 @@ def main():
     # with open("/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix",
     #           "wb") as f:
     #     pickle.dump(CnnMatrix, f)
-
+    make_ID_mapping()
+    eval_dir = os.path.join("..", "data", "top25_sift")
+    files = os.listdir(eval_dir)
+    files_to_use = [file for file in files if file.startswith("prob_distrs")]
+    print("FILES: {}".format(files_to_use))
+    for file in files_to_use:
+        fname_split = file.split("_")
+        topics, keypoints, clusters = int(fname_split[2]), int(fname_split[
+                                                                   4]), \
+                                      int(fname_split[6])
+        print(topics, keypoints, clusters)
+        eval_lda_segmented_labels(topics, keypoints, clusters)
 
 if __name__ == "__main__":
     main()
