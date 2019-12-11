@@ -147,7 +147,7 @@ def make_ID_mapping():
     print(
         "THERE ARE {} different color IDs in ADE 20k".format(len(color_copies)))
     colorID_map = {color_copies[i]: i for i in range(len(color_copies))}
-    print(colorID_map)
+    #print(colorID_map)
 
     # Now pickle IDs and mapping
     fname_IDS = os.path.join("..", "data", "color_IDs.pkl")
@@ -172,7 +172,45 @@ def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
         probability_distribution_dict = pickle.load(f)
         f.close()
 
-    prob_tensor = np.zeros(())
+    # Load segmentation pickle file
+    fname_IDS = os.path.join("..", "data", "color_IDs.pkl")
+    fname_mapping = os.path.join("..", "data", "color_ID_Mapping.pkl")
+    fname_seg_counts = os.path.join("..", "data", "SEG_COUNTS.pkl")
+
+    with open(fname_seg_counts, "rb") as f:
+        seg_counts = pickle.load(f)
+        f.close()
+
+    with open(fname_IDS, "rb") as f:
+        IDs = pickle.load(f)
+        f.close()
+
+    with open(fname_mapping, "rb") as f:
+        mapping = pickle.load(f)
+        f.close()
+
+    prob_tensor = np.zeros((num_topics, len(IDs)))
+    letters = list(seg_counts.keys())
+    for letter in letters:
+        for file in list(seg_counts[letter].keys()):
+            color_map = np.array(list(mapping[seg_counts[letter][
+                file]])).reshape((1,len(IDs)))
+            print("COLOR MAP IS: {}".format(color_map))
+            topic_dist = np.array(probability_distribution_dict[
+                                      file]).reshape((1en(num_topics),1)
+            prob_tensor += topic_dist@color_map
+
+    # Now pickle probability tensor/matrix
+    fname_out =  os.path.join("..", "data", "topic_GT_label_dist_{"
+                                            "}_topics_{}_keypoints_{"
+                                            "}_clusters.pkl".format(n_topics,
+                                                                    n_keypoints, n_clusters))
+
+    with open(fname_out, "wb") as f:
+        pickle.dump(prob_tensor, f)
+        f.close()
+
+    print("FINISHED PICKLING")
 
 
 
@@ -478,8 +516,15 @@ def main():
     # with open("/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix",
     #           "wb") as f:
     #     pickle.dump(CnnMatrix, f)
-    make_ID_mapping()
-
+    eval_dir = os.path.join("..", "data", "top25_sift")
+    files = os.listdir(eval_dir))
+    files_to_use = [file for file in files if file.beginswith("prob_distrs")]
+    print("FILES: {}".format(files_to_use))
+    for file in files_to_use:
+        fname_split = file.split("_")
+        topics, keypoints, clusters = fname_split[2], fname_split[4], \
+                                      fname_split[6]
+        eval_lda_segmented_labels(topics, keypoints, clusters)
 
 if __name__ == "__main__":
     main()
