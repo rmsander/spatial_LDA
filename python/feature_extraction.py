@@ -22,7 +22,7 @@ from pca import featureNormalize
 n_keypoints = 300  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
 n_clusters = 300  # also need to tune this
-feature_model = "googlenetg" # see temp.txt for possible list of models
+feature_model = "alexnetg" # see temp.txt for possible list of models
 cnn_num_layers_removed = 3 # NOTE set to None for sift
 num_most_common_labels_used = 25
 
@@ -30,7 +30,7 @@ def get_model():
     model = torch.hub.load('pytorch/vision', feature_model[:-1], pretrained=True)
     # cut off the last layer of this classifier
     new_classifier = torch.nn.Sequential(*list(model.children())[:-cnn_num_layers_removed])
-    # print(new_classifier)
+    print(new_classifier)
     model = new_classifier
     return model
 
@@ -317,7 +317,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
 
 def create_feature_matrix_cnn():
     # save_root = os.path.join(os.path.dirname(__file__), '../data')
-    save_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed)
+    save_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed, makedirs=True)
 
     #DUMP DESCRIPTOR LIST
     descriptor_path = os.path.join(save_root,  "image_descriptors_dictionary_%s_keypoints.pkl" % \

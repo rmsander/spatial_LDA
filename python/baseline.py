@@ -188,7 +188,7 @@ def createFeatureVectors(max_edge_len, n_keypoints):
 
 def create_latex_table(n_labels, max_edge_len, n_keypoints):
     plot_prefix =  "baseline_%d_clust_%d_edgelen_%d_kp" % (n_labels, max_edge_len, n_keypoints)
-    plot_folder = os.path.join(data_root + "/baselines top 5/", plot_prefix)
+    plot_folder = os.path.join(data_root + "/baselines_5", plot_prefix)
     print(plot_folder)
     label_to_predictions = pickle.load(open(os.path.join(plot_folder, "label_to_pred.pkl"), "rb"))
 
@@ -218,10 +218,59 @@ def create_latex_table(n_labels, max_edge_len, n_keypoints):
     print(latex_template)
 
 
-for i in range(300, 500, 20):
-    for j in range(5, 79, 10):
-        createFeatureVectors(i, j)
+
+
+def createplot():
+    plot_prefix1 =  "baseline_%d_clust_%d_edgelen_%d_kp" % (5, 380, 5)
+    plot_prefix2 =  "baseline_%d_clust_%d_edgelen_%d_kp" % (5, 380, 75)
+
+    plot_p1 = os.path.join(data_root + "/baselines_5", plot_prefix1)
+    plot_p2 = os.path.join(data_root + "/baselines_5", plot_prefix2)
+    # print(plot_folder)
+    label_to_predictions1 = pickle.load(open(os.path.join(plot_p1, "label_to_pred.pkl"), "rb"))
+    label_to_predictions2 = pickle.load(open(os.path.join(plot_p2, "label_to_pred.pkl"), "rb"))
+
+
+    x = np.arange(5)  # the label locations
+    width = 0.35  # the width of the bars
+
+    for label in label_to_predictions1:
+
+        fig, ax = plt.subplots()
+        rects1 = ax.bar(x - width/2, np.around(label_to_predictions1[label], decimals=3), width, label="5 PCA components")
+        rects2 = ax.bar(x + width/2, np.around(label_to_predictions2[label], decimals=3), width, label='75 PCA components')
+
+        # Add some text for labels, title and custom x-axis tick labels, etc.
+        ax.set_ylabel('Percent classified in cluster')
+        ax.set_title('PCA Kmeans Classification Comparison for %s' % label)
+        ax.set_xticks(x)
+        ax.set_xticklabels(["Clust 0", "Clust 1", "Clust 2" , "Clust 3", "Clust 4"])
+        ax.legend()
+
+
+        def autolabel(rects):
+            """Attach a text label above each bar in *rects*, displaying its height."""
+            for rect in rects:
+                height = rect.get_height()
+                ax.annotate('{}'.format(height),
+                            xy=(rect.get_x() + rect.get_width() / 2, height),
+                            xytext=(0, 3),  # 3 points vertical offset
+                            textcoords="offset points",
+                            ha='center', va='bottom')
+
+
+        autolabel(rects1)
+        autolabel(rects2)
+
+        fig.tight_layout()
+
+        # plt.show()
+        plt.savefig(os.path.join(data_root, "../pca_kmeans_comparison_%s.png"%(label)))
+
+# for i in range(300, 500, 20):
+    # for j in range(5, 79, 10):
+        # createFeatureVectors(i, j)
         # create_latex_table(5, i, j)
 
 
-
+createplot()

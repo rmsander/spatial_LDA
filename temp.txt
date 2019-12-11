@@ -32,3 +32,640 @@ googlenet
 shufflenet_v2_x0_5
 shufflenet_v2_x1_0
 mobilenet_v2incept
+
+
+scp -r -i ~/.ssh/mit-yt.pem ubuntu@ec2-34-226-233-169.compute-1.amazonaws.com:/home/ubuntu/hdd2/programs/spatial_LDA/data/top25_alexnetg_layer3/plots_300_keypoints_100_clusters ~/Programs/spatial_LDA/data
+
+
+
+
+
+
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.295 & 0.235 & 0.109 & 0.322 & 0.039 \\
+    bathroom & 0.274 & 0.256 & 0.088 & 0.319 & 0.063 \\
+    bedroom & 0.31 & 0.253 & 0.064 & 0.314 & 0.058 \\
+    living_room & 0.292 & 0.282 & 0.077 & 0.297 & 0.052 \\
+    skyscraper & 0.294 & 0.27 & 0.08 & 0.3 & 0.057
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (300,300)}
+    \label{Tab:baseline5clust300len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_300_edgelen_15_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.203 & 0.326 & 0.121 & 0.195 & 0.155 \\
+    bathroom & 0.182 & 0.346 & 0.133 & 0.176 & 0.164 \\
+    bedroom & 0.194 & 0.346 & 0.112 & 0.209 & 0.14 \\
+    living_room & 0.188 & 0.322 & 0.115 & 0.2 & 0.176 \\
+    skyscraper & 0.176 & 0.34 & 0.124 & 0.194 & 0.167
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (300,300)}
+    \label{Tab:baseline5clust300len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_300_edgelen_25_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.246 & 0.228 & 0.128 & 0.18 & 0.218 \\
+    bathroom & 0.247 & 0.216 & 0.139 & 0.185 & 0.213 \\
+    bedroom & 0.216 & 0.218 & 0.118 & 0.191 & 0.258 \\
+    living_room & 0.228 & 0.235 & 0.119 & 0.195 & 0.222 \\
+    skyscraper & 0.237 & 0.25 & 0.125 & 0.189 & 0.198
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (300,300)}
+    \label{Tab:baseline5clust300len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_300_edgelen_35_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.271 & 0.329 & 0.11 & 0.256 & 0.033 \\
+    bathroom & 0.247 & 0.323 & 0.091 & 0.282 & 0.057 \\
+    bedroom & 0.3 & 0.329 & 0.072 & 0.247 & 0.052 \\
+    living_room & 0.273 & 0.314 & 0.082 & 0.286 & 0.045 \\
+    skyscraper & 0.274 & 0.317 & 0.085 & 0.271 & 0.052
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (300,300)}
+    \label{Tab:baseline5clust300len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_300_edgelen_45_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.182 & 0.218 & 0.124 & 0.235 & 0.241 \\
+    bathroom & 0.18 & 0.191 & 0.134 & 0.221 & 0.274 \\
+    bedroom & 0.159 & 0.252 & 0.115 & 0.215 & 0.259 \\
+    living_room & 0.194 & 0.221 & 0.116 & 0.2 & 0.27 \\
+    skyscraper & 0.179 & 0.23 & 0.124 & 0.203 & 0.265
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (300,300)}
+    \label{Tab:baseline5clust300len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_300_edgelen_55_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.232 & 0.206 & 0.21 & 0.23 & 0.122 \\
+    bathroom & 0.195 & 0.224 & 0.209 & 0.238 & 0.134 \\
+    bedroom & 0.234 & 0.198 & 0.185 & 0.271 & 0.112 \\
+    living_room & 0.212 & 0.231 & 0.189 & 0.249 & 0.119 \\
+    skyscraper & 0.231 & 0.227 & 0.188 & 0.23 & 0.125
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (300,300)}
+    \label{Tab:baseline5clust300len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_300_edgelen_65_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.277 & 0.131 & 0.197 & 0.154 & 0.241 \\
+    bathroom & 0.279 & 0.139 & 0.224 & 0.14 & 0.219 \\
+    bedroom & 0.285 & 0.119 & 0.17 & 0.156 & 0.27 \\
+    living_room & 0.268 & 0.124 & 0.209 & 0.155 & 0.244 \\
+    skyscraper & 0.25 & 0.127 & 0.227 & 0.143 & 0.253
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (300,300)}
+    \label{Tab:baseline5clust300len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_300_edgelen_75_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.274 & 0.225 & 0.116 & 0.152 & 0.232 \\
+    bathroom & 0.237 & 0.24 & 0.133 & 0.155 & 0.235 \\
+    bedroom & 0.271 & 0.232 & 0.112 & 0.17 & 0.215 \\
+    living_room & 0.247 & 0.221 & 0.113 & 0.165 & 0.253 \\
+    skyscraper & 0.262 & 0.247 & 0.125 & 0.128 & 0.237
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (300,300)}
+    \label{Tab:baseline5clust300len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_320_edgelen_5_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.231 & 0.213 & 0.277 & 0.158 & 0.121 \\
+    bathroom & 0.255 & 0.25 & 0.264 & 0.119 & 0.112 \\
+    bedroom & 0.231 & 0.235 & 0.279 & 0.116 & 0.139 \\
+    living_room & 0.221 & 0.256 & 0.277 & 0.107 & 0.139 \\
+    skyscraper & 0.235 & 0.244 & 0.283 & 0.113 & 0.124
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (320,320)}
+    \label{Tab:baseline5clust320len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_320_edgelen_15_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.306 & 0.136 & 0.295 & 0.207 & 0.057 \\
+    bathroom & 0.352 & 0.094 & 0.273 & 0.241 & 0.04 \\
+    bedroom & 0.338 & 0.104 & 0.301 & 0.216 & 0.04 \\
+    living_room & 0.317 & 0.086 & 0.314 & 0.235 & 0.046 \\
+    skyscraper & 0.34 & 0.091 & 0.295 & 0.222 & 0.052
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (320,320)}
+    \label{Tab:baseline5clust320len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_320_edgelen_25_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.167 & 0.161 & 0.191 & 0.262 & 0.219 \\
+    bathroom & 0.171 & 0.115 & 0.192 & 0.244 & 0.277 \\
+    bedroom & 0.194 & 0.119 & 0.201 & 0.253 & 0.232 \\
+    living_room & 0.194 & 0.109 & 0.231 & 0.234 & 0.232 \\
+    skyscraper & 0.183 & 0.116 & 0.209 & 0.261 & 0.231
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (320,320)}
+    \label{Tab:baseline5clust320len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_320_edgelen_35_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.228 & 0.13 & 0.212 & 0.156 & 0.274 \\
+    bathroom & 0.292 & 0.127 & 0.213 & 0.113 & 0.255 \\
+    bedroom & 0.256 & 0.156 & 0.195 & 0.112 & 0.28 \\
+    living_room & 0.282 & 0.142 & 0.194 & 0.104 & 0.279 \\
+    skyscraper & 0.276 & 0.127 & 0.203 & 0.112 & 0.283
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (320,320)}
+    \label{Tab:baseline5clust320len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_320_edgelen_45_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.177 & 0.292 & 0.21 & 0.159 & 0.161 \\
+    bathroom & 0.185 & 0.279 & 0.212 & 0.116 & 0.209 \\
+    bedroom & 0.191 & 0.308 & 0.222 & 0.116 & 0.162 \\
+    living_room & 0.176 & 0.322 & 0.224 & 0.11 & 0.168 \\
+    skyscraper & 0.204 & 0.307 & 0.213 & 0.115 & 0.161
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (320,320)}
+    \label{Tab:baseline5clust320len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_320_edgelen_55_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.286 & 0.277 & 0.049 & 0.262 & 0.125 \\
+    bathroom & 0.273 & 0.292 & 0.034 & 0.304 & 0.097 \\
+    bedroom & 0.303 & 0.271 & 0.033 & 0.294 & 0.1 \\
+    living_room & 0.308 & 0.258 & 0.03 & 0.306 & 0.098 \\
+    skyscraper & 0.304 & 0.274 & 0.037 & 0.295 & 0.089
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (320,320)}
+    \label{Tab:baseline5clust320len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_320_edgelen_65_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.08 & 0.225 & 0.291 & 0.091 & 0.313 \\
+    bathroom & 0.079 & 0.258 & 0.323 & 0.055 & 0.285 \\
+    bedroom & 0.08 & 0.244 & 0.313 & 0.057 & 0.306 \\
+    living_room & 0.08 & 0.246 & 0.295 & 0.051 & 0.328 \\
+    skyscraper & 0.063 & 0.249 & 0.304 & 0.064 & 0.32
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (320,320)}
+    \label{Tab:baseline5clust320len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_320_edgelen_75_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.154 & 0.295 & 0.162 & 0.168 & 0.221 \\
+    bathroom & 0.14 & 0.347 & 0.119 & 0.145 & 0.249 \\
+    bedroom & 0.164 & 0.314 & 0.122 & 0.159 & 0.24 \\
+    living_room & 0.191 & 0.332 & 0.106 & 0.14 & 0.231 \\
+    skyscraper & 0.17 & 0.313 & 0.119 & 0.168 & 0.23
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (320,320)}
+    \label{Tab:baseline5clust320len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_340_edgelen_5_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.189 & 0.253 & 0.127 & 0.173 & 0.258 \\
+    bathroom & 0.182 & 0.256 & 0.124 & 0.203 & 0.235 \\
+    bedroom & 0.179 & 0.247 & 0.125 & 0.174 & 0.274 \\
+    living_room & 0.168 & 0.265 & 0.125 & 0.204 & 0.237 \\
+    skyscraper & 0.17 & 0.237 & 0.134 & 0.179 & 0.28
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (340,340)}
+    \label{Tab:baseline5clust340len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_340_edgelen_15_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.171 & 0.231 & 0.127 & 0.186 & 0.285 \\
+    bathroom & 0.206 & 0.232 & 0.116 & 0.174 & 0.271 \\
+    bedroom & 0.201 & 0.252 & 0.122 & 0.162 & 0.262 \\
+    living_room & 0.198 & 0.241 & 0.127 & 0.171 & 0.262 \\
+    skyscraper & 0.148 & 0.276 & 0.128 & 0.192 & 0.256
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (340,340)}
+    \label{Tab:baseline5clust340len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_340_edgelen_25_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.244 & 0.125 & 0.25 & 0.209 & 0.171 \\
+    bathroom & 0.271 & 0.118 & 0.232 & 0.179 & 0.2 \\
+    bedroom & 0.25 & 0.118 & 0.237 & 0.213 & 0.182 \\
+    living_room & 0.255 & 0.125 & 0.238 & 0.174 & 0.207 \\
+    skyscraper & 0.268 & 0.13 & 0.234 & 0.213 & 0.155
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (340,340)}
+    \label{Tab:baseline5clust340len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_340_edgelen_35_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.188 & 0.213 & 0.237 & 0.231 & 0.131 \\
+    bathroom & 0.2 & 0.21 & 0.228 & 0.24 & 0.122 \\
+    bedroom & 0.189 & 0.213 & 0.224 & 0.247 & 0.127 \\
+    living_room & 0.215 & 0.179 & 0.241 & 0.24 & 0.125 \\
+    skyscraper & 0.164 & 0.207 & 0.256 & 0.237 & 0.136
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (340,340)}
+    \label{Tab:baseline5clust340len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_340_edgelen_45_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.085 & 0.353 & 0.122 & 0.198 & 0.241 \\
+    bathroom & 0.119 & 0.319 & 0.116 & 0.201 & 0.244 \\
+    bedroom & 0.092 & 0.331 & 0.124 & 0.218 & 0.235 \\
+    living_room & 0.118 & 0.295 & 0.122 & 0.219 & 0.246 \\
+    skyscraper & 0.101 & 0.32 & 0.127 & 0.255 & 0.197
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (340,340)}
+    \label{Tab:baseline5clust340len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_340_edgelen_55_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.252 & 0.304 & 0.03 & 0.1 & 0.314 \\
+    bathroom & 0.231 & 0.297 & 0.025 & 0.101 & 0.346 \\
+    bedroom & 0.237 & 0.311 & 0.039 & 0.094 & 0.319 \\
+    living_room & 0.207 & 0.322 & 0.042 & 0.086 & 0.343 \\
+    skyscraper & 0.235 & 0.329 & 0.037 & 0.097 & 0.301
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (340,340)}
+    \label{Tab:baseline5clust340len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_340_edgelen_65_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.066 & 0.215 & 0.304 & 0.11 & 0.306 \\
+    bathroom & 0.072 & 0.194 & 0.303 & 0.106 & 0.326 \\
+    bedroom & 0.07 & 0.219 & 0.303 & 0.1 & 0.308 \\
+    living_room & 0.08 & 0.201 & 0.289 & 0.103 & 0.326 \\
+    skyscraper & 0.048 & 0.252 & 0.303 & 0.119 & 0.279
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (340,340)}
+    \label{Tab:baseline5clust340len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_340_edgelen_75_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.218 & 0.173 & 0.276 & 0.206 & 0.128 \\
+    bathroom & 0.197 & 0.186 & 0.256 & 0.24 & 0.121 \\
+    bedroom & 0.232 & 0.182 & 0.276 & 0.186 & 0.124 \\
+    living_room & 0.213 & 0.21 & 0.253 & 0.195 & 0.128 \\
+    skyscraper & 0.262 & 0.137 & 0.256 & 0.216 & 0.128
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (340,340)}
+    \label{Tab:baseline5clust340len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_360_edgelen_5_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.27 & 0.316 & 0.066 & 0.064 & 0.285 \\
+    bathroom & 0.301 & 0.319 & 0.06 & 0.066 & 0.255 \\
+    bedroom & 0.282 & 0.307 & 0.07 & 0.076 & 0.265 \\
+    living_room & 0.274 & 0.32 & 0.046 & 0.085 & 0.274 \\
+    skyscraper & 0.291 & 0.286 & 0.076 & 0.089 & 0.258
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (360,360)}
+    \label{Tab:baseline5clust360len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_360_edgelen_15_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.113 & 0.11 & 0.265 & 0.259 & 0.252 \\
+    bathroom & 0.116 & 0.116 & 0.247 & 0.259 & 0.261 \\
+    bedroom & 0.13 & 0.112 & 0.262 & 0.259 & 0.237 \\
+    living_room & 0.113 & 0.121 & 0.252 & 0.244 & 0.27 \\
+    skyscraper & 0.154 & 0.085 & 0.256 & 0.255 & 0.25
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (360,360)}
+    \label{Tab:baseline5clust360len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_360_edgelen_25_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.306 & 0.297 & 0.067 & 0.262 & 0.069 \\
+    bathroom & 0.337 & 0.286 & 0.051 & 0.243 & 0.083 \\
+    bedroom & 0.3 & 0.304 & 0.066 & 0.246 & 0.085 \\
+    living_room & 0.306 & 0.306 & 0.033 & 0.255 & 0.101 \\
+    skyscraper & 0.319 & 0.27 & 0.061 & 0.247 & 0.103
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (360,360)}
+    \label{Tab:baseline5clust360len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_360_edgelen_35_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.334 & 0.107 & 0.24 & 0.162 & 0.156 \\
+    bathroom & 0.279 & 0.11 & 0.253 & 0.195 & 0.162 \\
+    bedroom & 0.279 & 0.122 & 0.247 & 0.164 & 0.188 \\
+    living_room & 0.307 & 0.11 & 0.246 & 0.173 & 0.164 \\
+    skyscraper & 0.273 & 0.143 & 0.253 & 0.174 & 0.156
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (360,360)}
+    \label{Tab:baseline5clust360len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_360_edgelen_45_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.204 & 0.288 & 0.173 & 0.227 & 0.109 \\
+    bathroom & 0.212 & 0.274 & 0.174 & 0.225 & 0.115 \\
+    bedroom & 0.2 & 0.28 & 0.182 & 0.216 & 0.122 \\
+    living_room & 0.218 & 0.288 & 0.146 & 0.241 & 0.107 \\
+    skyscraper & 0.194 & 0.261 & 0.192 & 0.203 & 0.151
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (360,360)}
+    \label{Tab:baseline5clust360len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_360_edgelen_55_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.116 & 0.246 & 0.268 & 0.113 & 0.256 \\
+    bathroom & 0.128 & 0.222 & 0.267 & 0.119 & 0.264 \\
+    bedroom & 0.143 & 0.235 & 0.259 & 0.127 & 0.235 \\
+    living_room & 0.128 & 0.224 & 0.283 & 0.115 & 0.25 \\
+    skyscraper & 0.124 & 0.222 & 0.243 & 0.154 & 0.258
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (360,360)}
+    \label{Tab:baseline5clust360len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_360_edgelen_65_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.212 & 0.106 & 0.286 & 0.288 & 0.109 \\
+    bathroom & 0.225 & 0.109 & 0.255 & 0.3 & 0.112 \\
+    bedroom & 0.221 & 0.103 & 0.262 & 0.294 & 0.121 \\
+    living_room & 0.215 & 0.121 & 0.276 & 0.282 & 0.107 \\
+    skyscraper & 0.188 & 0.125 & 0.231 & 0.308 & 0.148
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (360,360)}
+    \label{Tab:baseline5clust360len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_360_edgelen_75_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.261 & 0.282 & 0.243 & 0.112 & 0.103 \\
+    bathroom & 0.264 & 0.262 & 0.224 & 0.118 & 0.133 \\
+    bedroom & 0.264 & 0.255 & 0.222 & 0.124 & 0.136 \\
+    living_room & 0.25 & 0.271 & 0.262 & 0.113 & 0.103 \\
+    skyscraper & 0.227 & 0.25 & 0.252 & 0.149 & 0.122
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (360,360)}
+    \label{Tab:baseline5clust360len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_380_edgelen_5_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.222 & 0.292 & 0.109 & 0.189 & 0.188 \\
+    bathroom & 0.207 & 0.28 & 0.124 & 0.213 & 0.176 \\
+    bedroom & 0.209 & 0.271 & 0.125 & 0.222 & 0.173 \\
+    living_room & 0.231 & 0.292 & 0.124 & 0.173 & 0.18 \\
+    skyscraper & 0.209 & 0.295 & 0.137 & 0.206 & 0.154
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (380,380)}
+    \label{Tab:baseline5clust380len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_380_edgelen_15_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.222 & 0.213 & 0.265 & 0.11 & 0.189 \\
+    bathroom & 0.224 & 0.218 & 0.253 & 0.124 & 0.182 \\
+    bedroom & 0.24 & 0.192 & 0.238 & 0.128 & 0.201 \\
+    living_room & 0.241 & 0.194 & 0.24 & 0.122 & 0.203 \\
+    skyscraper & 0.246 & 0.182 & 0.265 & 0.137 & 0.17
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (380,380)}
+    \label{Tab:baseline5clust380len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_380_edgelen_25_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.244 & 0.197 & 0.234 & 0.106 & 0.219 \\
+    bathroom & 0.224 & 0.198 & 0.207 & 0.121 & 0.25 \\
+    bedroom & 0.234 & 0.167 & 0.219 & 0.124 & 0.256 \\
+    living_room & 0.224 & 0.195 & 0.237 & 0.116 & 0.228 \\
+    skyscraper & 0.237 & 0.165 & 0.215 & 0.131 & 0.252
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (380,380)}
+    \label{Tab:baseline5clust380len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_380_edgelen_35_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.207 & 0.337 & 0.335 & 0.033 & 0.088 \\
+    bathroom & 0.186 & 0.37 & 0.311 & 0.051 & 0.082 \\
+    bedroom & 0.18 & 0.38 & 0.295 & 0.057 & 0.088 \\
+    living_room & 0.207 & 0.323 & 0.332 & 0.045 & 0.092 \\
+    skyscraper & 0.204 & 0.338 & 0.313 & 0.042 & 0.103
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (380,380)}
+    \label{Tab:baseline5clust380len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_380_edgelen_45_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.133 & 0.276 & 0.2 & 0.106 & 0.286 \\
+    bathroom & 0.115 & 0.277 & 0.186 & 0.122 & 0.3 \\
+    bedroom & 0.119 & 0.286 & 0.174 & 0.127 & 0.294 \\
+    living_room & 0.13 & 0.28 & 0.197 & 0.122 & 0.271 \\
+    skyscraper & 0.107 & 0.28 & 0.176 & 0.13 & 0.307
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (380,380)}
+    \label{Tab:baseline5clust380len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_380_edgelen_55_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.139 & 0.25 & 0.267 & 0.24 & 0.104 \\
+    bathroom & 0.118 & 0.231 & 0.286 & 0.244 & 0.121 \\
+    bedroom & 0.133 & 0.222 & 0.271 & 0.255 & 0.119 \\
+    living_room & 0.145 & 0.249 & 0.289 & 0.198 & 0.119 \\
+    skyscraper & 0.133 & 0.246 & 0.261 & 0.232 & 0.128
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (380,380)}
+    \label{Tab:baseline5clust380len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_380_edgelen_65_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.225 & 0.174 & 0.3 & 0.11 & 0.191 \\
+    bathroom & 0.218 & 0.159 & 0.274 & 0.122 & 0.227 \\
+    bedroom & 0.213 & 0.165 & 0.258 & 0.125 & 0.238 \\
+    living_room & 0.232 & 0.164 & 0.303 & 0.124 & 0.177 \\
+    skyscraper & 0.227 & 0.145 & 0.285 & 0.136 & 0.209
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (380,380)}
+    \label{Tab:baseline5clust380len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_380_edgelen_75_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.303 & 0.107 & 0.152 & 0.188 & 0.25 \\
+    bathroom & 0.271 & 0.124 & 0.13 & 0.198 & 0.277 \\
+    bedroom & 0.274 & 0.125 & 0.142 & 0.174 & 0.285 \\
+    living_room & 0.288 & 0.121 & 0.158 & 0.189 & 0.244 \\
+    skyscraper & 0.282 & 0.13 & 0.162 & 0.185 & 0.241
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (380,380)}
+    \label{Tab:baseline5clust380len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_400_edgelen_5_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.219 & 0.292 & 0.103 & 0.18 & 0.206 \\
+    bathroom & 0.173 & 0.261 & 0.128 & 0.171 & 0.267 \\
+    bedroom & 0.209 & 0.27 & 0.121 & 0.183 & 0.218 \\
+    living_room & 0.192 & 0.282 & 0.119 & 0.17 & 0.237 \\
+    skyscraper & 0.207 & 0.265 & 0.142 & 0.137 & 0.249
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (400,400)}
+    \label{Tab:baseline5clust400len}
+    \end{table}
+    
+python/../data/baselines_5/baseline_5_clust_400_edgelen_15_kp
+
+    \begin{table}[H]
+    \begin{tabular}{llllll}
+    Label & Clust. 0 & Clust. 1 & Clust. 2 & Clust. 3 & Clust. 4 \\
+    street & 0.27 & 0.165 & 0.107 & 0.237 & 0.221 \\
+    bathroom & 0.212 & 0.174 & 0.13 & 0.262 & 0.222 \\
+    bedroom & 0.234 & 0.179 & 0.121 & 0.237 & 0.23 \\
+    living_room & 0.218 & 0.171 & 0.121 & 0.247 & 0.243 \\
+    skyscraper & 0.219 & 0.192 & 0.14 & 0.244 & 0.204
+    \end{tabular}
+    \caption{Distribution over label predictions for PCA Kmeans clustering with 5 clusters resized to a max dimension of (400,400)}
+    \label{Tab:baseline5clust400len}
+    \end{table}
