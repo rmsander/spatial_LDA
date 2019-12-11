@@ -517,7 +517,7 @@ def main():
     #           "wb") as f:
     #     pickle.dump(CnnMatrix, f)
     eval_dir = os.path.join("..", "data", "top25_sift")
-    files = os.listdir(eval_dir))
+    files = os.listdir(eval_dir)
     files_to_use = [file for file in files if file.beginswith("prob_distrs")]
     print("FILES: {}".format(files_to_use)
     for file in files_to_use:
