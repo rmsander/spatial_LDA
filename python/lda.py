@@ -21,7 +21,7 @@ from scipy.special import kl_div
 from dataset import *
 # Custom module imports
 #import dataset
-import feature_extraction
+# import feature_extraction
 import crop_images
 from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters,\
  feature_model, cnn_num_layers_removed, num_most_common_labels_used
@@ -287,6 +287,7 @@ def find_baseline_kl(n_keypoints, n_clusters, n_topics, val = False):
         path = os.path.join(data_dir, "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl"%(n_topics, n_keypoints, n_clusters))
     else:
         path = os.path.join(data_dir, "VAL_prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl"%(n_topics, n_keypoints, n_clusters))
+    print(path)
     with open(path, 'rb') as f:
         prob_distrs = pickle.load(f)
     total_kl = 0
