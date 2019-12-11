@@ -63,7 +63,8 @@ def main():
                 fname_split = f_img.split(".")
                 seg_name = fname_split[0]+"_seg.png"
                 print("FILE NAME IS: {}".format(seg_name))
-                fpath = os.path.join(dir_segmented,sub_folder, label, seg_name)
+                print(os.path.exists(dir_segmented, sub_folder, label))
+                fpath = os.path.join(dir_segmented, sub_folder, label, seg_name)
                 print(os.path.exists(fpath))
                 A = cv.imread(fpath)
 
@@ -81,7 +82,7 @@ def main():
 
 
     # Pickle results
-    output_fname = os.path.join("..", "data", "SEG_COUNTS.pkl")
+    output_fname = os.path.join("..", "data", "SEG_COUNTS_VAL.pkl")
     with open(output_fname, "wb") as f:
         pickle.dump(segimg2class, f)
         f.close()
