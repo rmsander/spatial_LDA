@@ -195,11 +195,18 @@ def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
     letters = list(seg_counts.keys())
     for letter in letters:
         for file in list(seg_counts[letter].keys()):
-            color_map = np.array(list(mapping[seg_counts[letter][
-                file]])).reshape((1,len(IDs)))
+            key = seg_counts[letter][file]
+            print("KEY IS: {}".format(key))
+            color_map = np.zeros((len(IDs)))
+            key_indices_unmapped = list(key.keys())
+            key_indices_mapped = [mapping[key_indices_unmapped[i]] for i in range(len(key_indices_unmapped))]
+            for i in range(len(key_indices_mapped)):
+                color_map[key_indices_mapped[i]] = seg_counts[letter][file][key_indices_unmapped[i]]
+            color_map = np.array(color_map).reshape((1,len(IDs)))
             print("COLOR MAP IS: {}".format(color_map))
+            print(list(probability_distribution_dict.keys()))
             topic_dist = np.array(probability_distribution_dict[
-                                      file]).reshape((len(n_topics),1))
+                file]).reshape((n_topics,1))
             prob_tensor += topic_dist@color_map
 
     # Now pickle probability tensor/matrix

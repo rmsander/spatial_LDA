@@ -36,7 +36,7 @@ def make_rgb_label_dict(rgb_dir):
 def main():
     # Relevant directories
     dir_files = os.path.join("..", "..", "datasets", "seg_data",
-                                 "images", "dataset1")
+            "images", "dataset1_val")
     dir_segmented = os.path.join("..", "..", "datasets", "seg_data",
                                  "images", "training")
     dir_rgb_codes = os.path.join("..", "..", "datasets", "seg_data", "color150")
@@ -63,8 +63,9 @@ def main():
                 fname_split = f_img.split(".")
                 seg_name = fname_split[0]+"_seg.png"
                 print("FILE NAME IS: {}".format(seg_name))
-                A = cv.imread(os.path.join(dir_segmented, sub_folder,
-                                            label, seg_name))
+                fpath = os.path.join(dir_segmented,sub_folder, label, seg_name)
+                print(os.path.exists(fpath))
+                A = cv.imread(fpath)
 
                 M, N, _ = A.shape
                 num_pixels = M * N
