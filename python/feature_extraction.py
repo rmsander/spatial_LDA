@@ -168,7 +168,8 @@ def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
     # latent topic
     with open(os.path.join("data","top25_sift",
                            "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(
-                                   n_topics, n_keypoints, n_clusters)), "wb") as f:
+                                   n_topics, n_keypoints, n_clusters)),
+              "rb") as f:
         probability_distribution_dict = pickle.load(f)
         f.close()
 
@@ -518,7 +519,7 @@ def main():
     #     pickle.dump(CnnMatrix, f)
     eval_dir = os.path.join("..", "data", "top25_sift")
     files = os.listdir(eval_dir)
-    files_to_use = [file for file in files if file.beginswith("prob_distrs")]
+    files_to_use = [file for file in files if file.startswith("prob_distrs")]
     print("FILES: {}".format(files_to_use))
     for file in files_to_use:
         fname_split = file.split("_")
