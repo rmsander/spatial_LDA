@@ -166,7 +166,7 @@ def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
 
     # Now we want to compute the distribution of ground truth labels for each
     # latent topic
-    with open(os.path.join(cnn_root,
+    with open(os.path.join("data","top25_sift",
                            "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(
                                    n_topics, n_keypoints, n_clusters)), "wb") as f:
         probability_distribution_dict = pickle.load(f)
@@ -519,11 +519,12 @@ def main():
     eval_dir = os.path.join("..", "data", "top25_sift")
     files = os.listdir(eval_dir))
     files_to_use = [file for file in files if file.beginswith("prob_distrs")]
-    print("FILES: {}".format(files_to_use))
+    print("FILES: {}".format(files_to_use)
     for file in files_to_use:
         fname_split = file.split("_")
         topics, keypoints, clusters = fname_split[2], fname_split[4], \
                                       fname_split[6]
+        print(topics, keypoints, clusters)
         eval_lda_segmented_labels(topics, keypoints, clusters)
 
 if __name__ == "__main__":
