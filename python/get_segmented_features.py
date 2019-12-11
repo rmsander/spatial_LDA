@@ -63,9 +63,8 @@ def main():
                 fname_split = f_img.split(".")
                 seg_name = fname_split[0]+"_seg.png"
                 print("FILE NAME IS: {}".format(seg_name))
-                print(os.path.exists(dir_segmented, sub_folder, label))
                 fpath = os.path.join(dir_segmented, sub_folder, label, seg_name)
-                print(os.path.exists(fpath))
+                print("FPATH {}".format(fpath))
                 A = cv.imread(fpath)
 
                 M, N, _ = A.shape
