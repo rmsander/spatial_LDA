@@ -189,7 +189,7 @@ def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
     with open(fname_mapping, "rb") as f:
         mapping = pickle.load(f)
         f.close()
-
+    print("SEG COUNTS {}".format(seg_counts))
     prob_tensor = np.zeros((n_topics, len(IDs)))
     letters = list(seg_counts.keys())
     for letter in letters:
