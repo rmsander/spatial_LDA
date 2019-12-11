@@ -18,7 +18,7 @@ import cv2 as cv
 from sklearn.decomposition import LatentDirichletAllocation as LDA
 from sklearn.cluster import KMeans
 from scipy.special import kl_div
-from dataset import *
+# from dataset import *
 # Custom module imports
 #import dataset
 # import feature_extraction
