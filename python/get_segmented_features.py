@@ -60,7 +60,7 @@ def main():
                                                       label))
             segimg2class[sub_folder] = {}
             for f_img in segmented_files:
-                fname_split = "ADE_val_"+f_img.split(".")[0].split("_")[-1]
+                fname_split = "ADE_val_"+f_img.split(".")[0].split("_")[-2:]
                 seg_name = fname_split[0]+"_seg.png"
                 print("FILE NAME IS: {}".format(seg_name))
                 fpath = os.path.join(dir_segmented, sub_folder, label, seg_name)
