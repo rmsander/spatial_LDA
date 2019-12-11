@@ -16,6 +16,7 @@ from dataset import *
 import torch
 from tqdm import tqdm
 import gc
+import copy
 from pca import featureNormalize
 
 n_keypoints = 300  # hyperparameter, need to tune
@@ -121,6 +122,60 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
 
     return histogram_distance_dict
 
+# Helper functions for segmentation code
+def make_ID_mapping():
+    segmented_counts_path = os.path.join("..", "data", "SEG_COUNTS.pkl")
+
+    # Read pickle file of counts for each segmented image
+    with open(segmented_counts_path, "rb") as f:
+        segmentation_counts = pickle.load(f)
+        f.close()
+
+    # Get list of all unique IDs
+    colorIDs = set()
+
+    # Now get the number of classes for segmentation counts
+    letters = list(segmentation_counts.keys())
+    for letter in letters:
+        for file in list(segmentation_counts[letter].keys()):
+            unique_colors = list(segmentation_counts[letter][file])
+            for color in unique_colors:
+                colorIDs.add(color)
+
+    # Create mapping
+    color_copies = list(copy.deepcopy(colorIDs))
+    print(
+        "THERE ARE {} different color IDs in ADE 20k".format(len(color_copies)))
+    colorID_map = {color_copies[i]: i for i in range(len(color_copies))}
+    print(colorID_map)
+
+    # Now pickle IDs and mapping
+    fname_IDS = os.path.join("..", "data", "color_IDs.pkl")
+    fname_mapping = os.path.join("..", "data", "color_ID_Mapping.pkl")
+
+    with open(fname_IDS, "wb") as ID_file:
+        pickle.dump(colorIDs, ID_file)
+        ID_file.close()
+
+    with open(fname_mapping, "wb") as map_file:
+        pickle.dump(colorIDs, map_file)
+        map_file.close()
+
+def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
+                              n_clusters=300):
+
+    # Now we want to compute the distribution of ground truth labels for each
+    # latent topic
+    with open(os.path.join(cnn_root,
+                           "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(
+                                   n_topics, n_keypoints, n_clusters)), "wb") as f:
+        probability_distribution_dict = pickle.load(f)
+        f.close()
+
+    prob_tensor = np.zeros(())
+
+
+
 
 def plot_eval_results(ks, distances, out_file_path="", metric="L2 Norm"):
     """Function for plotting average histogram distance between images with
@@ -156,7 +211,7 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     #uncomment to create descriptor_list_dic
     descriptor_list_dic = {} #f: descriptor vectors
     num_files = 0
-    for l in img_files: 
+    for l in img_files:
         label_path = os.path.join(img_path, l) #a/
         labels = os.listdir(label_path) #a/amusement_park
         for label in labels:
@@ -175,8 +230,8 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     with open(descriptor_path, "wb") as f:
         pickle.dump(descriptor_list_dic, f)
     print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
-    
-    
+
+
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if
                         i is not None and i.shape[0] == n_keypoints])
     print(vstack.shape)
@@ -382,7 +437,7 @@ def create_feature_matrix_sift():
                 continue
             histogram = build_histogram(des, kmeans, n_clusters)
             hist_list.append(histogram)
-            index_mask.append(True)      
+            index_mask.append(True)
 
     return (hist_list, index_mask), kmeans
 
@@ -423,6 +478,7 @@ def main():
     # with open("/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix",
     #           "wb") as f:
     #     pickle.dump(CnnMatrix, f)
+    make_ID_mapping()
 
 
 if __name__ == "__main__":
