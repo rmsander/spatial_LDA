@@ -197,7 +197,7 @@ def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
                 file]])).reshape((1,len(IDs)))
             print("COLOR MAP IS: {}".format(color_map))
             topic_dist = np.array(probability_distribution_dict[
-                                      file]).reshape((len(num_topics),1)
+                                      file]).reshape((len(num_topics),1))
             prob_tensor += topic_dist@color_map
 
     # Now pickle probability tensor/matrix
