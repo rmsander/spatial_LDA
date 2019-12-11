@@ -281,6 +281,7 @@ def evaluate_dataset_sift():
         pickle.dump(avg_kl, f)
 
 def find_baseline_kl(n_keypoints, n_clusters, n_topics):
+    print("finding baseline for %s, %s, %s"%(n_keypoints,n_clusters, n_topics))
     data_dir = "/home/yaatehr/programs/spatial_LDA/data/top25_sift/"
     path = os.path.join(data_dir, "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl"%(n_topics, n_keypoints, n_clusters))
     with open(path, 'rb') as f:
