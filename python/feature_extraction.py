@@ -166,7 +166,7 @@ def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
 
     # Now we want to compute the distribution of ground truth labels for each
     # latent topic
-    with open(os.path.join("data","top25_sift",
+    with open(os.path.join("..", "data", "top25_sift",
                            "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(
                                    n_topics, n_keypoints, n_clusters)),
               "rb") as f:
