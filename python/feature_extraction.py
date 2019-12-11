@@ -523,8 +523,9 @@ def main():
     print("FILES: {}".format(files_to_use))
     for file in files_to_use:
         fname_split = file.split("_")
-        topics, keypoints, clusters = fname_split[2], fname_split[4], \
-                                      fname_split[6]
+        topics, keypoints, clusters = int(fname_split[2]), int(fname_split[
+                                                                   4]), \
+                                      int(fname_split[6])
         print(topics, keypoints, clusters)
         eval_lda_segmented_labels(topics, keypoints, clusters)
 
