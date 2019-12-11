@@ -158,7 +158,7 @@ def make_ID_mapping():
         ID_file.close()
 
     with open(fname_mapping, "wb") as map_file:
-        pickle.dump(colorIDs, map_file)
+        pickle.dump(colorID_map, map_file)
         map_file.close()
 
 def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
@@ -189,7 +189,8 @@ def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
     with open(fname_mapping, "rb") as f:
         mapping = pickle.load(f)
         f.close()
-    print("SEG COUNTS {}".format(seg_counts))
+
+    print("TYPE: {}".format(mapping))
     prob_tensor = np.zeros((n_topics, len(IDs)))
     letters = list(seg_counts.keys())
     for letter in letters:
@@ -517,6 +518,7 @@ def main():
     # with open("/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix",
     #           "wb") as f:
     #     pickle.dump(CnnMatrix, f)
+    make_ID_mapping()
     eval_dir = os.path.join("..", "data", "top25_sift")
     files = os.listdir(eval_dir)
     files_to_use = [file for file in files if file.startswith("prob_distrs")]
