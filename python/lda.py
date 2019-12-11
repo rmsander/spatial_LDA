@@ -18,13 +18,13 @@ import cv2 as cv
 from sklearn.decomposition import LatentDirichletAllocation as LDA
 from sklearn.cluster import KMeans
 from scipy.special import kl_div
-# from dataset import *
+from dataset import *
 # Custom module imports
 #import dataset
-# import feature_extraction
+import feature_extraction
 import crop_images
-# from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters,\
-#  feature_model, cnn_num_layers_removed, num_most_common_labels_used
+from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters,\
+ feature_model, cnn_num_layers_removed, num_most_common_labels_used
 
 #n_keypoints = 100
 # n_keypoints=49*4
