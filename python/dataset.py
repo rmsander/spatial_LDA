@@ -3,7 +3,6 @@ import os
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 from skimage import io
-from skimage.color import rgb2gray
 import copy
 from collections import Counter
 import sklearn as skl
@@ -13,13 +12,8 @@ from torch.utils.data.sampler import SubsetRandomSampler, WeightedRandomSampler
 import numpy as np
 from PIL import Image
 
+# Get file paths and directories
 data_root = os.path.join(os.path.dirname(__file__), '../data')
-# train_root = os.path.join(data_root, 'train')
-# val_root = os.path.join(data_root, 'val')
-# test_root = os.path.join(data_root, 'test')
-# hierarchy_json_path = os.path.join(data_root,
-# 'bbox_labels_600_hierarchy.json')
-
 train_root = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m"
 test_root = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m"
 hierarchy_json_path = "/home/yaatehr/programs/spatial_LDA/data" \
@@ -28,8 +22,10 @@ path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
               "-annotations-bbox.csv"
 path_to_classname_map_csv = os.path.join(data_root, 'class-descriptions.csv')
 
-#NOTE if you are using on a new box, you will want to add your data root directory here
-YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data/images/training"
+# NOTE if you are using on a new box, you will want to add your data root
+# directory here
+YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data/images" \
+                   "/training"
 BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
 DSAIL_BOX_DATA_ROOT = "/home/ubuntu/hdd2/datasets/seg_data/images/training"
 
@@ -42,22 +38,24 @@ def getDataRoot():
     else:
         return BOX_DATA_ROOT
 
-def getDirPrefix(num_most_common_labels_used, feature_model, makedirs=False, cnn_num_layers_removed=None):
+
+def getDirPrefix(num_most_common_labels_used, feature_model, makedirs=False,
+                 cnn_num_layers_removed=None):
     data_root = os.path.join(os.path.dirname(__file__), '../data')
     if cnn_num_layers_removed is not None:
-        # print("entered this thi")
-        d = data_root + "/top%d_%s_layer%d/"% \
+        d = data_root + "/top%d_%s_layer%d/" % \
             (num_most_common_labels_used, feature_model, cnn_num_layers_removed)
     else:
-        # print(cnn_num_layers_removed)
-        d = data_root + "/top%d_%s" % (num_most_common_labels_used, feature_model)
-    
+        d = data_root + "/top%d_%s" % (
+        num_most_common_labels_used, feature_model)
+
     if not os.path.exists(d):
         if makedirs:
             os.makedirs(d)
         else:
             raise Exception("INVALID DIR PATH FOR CNN FEATURES: %s" % d)
     return d
+
 
 def create_classname_map(path_to_csv):
     output = {}
@@ -68,6 +66,7 @@ def create_classname_map(path_to_csv):
             output[vals[0].split("/")[-1]] = vals[1].strip()
             line = file.readline()
     return output
+
 
 def get_model_transform(model):
     model = model[:-1]
@@ -83,20 +82,20 @@ def get_model_transform(model):
     else:
         raise Exception("please add a transform for your net")
 
+
 try:
     classname_map = create_classname_map(path_to_classname_map_csv)
     max_hierarchy_level = 3
     granularity_map = make_inverted_labelmap(max_hierarchy_level,
-                                            path_to_hierarchy=hierarchy_json_path)
+                                             path_to_hierarchy=hierarchy_json_path)
 except Exception as e:
     classname_map = None
     granularity_map = None
-    # print("could not initialize classname map or granularity map for google open images")
-
 
 resnet_transform = transforms.Compose([
     transforms.ToPILImage(),
-    transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding_mode='constant'),
+    transforms.RandomCrop(224, pad_if_needed=True, fill=0,
+                          padding_mode='constant'),
     transforms.ToTensor(),
     # transforms.Normalize([0.5] * 3, [0.5] * 3)
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
@@ -105,7 +104,8 @@ resnet_transform = transforms.Compose([
 #  Note: these constants are the normalization constants for normalize
 segnet_transform = transforms.Compose([
     transforms.ToPILImage(),
-    transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding_mode='constant'),
+    transforms.RandomCrop(224, pad_if_needed=True, fill=0,
+                          padding_mode='constant'),
     transforms.ToTensor(),
     # transforms.Normalize([0.5] * 3, [0.5] * 3)
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[
@@ -114,13 +114,15 @@ segnet_transform = transforms.Compose([
 
 vae_transform = transforms.Compose([
     transforms.ToPILImage(),
-    transforms.RandomCrop(224, pad_if_needed=True, fill=0, padding_mode='constant'),
+    transforms.RandomCrop(224, pad_if_needed=True, fill=0,
+                          padding_mode='constant'),
     transforms.Grayscale(),
     transforms.ToTensor(),
 ])
 googlenet_transform = transforms.Compose([
     transforms.ToPILImage(),
-    transforms.RandomCrop(256, pad_if_needed=True, fill=0, padding_mode='constant'),
+    transforms.RandomCrop(256, pad_if_needed=True, fill=0,
+                          padding_mode='constant'),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
@@ -135,7 +137,10 @@ alexnet_transform = transforms.Compose([
 
 class ADE20K(Dataset):
 
-    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False, numLabelsLoaded=0, labelSubset=None, useStringLabels=True, randomSeed=33, normalizeWeights=False, usePIL=False, grayscaleRGB=False):
+    def __init__(self, root=train_root, transform=resnet_transform,
+                 grayscale=False, numLabelsLoaded=0, labelSubset=None,
+                 useStringLabels=True, randomSeed=33, normalizeWeights=False,
+                 usePIL=False, grayscaleRGB=False):
         """
         Args:
             root_dir (string): Directory with all the images organized into
@@ -146,7 +151,8 @@ class ADE20K(Dataset):
             numLabelsLoaded: pick a subset of labels (ran tune with randomSeed)
             labelSubset: manually pick labels, overrides numLabelsLoaded
             useStringLabels: use string over one hot
-            normalizeWeights: if label subsets in effct, will make sure there are equal numbers of each class
+            normalizeWeights: if label subsets in effct, will make sure there
+            are equal numbers of each class
 
 
         """
@@ -166,7 +172,8 @@ class ADE20K(Dataset):
         index = 0
         label_letters = os.listdir(self.root)  # E.g. directories given by "a/"
         # Iterate over each letter label
-        for label_letter in label_letters:  # Iterate over each label letter categ.
+        for label_letter in label_letters:  # Iterate over each label letter
+            # categ.
             sub_dir = os.path.join(self.root, label_letter)
             label_names = os.listdir(sub_dir)  # Lists labels as directories
             for label in label_names:  # Iterate over each individual label
@@ -175,23 +182,23 @@ class ADE20K(Dataset):
                 label_dir_files = os.listdir(label_dir_name)
                 for filename in label_dir_files:
                     if filename.endswith('.jpg'):
-                        self.image_paths.append(os.path.join(label_dir_name, filename))
+                        self.image_paths.append(
+                            os.path.join(label_dir_name, filename))
                         self.image_classes.append(label)
-                        # print(label)
-                        self.counter[label]+=1
+                        self.counter[label] += 1
                         if label in self.class_indices.keys():
                             self.class_indices[label].append(index)
                         else:
                             self.class_indices[label] = [index]
-                        index +=1
+                        index += 1
         self.class_set = list(self.class_indices.keys())
 
-        #select subset of classes
-        if labelSubset is not None or numLabelsLoaded > 0: 
+        # select subset of classes
+        if labelSubset is not None or numLabelsLoaded > 0:
             self.selectSubset(labelSubset, numLabelsLoaded, normalizeWeights)
-            
 
-        self.onehot_labelmap = self.init_one_hot_map(list(self.class_indices.keys()))
+        self.onehot_labelmap = self.init_one_hot_map(
+            list(self.class_indices.keys()))
 
     def __len__(self):
         return len(self.image_paths)
@@ -199,22 +206,21 @@ class ADE20K(Dataset):
     def __getitem__(self, idx):
         impath = self.image_paths[idx]
         if not self.usePIL:
-            image = io.imread(impath, as_gray=(self.grayscale or self.grayscaleRGB))
+            image = io.imread(impath,
+                              as_gray=(self.grayscale or self.grayscaleRGB))
         else:
             image = Image.open(impath)
-        
+
         if self.transform:
             try:
                 if self.grayscaleRGB:
-                    image = np.stack((image,)*3, axis=-1)
+                    image = np.stack((image,) * 3, axis=-1)
                 image = self.transform(image)
             except:
                 print("Converting grayscale to RGB (failsafe)")
-                # image = np.expand_dims(image, axis=0)
-                image = np.stack((image,)*3, axis=-1)
-                image = self.transform(image) # convert a grayscale to RGB format
-        image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[
-            -1]
+                image = np.stack((image,) * 3, axis=-1)
+                image = self.transform(
+                    image)  # convert a grayscale to RGB format
 
         label = self.image_classes[idx]
         if not self.useStringLabels:
@@ -225,6 +231,7 @@ class ADE20K(Dataset):
     def get_all_label_strings(self, use_text=True):
         output = set(self.image_classes)
         return output
+
     def get_onehot_label(self, label):
         return self.onehot_labelmap[label]
 
@@ -232,26 +239,30 @@ class ADE20K(Dataset):
         label_encoder = skl.preprocessing.LabelEncoder()
         integer_encoded = label_encoder.fit_transform(data)
         # binary encode
-        onehot_encoder = skl.preprocessing.OneHotEncoder(sparse=False, categories='auto')
+        onehot_encoder = skl.preprocessing.OneHotEncoder(sparse=False,
+                                                         categories='auto')
         integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
         onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
         return dict(zip(data, onehot_encoded))
 
-    def selectSubset(self, labelSubset=None, numLabelsLoaded=0, normalizeWeights=False):
-        #for manually selected strings
-        if labelSubset is not None:              
+    def selectSubset(self, labelSubset=None, numLabelsLoaded=0,
+                     normalizeWeights=False):
+        # for manually selected strings
+        if labelSubset is not None:
             indToRemove = copy.copy(self.class_indices)
             existing_classes = set(self.image_classes)
             for label in labelSubset:
                 if label not in existing_classes:
-                    raise Exception("Invalid class name in labelSubset: " + label)
+                    raise Exception(
+                        "Invalid class name in labelSubset: " + label)
                 del indToRemove[label]
-        #for random subset fo classes
-        elif(numLabelsLoaded > 0):
+        # for random subset fo classes
+        elif (numLabelsLoaded > 0):
             np.random.seed(self.randomSeed)
             indices = list(range(len(self.class_set)))
             np.random.shuffle(indices)
-            labelSubset = [self.class_set[j] for i, j in enumerate(indices) if i < numLabelsLoaded]
+            labelSubset = [self.class_set[j] for i, j in enumerate(indices) if
+                           i < numLabelsLoaded]
             print(len(labelSubset))
             print(labelSubset)
             indToRemove = copy.copy(self.class_indices)
@@ -261,84 +272,101 @@ class ADE20K(Dataset):
         for l in [indToRemove[key] for key in indToRemove.keys()]:
             indices.extend(l)
         indices = np.array(indices)
-        # print(indices.shape)
-        self.image_paths = np.delete(np.array(self.image_paths), indices).tolist()
-        self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
+        self.image_paths = np.delete(np.array(self.image_paths),
+        self.image_paths = np.delete(np.array(self.image_paths),
+                                     indices).tolist()
+        self.image_classes = np.delete(np.array(self.image_classes),
+                                       indices).tolist()
         assert len(self.image_paths) == len(self.image_classes)
         index = 0
-        min_label_samples = min([len(self.class_indices[i]) for i in labelSubset])
+        min_label_samples = min(
+            [len(self.class_indices[i]) for i in labelSubset])
         self.class_indices = {}
         self.counter = Counter()
         new_impaths = []
         new_labels = []
         for i, path in enumerate(self.image_paths):
             label = os.path.basename(os.path.dirname(path)).split("/")[-1]
-            if(normalizeWeights):
+            if (normalizeWeights):
                 if self.counter[label] == min_label_samples:
                     continue
                 new_impaths.append(path)
                 new_labels.append(self.image_classes[i])
-            self.counter[label] +=1
+            self.counter[label] += 1
             if label in self.class_indices.keys():
                 self.class_indices[label].append(index)
             else:
                 self.class_indices[label] = [index]
-            index +=1 
-        if(normalizeWeights):
+            index += 1
+        if (normalizeWeights):
             self.image_paths = new_impaths
             self.image_classes = new_labels
-        assert len(self.image_paths) == len(self.image_classes), "impath length %d and imclass length %d " % (len(self.image_paths), len(self.image_classes))
+        assert len(self.image_paths) == len(
+            self.image_classes), "impath length %d and imclass length %d " % (
+        len(self.image_paths), len(self.image_classes))
         print("Selected the following distribution: ", self.counter)
-        self.onehot_labelmap = self.init_one_hot_map(list(self.class_indices.keys()))
+        self.onehot_labelmap = self.init_one_hot_map(
+            list(self.class_indices.keys()))
 
-
-    def applyMask(self, maskList, normalizeWeights =False):
+    def applyMask(self, maskList, normalizeWeights=False):
         if type(maskList) == list:
             maskList = np.array(maskList)
         indices = np.argwhere(maskList == False).flatten()
-        assert len(maskList) == len(self.image_paths), "mask must match the size of the dataset and be true false"
+        assert len(maskList) == len(
+            self.image_paths), "mask must match the size of the dataset and " \
+                               "be true false"
 
-        self.image_paths = np.delete(np.array(self.image_paths), indices).tolist()
-        self.image_classes = np.delete(np.array(self.image_classes), indices).tolist()
+        self.image_paths = np.delete(np.array(self.image_paths),
+                                     indices).tolist()
+        self.image_classes = np.delete(np.array(self.image_classes),
+                                       indices).tolist()
         assert len(self.image_paths) == len(self.image_classes)
         index = 0
-        min_label_samples = min([len(self.class_indices[i]) for i in self.class_indices.keys()])
+        min_label_samples = min(
+            [len(self.class_indices[i]) for i in self.class_indices.keys()])
         self.class_indices = {}
         self.counter = Counter()
         new_impaths = []
         new_labels = []
         for i, path in enumerate(self.image_paths):
             label = os.path.basename(os.path.dirname(path)).split("/")[-1]
-            if(normalizeWeights):
+            if (normalizeWeights):
                 if self.counter[label] == min_label_samples:
                     continue
                 new_impaths.append(path)
                 new_labels.append(self.image_classes[i])
-            self.counter[label] +=1
+            self.counter[label] += 1
             if label in self.class_indices.keys():
                 self.class_indices[label].append(index)
             else:
                 self.class_indices[label] = [index]
-            index +=1 
-        if(normalizeWeights):
+            index += 1
+        if (normalizeWeights):
             self.image_paths = new_impaths
             self.image_classes = new_labels
-        assert len(self.image_paths) == len(self.image_classes), "impath length %d and imclass length %d " % (len(self.image_paths), len(self.image_classes))
+        assert len(self.image_paths) == len(
+            self.image_classes), "impath length %d and imclass length %d " % (
+        len(self.image_paths), len(self.image_classes))
         print("Selected the following distribution: ", self.counter)
-        self.onehot_labelmap = self.init_one_hot_map(list(self.class_indices.keys()))
-
+        self.onehot_labelmap = self.init_one_hot_map(
+            list(self.class_indices.keys()))
 
     def useStringLabels(self):
         self.useStringLabels = True
+
     def useOneHotLabels(self):
         self.useStringLabels = False
+
     def getImpathToLabelDict(self):
-        out = {self.image_paths[i]: self.image_classes[i] for i in range(len(self.image_paths))}
+        out = {self.image_paths[i]: self.image_classes[i] for i in
+               range(len(self.image_paths))}
         return out
+
 
 class ImageDataset(Dataset):
 
-    def __init__(self, root=train_root, transform=resnet_transform, grayscale=False):
+    def __init__(self, root=train_root, transform=resnet_transform,
+                 grayscale=False):
         """
         Args:
             root_dir (string): Directory with all the images organized into
@@ -374,10 +402,6 @@ class ImageDataset(Dataset):
         image = io.imread(impath, as_gray=self.grayscale)
         if self.transform:
             image = self.transform(image)
-        # TODO: Splitting might mess this up
-        image_class_hash = os.path.basename(os.path.dirname(impath)).split("/")[
-            -1]
-
         label = self.effective_labels[idx]
         return image, self.onehot_labelmap[label]
 
@@ -430,16 +454,14 @@ def get_loaders(dataset=None, batch_size=50, validation_split=.2,
     return train_loader, val_loader
 
 
-def get_single_loader(dataset=None, batch_size=50, shuffle_dataset=False, random_seed=54):
+def get_single_loader(dataset=None, batch_size=50, shuffle_dataset=False,
+                      random_seed=54):
     """
         returns a single data loader, should be used for test dataset
     """
     if not dataset:
         dataset = ImageDataset(test_root)
-    
-    # if getattr(dataset, 'counter', None) != None:
-    #     sampler = WeightedRandomSampler(list(np.array([i for i in dataset.counter.values()])/sum(dataset.counter.values())), 100)
-    # else:
+
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
     if shuffle_dataset:
@@ -447,4 +469,5 @@ def get_single_loader(dataset=None, batch_size=50, shuffle_dataset=False, random
         np.random.shuffle(indices)
     sampler = SubsetRandomSampler(indices)
 
-    return torch.utils.data.DataLoader(dataset, batch_size=batch_size, sampler=sampler)
+    return torch.utils.data.DataLoader(dataset, batch_size=batch_size,
+                                       sampler=sampler)

@@ -6,25 +6,26 @@ import torch.nn.functional as F
 
 
 class BasicBlock(nn.Module):
-
     expansion = 1
 
     def __init__(self, in_planes, out_planes, stride=1):
         super(BasicBlock, self).__init__()
 
-        self.Conv1 = nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.Conv1 = nn.Conv2d(in_planes, out_planes, kernel_size=3,
+                               stride=stride, padding=1, bias=False)
         self.BN1 = nn.BatchNorm2d(out_planes)
-        self.Conv2 = nn.Conv2d(out_planes, self.expansion * out_planes, kernel_size=3, stride=1, padding=1, bias=False)
+        self.Conv2 = nn.Conv2d(out_planes, self.expansion * out_planes,
+                               kernel_size=3, stride=1, padding=1, bias=False)
         self.BN2 = nn.BatchNorm2d(self.expansion * out_planes)
 
         if stride != 1 or in_planes != self.expansion * out_planes:
             self.downsample = nn.Sequential(
-                nn.Conv2d(in_planes, self.expansion * out_planes, kernel_size=1, stride=stride, bias=False),
+                nn.Conv2d(in_planes, self.expansion * out_planes, kernel_size=1,
+                          stride=stride, bias=False),
                 nn.BatchNorm2d(self.expansion * out_planes),
             )
 
     def forward(self, x):
-
         residual = self.downsample(x) if hasattr(self, 'downsample') else x
 
         output = self.Conv1(x)
@@ -40,27 +41,29 @@ class BasicBlock(nn.Module):
 
 
 class Bottleneck(nn.Module):
-
     expansion = 4
 
     def __init__(self, in_planes, out_planes, stride=1):
         super(Bottleneck, self).__init__()
 
-        self.Conv1 = nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1, bias=False)
+        self.Conv1 = nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=1,
+                               bias=False)
         self.BN1 = nn.BatchNorm2d(out_planes)
-        self.Conv2 = nn.Conv2d(out_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.Conv2 = nn.Conv2d(out_planes, out_planes, kernel_size=3,
+                               stride=stride, padding=1, bias=False)
         self.BN2 = nn.BatchNorm2d(out_planes)
-        self.Conv3 = nn.Conv2d(out_planes, self.expansion * out_planes, kernel_size=1, stride=1, bias=False)
+        self.Conv3 = nn.Conv2d(out_planes, self.expansion * out_planes,
+                               kernel_size=1, stride=1, bias=False)
         self.BN3 = nn.BatchNorm2d(self.expansion * out_planes)
 
         if stride != 1 or in_planes != self.expansion * out_planes:
             self.downsample = nn.Sequential(
-                nn.Conv2d(in_planes, self.expansion * out_planes, kernel_size=1, stride=stride, bias=False),
+                nn.Conv2d(in_planes, self.expansion * out_planes, kernel_size=1,
+                          stride=stride, bias=False),
                 nn.BatchNorm2d(self.expansion * out_planes),
             )
 
     def forward(self, x):
-
         residual = self.downsample(x) if hasattr(self, 'downsample') else x
 
         output = self.Conv1(x)
@@ -88,7 +91,8 @@ class ResNet(nn.Module):
 
         self.in_planes = 64
 
-        self.Conv1 = nn.Conv2d(3, self.in_planes, kernel_size=7, stride=2, padding=3, bias=False)
+        self.Conv1 = nn.Conv2d(3, self.in_planes, kernel_size=7, stride=2,
+                               padding=3, bias=False)
         self.BN1 = nn.BatchNorm2d(self.in_planes)
 
         self.layer1 = self._make_layer(block, 64, layers[0], stride=1)
@@ -145,9 +149,12 @@ class ResNet(nn.Module):
 
         return output
 
+
 class ResNetWithDropout(ResNet):
-    def __init__(self, block, layers, p=0.5, num_classes=25, featureModel=False):
-        super(ResNetWithDropout, self).__init__(block, layers, num_classes=num_classes)
+    def __init__(self, block, layers, p=0.5, num_classes=25,
+                 featureModel=False):
+        super(ResNetWithDropout, self).__init__(block, layers,
+                                                num_classes=num_classes)
 
         self.dropout1 = nn.Dropout(p)
         self.dropout2 = nn.Dropout(p)
@@ -175,10 +182,11 @@ class ResNetWithDropout(ResNet):
 
         return output
 
+
 def resnet_18():
     model = ResNet(BasicBlock, [2, 2, 2, 2])
     return model
- 
+
 
 def resnet_34():
     model = ResNet(BasicBlock, [3, 4, 6, 3])
@@ -199,6 +207,8 @@ def resnet_152():
     model = ResNet(Bottleneck, [3, 8, 36, 3])
     return model
 
+
 def resnet_dropout_18(num_classes=25, featureModel=False, p=0.5):
-    model = ResNetWithDropout(BasicBlock, [2, 2, 2, 2], num_classes=num_classes, featureModel=featureModel, p=p)
+    model = ResNetWithDropout(BasicBlock, [2, 2, 2, 2], num_classes=num_classes,
+                              featureModel=featureModel, p=p)
     return model

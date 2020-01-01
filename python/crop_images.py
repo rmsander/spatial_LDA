@@ -5,7 +5,6 @@ their detected bounding boxes."""
 import os
 
 # External package imports
-import numpy as np
 import cv2 as cv
 import csv
 

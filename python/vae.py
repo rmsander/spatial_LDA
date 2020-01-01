@@ -1,9 +1,8 @@
-# source: https://github.com/wiseodd/generative-models/blob/master/VAE/vanilla_vae/vae_pytorch.py
+# source: https://github.com/wiseodd/generative-models/blob/master/VAE
+# /vanilla_vae/vae_pytorch.py
 import torch
 import torch.nn.functional as nn
-import torch.autograd as autograd
 import torch.optim as optim
-import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from torch.autograd import Variable
@@ -12,21 +11,22 @@ from dataset import *
 import os
 import gc
 import pickle
-data_root = os.path.join(os.path.dirname(__file__), '../data')
 from tqdm import tqdm
 
+# Get file path
+data_root = os.path.join(os.path.dirname(__file__), '../data')
 
+# Hyperparameters and flags
 NUM_KMEANS_CLUSTERS = 100
-
 PICKLE_SAVE_RUN = False
 IMAGE_MATRIX_PATH = os.path.join(data_root, "grayscale_img_matrix.pkl")
 
+grayscaleDataset = ADE20K(root=getDataRoot(), transform=vae_transform,
+                          useStringLabels=True, randomSeed=49)
 
-
-grayscaleDataset = ADE20K(root=getDataRoot(), transform=vae_transform, useStringLabels=True, randomSeed=49)
-
-#select most commoon label strings from tuples of (label, count)
-mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(5)))
+# select most common label strings from tuples of (label, count)
+mostCommonLabels = list(
+    map(lambda x: x[0], grayscaleDataset.counter.most_common(5)))
 grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
 
 print("resized image size is: ", grayscaleDataset.__getitem__(0)[0].shape)
@@ -40,8 +40,9 @@ print(label_dim)
 
 mb_size = 55
 Z_dim = 250
-X_dim = 224*224
-y_dim = label_dim #TODO change the numebr of one hot vectors after you chcnge this t a subse
+X_dim = 224 * 224
+y_dim = label_dim
+# Change this to be a subset
 h_dim = 128
 c = 0
 lr = 1e-3
@@ -99,35 +100,29 @@ params = [Wxh, bxh, Whz_mu, bhz_mu, Whz_var, bhz_var,
 
 solver = optim.Adam(params, lr=lr)
 
-
-
-# loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True)
-
 for epoch in range(500):
-    loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size, shuffle_dataset=True, random_seed=epoch)
-    bar = tqdm(total= len(grayscaleDataset), desc="epoch num: %d" % epoch)
+    loader = get_single_loader(dataset=grayscaleDataset, batch_size=mb_size,
+                               shuffle_dataset=True, random_seed=epoch)
+    bar = tqdm(total=len(grayscaleDataset), desc="epoch num: %d" % epoch)
 
     for batch_num, (X, Y) in enumerate(loader):
 
         X = Variable(torch.flatten(X, start_dim=1))
-        # print(X.shape)
-        # X = Variable(X.reshape(mb_size, 224*224))
 
         # Forward
         z_mu, z_var = Q(X)
         z = sample_z(z_mu, z_var)
         X_sample = P(z)
-        # print(X_sample.shape)
-
 
         # Loss
-        recon_loss = nn.binary_cross_entropy(X_sample, X, size_average=False) / mb_size
-        kl_loss = torch.mean(0.5 * torch.sum(torch.exp(z_var) + z_mu**2 - 1. - z_var, 1))
+        recon_loss = nn.binary_cross_entropy(X_sample, X,
+                                             size_average=False) / mb_size
+        kl_loss = torch.mean(
+            0.5 * torch.sum(torch.exp(z_var) + z_mu ** 2 - 1. - z_var, 1))
         loss = recon_loss + kl_loss
 
         # Backward
         loss.backward()
-        # print(loss.data)
 
         # Update
         solver.step()
@@ -158,7 +153,8 @@ for epoch in range(500):
             if not os.path.exists('out/'):
                 os.makedirs('out/')
 
-            plt.savefig('out/{}.png'.format(str(c).zfill(3)), bbox_inches='tight')
+            plt.savefig('out/{}.png'.format(str(c).zfill(3)),
+                        bbox_inches='tight')
             c += 1
             plt.close(fig)
 
@@ -166,4 +162,3 @@ for epoch in range(500):
     gc.collect()
     bar.close()
     pickle.dump(params, open("out/vaeparams.pkl", "wb"))
-

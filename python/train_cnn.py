@@ -1,17 +1,10 @@
-import copy
-from utils import topNError, saveErrorGraph
 from models.InceptionV3 import *
 from models.ResNet import *
-import matplotlib.pyplot as plt
-import numpy as np
-# from dataset import *
 from dataset import *
 from torchvision import transforms
 from skimage import io
 import gc
-import sys
 import os
-from torch.autograd import Variable
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -20,19 +13,17 @@ import torch.optim.lr_scheduler
 torch.backends.cudnn.benchmark = True
 
 import numpy as np
-import matplotlib.pyplot as plt
 from models.ResNet import *
 from models.InceptionV3 import *
 from models.SegNet import *
 from utils import topNError, saveErrorGraph
-import copy
 
-# from feature_extraction import n_keypoints, n_cnn_keypoints, n_clusters,\
-#  feature_model, cnn_num_layers_removed, num_most_common_labels_used
+# Hyperparameters
+cnnLr, cnnDropout = 1e-3, 0.5
 
+# Set up GPU env and get relevant file paths and directories
 cnnModelPath = os.path.join('models', 'bestCNNmodel')
 multiGPU = torch.cuda.device_count() > 1
-cnnLr, cnnDropout = 1e-3, 0.5
 
 # Fits image to shape (224, 224)
 resnet_transform = transforms.Compose([
@@ -58,6 +49,94 @@ segnet_transform = transforms.Compose([
 image_path = "/Users/yaatehr/Programs/spatial_LDA/data/ef741c8e8b81c793.jpg"
 
 
+def test():
+    model = get_model()
+    transform = get_model_transform(feature_model)
+    dataset = ADE20K(root=getDataRoot(), transform=transform,
+                     useStringLabels=True, randomSeed=49)
+    mostCommonLabels = list(map(lambda x: x[0], dataset.counter.most_common(
+        num_most_common_labels_used)))
+    dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
+    dataset.useOneHotLabels()
+
+    batch_size = 50
+    test_img = io.imread(image_path)
+    inputs = segnet_transform(test_img)
+    inputs = inputs.unsqueeze(0)
+    print(inputs.shape)
+    test_loader = get_single_loader(dataset=dataset, batch_size=batch_size)
+    for b, (img, label) in enumerate(test_loader):
+        print("model output size is: ", model(img).shape)
+    batchOutput = model(inputs).view(-1, 4, 128)
+
+    gc.collect()
+    print(batchOutput.shape)
+
+
+def cnnEpoch(model, loader, device, criterion, output_period, epoch,
+             optimizer=None):
+    running_loss = 0.0
+    num_batches = len(loader)
+    errors = np.zeros(2)
+    for batch_num, (inputs, labels) in enumerate(loader, 1):
+        inputs = inputs.to(device)
+        labels = np.array(labels).to(device)
+
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
+        if optimizer is not None:
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+        running_loss += loss.item()
+
+        if batch_num % output_period == 0:
+            print('[%d:%.2f] loss: %.3f' % (
+                epoch, batch_num * 1.0 / num_batches,
+                running_loss / output_period
+            ))
+            running_loss = 0.0
+        gc.collect()
+        errors += topNError(outputs, labels, [1, 2], False)
+    return errors
+
+
+def trainCNN(modelName='resnet'):
+    # More hyperparameters
+    dataset = ImageDataset()
+    dataset_labels = dataset.get_all_labels()
+    num_classes = len(dataset_labels)
+
+    if modelName == 'resnet':
+        model = resnet_dropout_18(num_classes=num_classes, p=cnnDropout)
+    elif modelName == 'inception':
+        model = Inception3(num_classes=num_classes, aux_logits=False)
+    elif modelName == 'segnet':
+        # TODO: Figure out how dims need to be changed based off of NYU dataset
+        model = SegNet(input_channels=3, output_channels=1, pretrained_vgg=True)
+    else:
+        raise Exception("Please select one of \'resnet\' or \'inception\' or "
+                        "\'segnet\'")
+
+    if torch.cuda.is_available():
+        if multiGPU:
+            model = nn.DataParallel(model)
+        model = model.cuda()
+    optimizer = optim.Adam(model.parameters(), lr=cnnLr)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min',
+                                                           patience=2)
+    # setup the device for running
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+    model.eval()
+
+    return model
+
+
+################################################################################
+# AUXILIARY CODE
+################################################################################
 # def cnnEpoch(model, loader, device, criterion, output_period, epoch,
 # optimizer=None):
 #     """
@@ -175,105 +254,9 @@ image_path = "/Users/yaatehr/Programs/spatial_LDA/data/ef741c8e8b81c793.jpg"
 
 
 # trainCNN("resnet")
-
-
-def test():
-    model = get_model()
-    transform = get_model_transform(feature_model)
-    dataset = ADE20K(root=getDataRoot(), transform=transform, useStringLabels=True, randomSeed=49)
-    mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
-    dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
-    dataset.useOneHotLabels()
-
-    batch_size = 50
-    test_img = io.imread(image_path)
-    inputs = segnet_transform(test_img)
-    inputs = inputs.unsqueeze(0)
-    print(inputs.shape)
-    test_loader = get_single_loader(dataset=dataset, batch_size=batch_size)
-    # num_batches = len(test_loader)
-    # errors = np.zeros(2)
-    # numSamples = len(test_loader) * batch_size
-    # print(inputs.shape[1:])
-    # inputs = inputs.view(inputs.shape[1:]).to(device)
-    # TODO: Should these be changed?
-    for b, (img,label) in enumerate(test_loader):
-        print("model output size is: ", model(img).shape)
-    batchOutput = model(inputs).view(-1, 4, 128)
-    # batchOutput = model(inputs).view(-1, 4 * 49, 128)
-
-    gc.collect()
-    print(batchOutput.shape)
-
-
-
-
-
-def cnnEpoch(model, loader, device, criterion, output_period, epoch,
-             optimizer=None):
-    running_loss = 0.0
-    num_batches = len(loader)
-    errors = np.zeros(2)
-    for batch_num, (inputs, labels) in enumerate(loader, 1):
-        # print(inputs)
-        # print(labels)
-        inputs = inputs.to(device)
-        labels = np.array(labels).to(device)
-
-        outputs = model(inputs)
-        loss = criterion(outputs, labels)
-        if optimizer is not None:
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-
-        running_loss += loss.item()
-
-        if batch_num % output_period == 0:
-            print('[%d:%.2f] loss: %.3f' % (
-                epoch, batch_num * 1.0 / num_batches,
-                running_loss / output_period
-            ))
-            running_loss = 0.0
-        gc.collect()
-        errors += topNError(outputs, labels, [1, 2], False)
-    return errors
-
-
-def trainCNN(modelName='resnet'):
-    # Parameters
-    num_epochs = 25
-    output_period = 100
-    batch_size = 20
-    dataset = ImageDataset()
-    dataset_labels = dataset.get_all_labels()
-    num_classes = len(dataset_labels)
-
-    if modelName == 'resnet':
-        model = resnet_dropout_18(num_classes=num_classes, p=cnnDropout)
-    elif modelName == 'inception':
-        model = Inception3(num_classes=num_classes, aux_logits=False)
-    elif modelName == 'segnet':
-        # TODO: Figure out how dims need to be changed based off of NYU dataset
-        model = SegNet(input_channels=3, output_channels=1, pretrained_vgg=True)
-    else:
-        raise Exception("Please select one of \'resnet\' or \'inception\' or "
-                        "\'segnet\'")
-
-    if torch.cuda.is_available():
-        if multiGPU:
-            model = nn.DataParallel(model)
-        model = model.cuda()
-    optimizer = optim.Adam(model.parameters(), lr=cnnLr)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min',
-                                                           patience=2)
-    # setup the device for running
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = model.to(device)
-    model.eval()
-
-    return model
-
+################################################################################
+# AUXILIARY CODE
+################################################################################
 
 if __name__ == '__main__':
     test()

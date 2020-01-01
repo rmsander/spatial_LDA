@@ -1,5 +1,4 @@
 import json
-import numpy as np
 import os
 from utils import make_inverted_labelmap
 

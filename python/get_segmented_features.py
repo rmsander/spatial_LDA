@@ -1,7 +1,6 @@
 # External package imports
 import numpy as np
 import cv2 as cv
-from PIL import Image
 
 # Native Python imports
 import os
@@ -39,7 +38,6 @@ def main():
             "images", "dataset1_val")
     dir_segmented = os.path.join("..", "..", "datasets", "seg_data",
                                  "images", "training")
-    dir_rgb_codes = os.path.join("..", "..", "datasets", "seg_data", "color150")
 
     # Get RGB --> CLASS LABEL
     rgb2class = {}
@@ -63,7 +61,6 @@ def main():
                 fname_split = "ADE_val_"+f_img.split(".")[0]
                 seg_name = fname_split[0]+"_seg.png"
                 print("FILE NAME IS: {}".format(seg_name))
-                fpaths = os.system()
                 fpath = os.path.join(dir_segmented, sub_folder, label, seg_name)
                 print("FPATH {}".format(fpath))
                 A = cv.imread(fpath)

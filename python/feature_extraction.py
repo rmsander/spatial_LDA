@@ -2,37 +2,35 @@ import cv2 as cv
 import numpy as np
 import os
 from sklearn.cluster import MiniBatchKMeans, KMeans
-from sklearn.neural_network import MLPClassifier
-from sklearn.datasets import make_multilabel_classification
-import scipy
-from skimage import io
 from scipy.special import kl_div as KL
 import pickle
-from torchvision import transforms
 from skimage import io
 import matplotlib.pyplot as plt
-import argparse
 from dataset import *
 import torch
 from tqdm import tqdm
 import gc
 import copy
-from pca import featureNormalize
 
+# Hyperparameters
 n_keypoints = 300  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
 n_clusters = 300  # also need to tune this
-feature_model = "alexnetg" # see temp.txt for possible list of models
-cnn_num_layers_removed = 3 # NOTE set to None for sift
+feature_model = "alexnetg"  # see temp.txt for possible list of models
+cnn_num_layers_removed = 3  # NOTE set to None for sift
 num_most_common_labels_used = 25
 
+
 def get_model():
-    model = torch.hub.load('pytorch/vision', feature_model[:-1], pretrained=True)
-    # cut off the last layer of this classifier
-    new_classifier = torch.nn.Sequential(*list(model.children())[:-cnn_num_layers_removed])
+    model = torch.hub.load('pytorch/vision', feature_model[:-1],
+                           pretrained=True)
+    # Remove off the last layer of this classifier
+    new_classifier = torch.nn.Sequential(
+        *list(model.children())[:-cnn_num_layers_removed])
     print(new_classifier)
     model = new_classifier
     return model
+
 
 def get_feature_vector(img):
     # Get keypoints and feature descriptors
@@ -122,6 +120,7 @@ def evaluate_kmeans(descriptor_list, kmeans, n_clusters, metric="l2"):
 
     return histogram_distance_dict
 
+
 # Helper functions for segmentation code
 def make_ID_mapping():
     segmented_counts_path = os.path.join("..", "data", "SEG_COUNTS.pkl")
@@ -147,7 +146,7 @@ def make_ID_mapping():
     print(
         "THERE ARE {} different color IDs in ADE 20k".format(len(color_copies)))
     colorID_map = {color_copies[i]: i for i in range(len(color_copies))}
-    #print(colorID_map)
+    # print(colorID_map)
 
     # Now pickle IDs and mapping
     fname_IDS = os.path.join("..", "data", "color_IDs.pkl")
@@ -161,13 +160,14 @@ def make_ID_mapping():
         pickle.dump(colorID_map, map_file)
         map_file.close()
 
+
 def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
                               n_clusters=300):
-
     # Now we want to compute the distribution of ground truth labels for each
     # latent topic
     with open(os.path.join("..", "data", "top25_sift",
-                           "prob_distrs_%s_topics_%s_keypoints_%s_clusters.pkl" %(
+                           "prob_distrs_%s_topics_%s_keypoints_%s_clusters"
+                           ".pkl" % (
                                    n_topics, n_keypoints, n_clusters)),
               "rb") as f:
         probability_distribution_dict = pickle.load(f)
@@ -199,29 +199,30 @@ def eval_lda_segmented_labels(n_topics=20, n_keypoints=300,
             print("KEY IS: {}".format(key))
             color_map = np.zeros((len(IDs)))
             key_indices_unmapped = list(key.keys())
-            key_indices_mapped = [mapping[key_indices_unmapped[i]] for i in range(len(key_indices_unmapped))]
+            key_indices_mapped = [mapping[key_indices_unmapped[i]] for i in
+                                  range(len(key_indices_unmapped))]
             for i in range(len(key_indices_mapped)):
-                color_map[key_indices_mapped[i]] = seg_counts[letter][file][key_indices_unmapped[i]]
-            color_map = np.array(color_map).reshape((1,len(IDs)))
+                color_map[key_indices_mapped[i]] = seg_counts[letter][file][
+                    key_indices_unmapped[i]]
+            color_map = np.array(color_map).reshape((1, len(IDs)))
             print("COLOR MAP IS: {}".format(color_map))
             print(list(probability_distribution_dict.keys()))
             topic_dist = np.array(probability_distribution_dict[
-                file]).reshape((n_topics,1))
-            prob_tensor += topic_dist@color_map
+                                      file]).reshape((n_topics, 1))
+            prob_tensor += topic_dist @ color_map
 
     # Now pickle probability tensor/matrix
-    fname_out =  os.path.join("..", "data", "topic_GT_label_dist_{"
-                                            "}_topics_{}_keypoints_{"
-                                            "}_clusters.pkl".format(n_topics,
-                                                                    n_keypoints, n_clusters))
+    fname_out = os.path.join("..", "data", "topic_GT_label_dist_{"
+                                           "}_topics_{}_keypoints_{"
+                                           "}_clusters.pkl".format(n_topics,
+                                                                   n_keypoints,
+                                                                   n_clusters))
 
     with open(fname_out, "wb") as f:
         pickle.dump(prob_tensor, f)
         f.close()
 
     print("FINISHED PICKLING")
-
-
 
 
 def plot_eval_results(ks, distances, out_file_path="", metric="L2 Norm"):
@@ -244,23 +245,20 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
     # Make clustering algorithm
     kmeans = KMeans(n_clusters=n_clusters)
     img_files = os.listdir(img_path)  # img_file should be
-    # "/home/yaatehr/datasets/seg_data/images/training/"
-    # print(img_files)
-    print(len(img_files))
     descriptor_path = "/home/yaatehr/programs/spatial_LDA/data" \
                       "/image_descriptors_dictionary_%s_keypoints.pkl" % \
                       n_keypoints
     print(descriptor_path)
-    #uncomment for pickled descriptor_list_dic
+    # uncomment for pickled descriptor_list_dic
     # with open(descriptor_path, "rb") as f:
-        # descriptor_list_dic = pickle.load(f)
+    # descriptor_list_dic = pickle.load(f)
 
-    #uncomment to create descriptor_list_dic
-    descriptor_list_dic = {} #f: descriptor vectors
+    # uncomment to create descriptor_list_dic
+    descriptor_list_dic = {}  # f: descriptor vectors
     num_files = 0
     for l in img_files:
-        label_path = os.path.join(img_path, l) #a/
-        labels = os.listdir(label_path) #a/amusement_park
+        label_path = os.path.join(img_path, l)  # a/
+        labels = os.listdir(label_path)  # a/amusement_park
         for label in labels:
             singular_label_path = os.path.join(label_path, label)
             print(singular_label_path)
@@ -269,15 +267,14 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                 if f[-3:] != 'jpg':
                     continue
                 num_files += 1
-                if num_files %99==0:
-                    print(str(num_files+1)+" files processed")
-                A = cv.imread(os.path.join(singular_label_path, f)) # read
+                if num_files % 99 == 0:
+                    print(str(num_files + 1) + " files processed")
+                A = cv.imread(os.path.join(singular_label_path, f))  # read
                 _, des = get_feature_vector(A)
-                descriptor_list_dic[f]= des
+                descriptor_list_dic[f] = des
     with open(descriptor_path, "wb") as f:
         pickle.dump(descriptor_list_dic, f)
-    print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
-
+    print("Dumped descriptor dictionary of %s keypoints" % n_keypoints)
 
     vstack = np.vstack([i for i in list(descriptor_list_dic.values()) if
                         i is not None and i.shape[0] == n_keypoints])
@@ -305,7 +302,8 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
                     continue
                 if num_files % 100 == 0:
                     print(str(num_files) + " files processed")
-                des = descriptor_list_dic[f]  # Get keypoints/descriptors from SIFT
+                des = descriptor_list_dic[
+                    f]  # Get keypoints/descriptors from SIFT
                 if des is None or des.shape[0] != n_keypoints:
                     continue
                 histogram = build_histogram(des, kmeans, n_clusters)
@@ -316,48 +314,64 @@ def create_feature_matrix(img_path, n_clusters=n_clusters):
 
 
 def create_feature_matrix_cnn():
-    # save_root = os.path.join(os.path.dirname(__file__), '../data')
-    save_root = getDirPrefix(num_most_common_labels_used, feature_model, cnn_num_layers_removed=cnn_num_layers_removed, makedirs=True)
+    save_root = getDirPrefix(num_most_common_labels_used, feature_model,
+                             cnn_num_layers_removed=cnn_num_layers_removed,
+                             makedirs=True)
 
-    #DUMP DESCRIPTOR LIST
-    descriptor_path = os.path.join(save_root,  "image_descriptors_dictionary_%s_keypoints.pkl" % \
-                      (n_keypoints))
+    # DUMP DESCRIPTOR LIST
+    descriptor_path = os.path.join(save_root,
+                                   "image_descriptors_dictionary_%s_keypoints.pkl" % \
+                                   (n_keypoints))
 
-    kmeans_path = os.path.join(save_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
-    if not os.path.exists(kmeans_path) :
-        kmeans_path = os.path.join(save_root, "batch_kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+    kmeans_path = os.path.join(save_root,
+                               "kmeans_%s_clusters_%s_keypoints.pkl" % (
+                               n_clusters, n_keypoints))
+    if not os.path.exists(kmeans_path):
+        kmeans_path = os.path.join(save_root,
+                                   "batch_kmeans_%s_clusters_%s_keypoints.pkl" % (
+                                   n_clusters, n_keypoints))
 
     if not (os.path.exists(kmeans_path) and os.path.exists(descriptor_path)):
-        print("NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n %s_clusters_%s_keypoints" % (save_root, n_clusters, n_keypoints))
+        print(
+            "NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n "
+            "%s_clusters_%s_keypoints" % (
+            save_root, n_clusters, n_keypoints))
         minibatchkmeans = MiniBatchKMeans(n_clusters=n_clusters)
         kmeans = KMeans(n_clusters)
         usingMinibatch = False
         model = get_model()
         transform = get_model_transform(feature_model)
-        dataset = ADE20K(root=getDataRoot(), transform=transform, useStringLabels=True, randomSeed=49)
-        mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
+        dataset = ADE20K(root=getDataRoot(), transform=transform,
+                         useStringLabels=True, randomSeed=49)
+        mostCommonLabels = list(map(lambda x: x[0], dataset.counter.most_common(
+            num_most_common_labels_used)))
         dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
         dataset.useOneHotLabels()
         num_images = len(dataset)
         batch_size = 79
         loader = get_single_loader(dataset=dataset, batch_size=batch_size)
         descriptor_dict = {}
-        bar = tqdm(total= num_images)
+        bar = tqdm(total=num_images)
 
-        for step, (img,label) in enumerate(loader):
+        for step, (img, label) in enumerate(loader):
             outputs = model(img)
-            unrolled_outputs = torch.flatten(outputs, start_dim=2).detach().numpy()
-            # unrolled_outputs = np.apply_along_axis(featureNormalize, 1, unrolled_outputs)
+            unrolled_outputs = torch.flatten(outputs,
+                                             start_dim=2).detach().numpy()
+            # unrolled_outputs = np.apply_along_axis(featureNormalize, 1,
+            # unrolled_outputs)
 
-            #build the descriptor map
-            offset = step*batch_size
+            # build the descriptor map
+            offset = step * batch_size
 
-            descriptors = dict(zip(dataset.image_paths[offset:offset+batch_size], unrolled_outputs.tolist()))
+            descriptors = dict(
+                zip(dataset.image_paths[offset:offset + batch_size],
+                    unrolled_outputs.tolist()))
             descriptor_dict.update(descriptors)
-            batch_outputs_for_kmeans = unrolled_outputs.reshape(-1,unrolled_outputs.shape[-1])
-            # minibatchkmeans.partial_fit(batch_outputs_for_kmeans)
+            batch_outputs_for_kmeans = unrolled_outputs.reshape(-1,
+                                                                unrolled_outputs.shape[
+                                                                    -1])
 
-            #build kmeans  fit input
+            # build kmeans  fit input
             if step == 0:
                 vstack = batch_outputs_for_kmeans
                 continue
@@ -371,12 +385,8 @@ def create_feature_matrix_cnn():
         with open(descriptor_path, "wb") as f:
             pickle.dump(descriptor_dict, f)
             # kmeans = pickle.load(f)
-        print('dumped descriptor dict for %s, %d, %s' % (feature_model, cnn_num_layers_removed, n_keypoints))
-
-        # try:
-        #     print("fitting generic kmeans")
-        #     kmeans.fit(vstack)
-        # except Exception as e:
+        print('dumped descriptor dict for %s, %d, %s' % (
+        feature_model, cnn_num_layers_removed, n_keypoints))
         gc.collect()
         print("falling back to minibatch")
         kmeans = minibatchkmeans.fit(vstack)
@@ -385,10 +395,12 @@ def create_feature_matrix_cnn():
         # DUMP KMEANS
         if not usingMinibatch:
             kmeans_path = os.path.join(save_root, "kmeans_" \
-                        "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+                                                  "%s_clusters_%s_keypoints.pkl" % (
+                                       n_clusters, n_keypoints))
         else:
             kmeans_path = os.path.join(save_root, "batch_kmeans_" \
-                "%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+                                                  "%s_clusters_%s_keypoints.pkl" % (
+                                       n_clusters, n_keypoints))
 
         with open(kmeans_path, "wb") as f:
             pickle.dump(kmeans, f)
@@ -411,39 +423,48 @@ def create_feature_matrix_cnn():
 
     return hist_list, kmeans
 
+
 def create_feature_matrix_sift():
     # save_root = os.path.join(os.path.dirname(__file__), '../data')
-    save_root =  getDirPrefix(num_most_common_labels_used, "sift")
+    save_root = getDirPrefix(num_most_common_labels_used, "sift")
 
-    #DUMP DESCRIPTOR LIST
-    descriptor_path = os.path.join(save_root, "image_descriptors_dictionary_%s_keypoints.pkl" % \
-                      (n_keypoints))
+    # DUMP DESCRIPTOR LIST
+    descriptor_path = os.path.join(save_root,
+                                   "image_descriptors_dictionary_%s_keypoints.pkl" % \
+                                   (n_keypoints))
 
-    kmeans_path = os.path.join(save_root, "kmeans_%s_clusters_%s_keypoints.pkl" % (n_clusters, n_keypoints))
+    kmeans_path = os.path.join(save_root,
+                               "kmeans_%s_clusters_%s_keypoints.pkl" % (
+                               n_clusters, n_keypoints))
 
     if not (os.path.exists(kmeans_path) and os.path.exists(descriptor_path)):
-        print("NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n %s_clusters_%s_keypoints" % (save_root, n_clusters, n_keypoints))
+        print(
+            "NO PATHS FOUND, overwriting descriptors and kmeans for: \n %s \n "
+            "%s_clusters_%s_keypoints" % (
+            save_root, n_clusters, n_keypoints))
         minibatchkmeans = MiniBatchKMeans(n_clusters=n_clusters)
         kmeans = KMeans(n_clusters)
-        dataset = ADE20K(root=getDataRoot(), transform=None, useStringLabels=True, randomSeed=49)
-        mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
+        dataset = ADE20K(root=getDataRoot(), transform=None,
+                         useStringLabels=True, randomSeed=49)
+        mostCommonLabels = list(map(lambda x: x[0], dataset.counter.most_common(
+            num_most_common_labels_used)))
         dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
         num_images = len(dataset)
         descriptor_dict = {}
-        bar = tqdm(total= num_images)
+        bar = tqdm(total=num_images)
 
-        for step, (img,label) in enumerate(dataset):
+        for step, (img, label) in enumerate(dataset):
             _, des = get_feature_vector(img)
             f = dataset.image_paths[step]
-            descriptor_dict[f]= des
-            if step%50 == 0:
+            descriptor_dict[f] = des
+            if step % 50 == 0:
                 bar.update(50)
 
         bar.close()
 
         with open(descriptor_path, "wb") as f:
             pickle.dump(descriptor_dict, f)
-        print("Dumped descriptor dictionary of %s keypoints" %n_keypoints)
+        print("Dumped descriptor dictionary of %s keypoints" % n_keypoints)
         vstack = np.vstack([i for i in list(descriptor_dict.values()) if
                             i is not None and i.shape[0] == n_keypoints])
         print(vstack.shape)
@@ -470,8 +491,10 @@ def create_feature_matrix_sift():
             kmeans = pickle.load(f)
         with open(descriptor_path, 'rb') as f:
             descriptor_dic = pickle.load(f)
-        dataset = ADE20K(root=getDataRoot(), transform=None, useStringLabels=True, randomSeed=49)
-        mostCommonLabels =  list(map(lambda x: x[0], dataset.counter.most_common(num_most_common_labels_used)))
+        dataset = ADE20K(root=getDataRoot(), transform=None,
+                         useStringLabels=True, randomSeed=49)
+        mostCommonLabels = list(map(lambda x: x[0], dataset.counter.most_common(
+            num_most_common_labels_used)))
         dataset.selectSubset(mostCommonLabels, normalizeWeights=True)
         hist_list = []
         index_mask = []
@@ -489,12 +512,15 @@ def create_feature_matrix_sift():
     return (hist_list, index_mask), kmeans
 
 
-
 def make_dataset_directory(dataset_filepath):
     BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
-    grayscaleDataset = ADE20K(grayscale=True, root=BOX_DATA_ROOT, transform = None, useStringLabels=True, randomSeed=49)
-    # dataset = get_single_loader(grayscaleDataset, batch_size=1, shuffle_dataset=False)
-    mostCommonLabels =  list(map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
+    grayscaleDataset = ADE20K(grayscale=True, root=BOX_DATA_ROOT,
+                              transform=None, useStringLabels=True,
+                              randomSeed=49)
+    # dataset = get_single_loader(grayscaleDataset, batch_size=1,
+    # shuffle_dataset=False)
+    mostCommonLabels = list(
+        map(lambda x: x[0], grayscaleDataset.counter.most_common(25)))
     grayscaleDataset.selectSubset(mostCommonLabels, normalizeWeights=True)
     if not os.path.exists(dataset_filepath):
         os.mkdir(dataset_filepath)
@@ -518,13 +544,15 @@ def make_dataset_directory(dataset_filepath):
 
 def main():
     dataset_path = "/home/yaatehr/programs/spatial_LDA/data/descriptors_test_1"
-    # M = create_feature_matrix(dataset_npath)
-    # model = get_model()
-    # # CnnMatrix = create_feature_matrix_cnn(dataset_path, model)
+    """
+    M = create_feature_matrix(dataset_npath)
+    model = get_model()
+    CnnMatrix = create_feature_matrix_cnn(dataset_path, model)
 
-    # with open("/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix",
-    #           "wb") as f:
-    #     pickle.dump(CnnMatrix, f)
+    with open("/home/yaatehr/programs/spatial_LDA/data/cnn_feature_matrix",
+               "wb") as f:
+         pickle.dump(CnnMatrix, f)
+    """
     make_ID_mapping()
     eval_dir = os.path.join("..", "data", "top25_sift")
     files = os.listdir(eval_dir)
@@ -537,6 +565,7 @@ def main():
                                       int(fname_split[6])
         print(topics, keypoints, clusters)
         eval_lda_segmented_labels(topics, keypoints, clusters)
+
 
 if __name__ == "__main__":
     main()
