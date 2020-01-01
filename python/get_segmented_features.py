@@ -60,10 +60,10 @@ def main():
                                                       label))
             segimg2class[sub_folder] = {}
             for f_img in segmented_files:
-                fname_split = "ADE_val_"+f_img.split(".")[0].split("train_")[
-                                         -1]
+                fname_split = "ADE_val_"+f_img.split(".")[0]
                 seg_name = fname_split[0]+"_seg.png"
                 print("FILE NAME IS: {}".format(seg_name))
+                fpaths = os.system()
                 fpath = os.path.join(dir_segmented, sub_folder, label, seg_name)
                 print("FPATH {}".format(fpath))
                 A = cv.imread(fpath)
