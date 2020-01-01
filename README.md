@@ -5,7 +5,7 @@ This repository contains the implementation of an unsupervised image organizatio
 ## Installation
 To install the requirements for this codebase, you can use either `conda` or `pip`.  In the root directory of this codebase (`spatial_LDA/`):
 * `conda env create -f environment.yml` (**conda**)
-* `pip install -r requirements.txt`(**pip**)
+* `pip install -r requirements.txt` (**pip**)
 
 ## Dataset
 For this project, we used the [ADE20K dataset](https://groups.csail.mit.edu/vision/datasets/ADE20K/), which consists of RGB and segmented class images of indoor and outdoor scenes of everyday objects, such as buildings, tables, cups, and chairs.  The version of ADE20K that we used was grouped into 150 unique ground truth labels.
@@ -22,12 +22,12 @@ For our dataset, our optimal observed tuple of hyperparameters was **(300 cluste
 ### Running our Pipeline
 Running our pipeline can be accomplished using the methods defined in `lda.py`.  This script contains flexible code for running the full pipeline (SIFT, CNN features, K-Means, and LDA), or LDA on pre-clustered features.  
 
-Other Python files, namely `utils.py`, `feature_extraction.py`, `dataset.py`, `eval_k_means_call.py`, and `validation.py` can also be of use for similar or downstream applications of this framework.
+Other Python files, namely `utils.py`, `feature_extraction.py` (extracts SIFT features/can apply K-Means Clustering), `dataset.py` (creates a smooth and flexible Python pipeline), `eval_k_means_call.py` (evaluates our framework using L2 norms on K-Means Clusters and Symmetric KL Divergence on LDA topics), and `validation.py` can also be of use for similar or downstream applications of this unsupervised image clustering framework.
 
 ### Baselines
-Another major component of this research was the use of baselines, namely **Principal Component Analysis (PCA)** and **Variational Autoencoders (VAEs)**.  These can be integrated into similar/downstream applications of this framework through `pca.py`, `vae.py`, and `dataset.py`, respectively.
+Another major component of this research project was the use of baselines, namely **Principal Component Analysis (PCA)** and **Variational Autoencoders (VAEs)**.  These can be integrated into similar/downstream applications of this framework through `pca.py`, `vae.py`, and `dataset.py`.
 
-**Note:** All information following this is not relevant for the operational use of this repository, and simply details the background and motivation for this project.  For more information on our project, please see our final paper under [final_paper.pdf](https://github.com/rmsander/spatial_LDA/blob/master/final_paper.pdf).
+**Note:** All information following this is not relevant for the operational use of this repository, and only details the background and motivation for this project.  For more technical/theoretical information on our project, please see our final paper under [final_paper.pdf](https://github.com/rmsander/spatial_LDA/blob/master/final_paper.pdf).
 
 ## Background and Motivation
 
