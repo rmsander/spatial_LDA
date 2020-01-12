@@ -2,6 +2,9 @@
 ## Overview
 This repository contains the implementation of an unsupervised image organization model for use in semi-automation of the image annotation and data curation process.  It uses Latent Dirichlet Allocation (LDA), Scale-Invariant Feature Transform (SIFT), and pre-trained Convolutional Neural Network (CNN) filters to cluster unlabeled images into different categories using latent features.
 
+## Block Diagram
+![block_diagram](https://github.com/rmsander/spatial_LDA/blob/master/images_readme/pipeline.png)
+
 ## Installation
 To install the requirements for this codebase, you can use either `conda` or `pip`.  In the root directory of this codebase (`spatial_LDA/`):
 * `conda env create -f environment.yml` (**conda**)
@@ -27,7 +30,7 @@ Other Python files, namely `utils.py`, `feature_extraction.py` (extracts SIFT fe
 ### Baselines
 Another major component of this research project was the use of baselines, namely **Principal Component Analysis (PCA)** and **Variational Autoencoders (VAEs)**.  These can be integrated into similar/downstream applications of this framework through `pca.py`, `vae.py`, and `dataset.py`.
 
-**Note:** All information following this is not relevant for the operational use of this repository, and only details the background and motivation for this project.  For more technical/theoretical information on our project, please see our final paper under [final_paper.pdf](https://github.com/rmsander/spatial_LDA/blob/master/final_paper.pdf).
+**Note:** All information following this is not relevant for the operational use of this repository, and only details the background and motivation for this project.  For more technical/theoretical information on our project, please see our final paper under [final_paper.pdf](https://github.com/rmsander/spatial_LDA/blob/master/final_paper.pdf), and our final poster under [final_poster.pdf](https://github.com/rmsander/spatial_LDA/blob/master/final_poster.pdf).
 
 ## Background and Motivation
 
