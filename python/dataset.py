@@ -12,6 +12,9 @@ from torch.utils.data.sampler import SubsetRandomSampler, WeightedRandomSampler
 import numpy as np
 from PIL import Image
 
+# Parameters for root directory of dataset
+from configuration import box_data_root
+
 # Get file paths and directories
 data_root = os.path.join(os.path.dirname(__file__), '../data')
 train_root = "/home/yaatehr/programs/spatial_LDA/data/cropped_test_0/m"
@@ -22,11 +25,10 @@ path_to_csv = "/home/yaatehr/programs/datasets/google_open_image/train" \
               "-annotations-bbox.csv"
 path_to_classname_map_csv = os.path.join(data_root, 'class-descriptions.csv')
 
-# NOTE if you are using on a new box, you will want to add your data root
-# directory here
+# NOTE: if you are using on a new box, you will want to add your data root in "configuration.py"
 YAATEH_DATA_ROOT = "/Users/yaatehr/Programs/spatial_LDA/data/seg_data/images" \
                    "/training"
-BOX_DATA_ROOT = "/home/yaatehr/programs/datasets/seg_data/images/training"
+BOX_DATA_ROOT = box_data_root
 DSAIL_BOX_DATA_ROOT = "/home/ubuntu/hdd2/datasets/seg_data/images/training"
 
 
