@@ -2,6 +2,7 @@ import json
 import os
 from utils import make_inverted_labelmap
 
+# Debugging flag
 USE_BOX = True
 
 def get_all_sublabels(node):
@@ -34,9 +35,6 @@ def depth(x):
 def find_ade150_nodes(tree, rgb_dict):
     queue = [root]
     while len(queue) > 0:
-
-# Debugging flag
-USE_BOX = True
 
 def main():
     if USE_BOX:

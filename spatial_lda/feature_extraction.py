@@ -16,7 +16,7 @@ import copy
 n_keypoints = 300  # hyperparameter, need to tune
 n_cnn_keypoints = 4 * 49
 n_clusters = 300  # also need to tune this
-feature_model = "alexnetg"  # see temp.txt for possible list of models
+feature_model = "alexnetg"  # see experiment_calls.txt for possible list of models
 cnn_num_layers_removed = 3  # NOTE set to None for sift
 num_most_common_labels_used = 25
 
