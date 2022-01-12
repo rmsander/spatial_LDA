@@ -275,7 +275,6 @@ class ADE20K(Dataset):
             indices.extend(l)
         indices = np.array(indices)
         self.image_paths = np.delete(np.array(self.image_paths),
-        self.image_paths = np.delete(np.array(self.image_paths),
                                      indices).tolist()
         self.image_classes = np.delete(np.array(self.image_classes),
                                        indices).tolist()
