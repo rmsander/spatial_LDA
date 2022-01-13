@@ -1,4 +1,5 @@
 # Spatial Latent Dirichlet Allocation
+
 ## Overview
 This repository contains the implementation of an unsupervised image organization model for use in semi-automation of the image 
 annotation and data curation process.  It uses Latent Dirichlet Allocation (LDA), Scale-Invariant Feature Transform (SIFT), and 
@@ -99,6 +100,15 @@ clustered latent features.
 Once we have obtained our Visual Bag of Words (VBOW) features through SIFT, 
 CNN filters, and K-Means Clustering, we are now ready to cluster our images 
 using Latent Dirichlet Allocation (LDA).
+
+## Cite
+If you found this repository useful, please consider citing **[our paper](https://www.researchgate.net/publication/339323231_Unsupervised_Image_Clustering_and_Topic_Modeling_for_Accelerated_Annotation)**:
+```
+@article{wangunsupervised,
+  title={Unsupervised Image Clustering and Topic Modeling for Accelerated Annotation},
+  author={Wang, Crystal and Richardson, Yaateh and Sander, Ryan}
+}
+```
 
 ## Credits
 Thank you to the 6.867 team, namely Professor David Sontag and our 
