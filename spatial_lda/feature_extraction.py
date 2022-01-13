@@ -8,6 +8,7 @@ from skimage import io
 import matplotlib.pyplot as plt
 from dataset import *
 import torch
+import torchvision
 from tqdm import tqdm
 import gc
 import copy
@@ -22,8 +23,7 @@ num_most_common_labels_used = 25
 
 
 def get_model():
-    model = torch.hub.load('pytorch/vision', feature_model[:-1],
-                           pretrained=True)
+    model = torchvision.models.alexnet(pretrained=True)
     # Remove off the last layer of this classifier
     new_classifier = torch.nn.Sequential(
         *list(model.children())[:-cnn_num_layers_removed])
