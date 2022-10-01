@@ -6,7 +6,7 @@ cytoolz==0.10.1
 dask==2021.10.0
 decorator==4.4.1
 imageio==2.6.1
-joblib==0.13.2
+joblib==1.2.0
 kiwisolver==1.1.0
 matplotlib==3.1.1
 mkl-fft==1.0.14
