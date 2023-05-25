@@ -28,5 +28,5 @@ six==1.12.0
 toolz==0.10.0
 torch>=1.13.1
 torchvision==0.4.1a0+d94043a
-tornado==6.0.3
+tornado==6.3.2
 tqdm==4.40.0
