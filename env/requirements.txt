@@ -29,4 +29,4 @@ toolz==0.10.0
 torch>=1.13.1
 torchvision==0.4.1a0+d94043a
 tornado==6.3.3
-tqdm==4.40.0
+tqdm==4.66.3
